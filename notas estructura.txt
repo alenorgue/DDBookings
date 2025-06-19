@@ -1,0 +1,73 @@
+/src
+  /shared                  # Utilidades, Value Objects comunes, errores, interfaces genéricas
+  /users
+    /domain
+      User.js
+      UserId.js
+      UserRepository.js
+      AuthService.js
+    /application
+      RegisterUser.js
+      LoginUser.js
+    /infrastructure
+      MongoUserRepository.js
+      JWTAuthService.js
+    /api
+      userController.js
+      userRoutes.js
+
+  /accommodations
+    /domain
+      Accommodation.js
+      Price.js
+      AccommodationRepository.js
+    /application
+      CreateAccommodation.js
+      UpdateAccommodation.js
+    /infrastructure
+      MongoAccommodationRepository.js
+    /api
+      accommodationController.js
+      accommodationRoutes.js
+
+  /booking
+    /domain
+      Booking.js
+      BookingRepository.js
+      BookingPolicy.js
+    /application
+      CreateBooking.js
+      CancelBooking.js
+    /infrastructure
+      MongoBookingRepository.js
+    /api
+      bookingController.js
+      bookingRoutes.js
+
+  /payments
+    /domain
+      Payment.js
+      PaymentRepository.js
+    /application
+      ProcessPayment.js
+      RefundPayment.js
+    /infrastructure
+      StripePaymentGateway.js
+    /api
+      paymentController.js
+      paymentRoutes.js
+
+  /reviews
+    /domain
+      Review.js
+      ReviewRepository.js
+    /application
+      CreateReview.js
+    /infrastructure
+      MongoReviewRepository.js
+    /api
+      reviewController.js
+      reviewRoutes.js
+
+  /config                   # Configuración de express, DB, middlewares
+  server.js

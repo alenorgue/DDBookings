@@ -1,0 +1,126 @@
+import mongoose from "mongoose";
+
+// This file defines the schema for an apartment listing in a real estate application.
+// const { Schema, model } = mongoose;
+
+
+const accommodationSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 100,
+        trim: true
+    },
+    pricePerNight: {
+        type: Number,
+        required: true,
+        min: 10,
+        max: 100000,
+    },
+    squareMeters: {
+        type: Number,
+        required: true,
+        min: 10,
+        max: 1000,
+    },
+    mainPhoto: {
+        type: String,
+        required: true,
+        match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i
+    },
+    photos: [{
+        type: String,
+        match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i
+    }],
+    description: {
+        type: String,
+        required: true,
+        minlength: 30,
+        maxlength: 2000,
+        trim: true
+    }, location: {
+    address: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 200,
+        trim: true
+    },
+    city: {
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 100,
+        trim: true
+    },
+    country: {
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 100,
+        trim: true
+    },
+    postalCode: {
+        type: String,
+        required: true,
+        match: /^[A-Za-z0-9\- ]{3,12}$/
+    }},
+    rooms: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 20
+    },
+    beds: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 40
+    },
+    bathrooms: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 20
+    },
+    propertyType: {
+        type: String,
+        required: true,
+        enum: ['Apartment', 'House', 'Studio', 'Loft', 'Other']
+    },
+    amenities: [{
+        type: String,
+        enum: [
+            'Wifi', 'Piscina', 'Plancha', 'Aire acondicionado', 'Calefacción', 'Cocina', 'Lavadora', 'Secadora', 'TV', 'Aparcamiento', 'Ascensor', 'Gimnasio', 'Terraza', 'Jardín', 'Cuna', 'Barbacoa', 'Chimenea', 'Lavavajillas', 'Microondas', 'Cafetera', 'Secador de pelo', 'Toallas', 'Ropa de cama', 'Otros'
+        ]
+    }],
+    petsAllowed: {
+        type: Boolean,
+        required: true
+    },
+    houseRules: {
+        type: String,
+        maxlength: 1000,
+        trim: true
+    },
+    cancellationPolicy: {
+        type: String,
+        enum: ['Flexible', 'Moderate', 'Strict', 'Super Strict', 'No Refund', 'Other'],
+        default: 'Flexible'
+    },
+    checkIn: {
+        type: String,
+        match: /^([01]\d|2[0-3]):([0-5]\d)$/
+    },
+    checkOut: {
+        type: String,
+        match: /^([01]\d|2[0-3]):([0-5]\d)$/
+    },
+    hostId: { type: String, required: true },
+}, {
+    timestamps: true
+});
+
+// Exportamos el modelo de mongoose
+module.exports = mongoose.model('Accommodation', accommodationSchema);
