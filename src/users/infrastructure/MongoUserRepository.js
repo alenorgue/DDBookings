@@ -1,8 +1,8 @@
 // MongoUserRepository.js
 // Implementación concreta del repositorio usando MongoDB y Mongoose.
 
-const UserModel = require('../models/UserModel');
-const User = require('../domain/User');
+import UserModel from '../models/UserModel.js';
+import User from '../domain/User.js';
 
 class MongoUserRepository {
   async findByEmail(email) {
@@ -16,4 +16,4 @@ class MongoUserRepository {
     return await model.save();
   }
 }
-module.exports = MongoUserRepository;
+export default MongoUserRepository;

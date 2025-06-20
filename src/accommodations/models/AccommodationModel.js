@@ -123,4 +123,4 @@ const accommodationSchema = new mongoose.Schema({
 });
 
 // Exportamos el modelo de mongoose
-module.exports = mongoose.model('Accommodation', accommodationSchema);
+export default mongoose.model('Accommodation', accommodationSchema);

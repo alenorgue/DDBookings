@@ -1,7 +1,7 @@
 // RegisterUser.js
 // Caso de uso para registrar un nuevo usuario
 
-const User = require('../domain/User');
+import User from '../domain/User.js';
 
 class RegisterUser {
   constructor(userRepo) {
@@ -16,4 +16,4 @@ class RegisterUser {
     return await this.userRepo.save(user);
   }
 }
-module.exports = RegisterUser;
+export default RegisterUser;

@@ -25,4 +25,4 @@ class AccommodationRepository {
   }
 }
 
-module.exports = AccommodationRepository;
+export default AccommodationRepository;

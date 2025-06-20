@@ -1,11 +1,11 @@
 // userRoutes.js
 // Define las rutas HTTP relacionadas con los usuarios
 
-const express = require('express');
-const router = express.Router();
-const MongoUserRepository = require('../infrastructure/MongoUserRepository');
-const RegisterUser = require('../application/RegisterUser');
+import express from 'express';
+import MongoUserRepository from '../infrastructure/MongoUserRepository.js';
+import RegisterUser from '../application/RegisterUser.js';
 
+const router = express.Router();
 const userRepo = new MongoUserRepository();
 
 // Ruta POST /api/users/register para registrar nuevos usuarios
@@ -20,4 +20,4 @@ router.post('/register', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 // Importamos las rutas de cada contexto
-const userRoutes = require('./users/api/userRoutes');
-const accommodationRoutes = require('./accommodations/api/accommodationRoutes');
+import userRoutes from './users/api/userRoutes.js';
+import accommodationRoutes from './accommodations/api/accommodationRoutes.js';
 
 // Configuración del servidor Express
 const app = express();

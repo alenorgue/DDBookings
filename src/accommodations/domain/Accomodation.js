@@ -1,5 +1,5 @@
-// Accomodation.js
-// Entidad del dominio Accomodation. Representa un alojamiento en el sistema.
+// Accommodation.js
+// Entidad del dominio Accommodation. Representa un alojamiento en el sistema.
 
 class Accommodation {
   constructor({
@@ -45,5 +45,4 @@ class Accommodation {
   }
 }
 
-
-module.exports = Accommodation;
+export default Accommodation;

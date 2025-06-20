@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
+import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRepository.js';
+import CreateAccommodation from '../application/CreateAccommodation.js';
 
-const MongoAccommodationRepository = require('../infrastructure/MongoAccommodationRepository');
-const CreateAccommodation = require('../application/CreateAccommodation');
+const router = express.Router();
 
 // Instanciamos el repositorio
 const accommodationRepo = new MongoAccommodationRepository();
@@ -45,4 +45,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

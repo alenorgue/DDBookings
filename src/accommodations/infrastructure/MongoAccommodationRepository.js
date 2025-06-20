@@ -1,5 +1,5 @@
-const AccommodationModel = require('../models/AccommodationModel');
-const Accommodation = require('../domain/Accommodation');
+import AccommodationModel from '../models/AccommodationModel.js';
+import Accommodation from '../domain/Accommodation.js';
 
 class MongoAccommodationRepository {
     /**
@@ -54,7 +54,7 @@ class MongoAccommodationRepository {
   }
 }
 
-module.exports = MongoAccommodationRepository;
+export default MongoAccommodationRepository;
 
 // Este código define un repositorio de MongoDB para gestionar alojamientos en una aplicación.
 // Utiliza Mongoose para interactuar con la base de datos y define métodos para guardar,
