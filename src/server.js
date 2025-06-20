@@ -1,28 +1,39 @@
 // server.js
 // Punto de entrada principal de la aplicación
+console.log('Iniciando server.js');
 import dotenv from 'dotenv';
+console.log('dotenv importado');
 import express from 'express';
+console.log('express importado');
 import mongoose from 'mongoose';
+console.log('mongoose importado');
 // Importamos las rutas de cada contexto
+console.log('Antes de importar rutas');
 import userRoutes from './users/api/userRoutes.js';
+console.log('userRoutes importado');
 import accommodationRoutes from './accommodations/api/accommodationRoutes.js';
+console.log('accommodationRoutes importado');
 
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
+console.log('dotenv.config ejecutado');
 // Configuración del servidor Express
 const app = express();
+console.log('Express app creado');
 app.use(express.json());
-
+console.log('express.json habilitado');
 
 // Rutas base de cada contexto
-
+console.log('Montando rutas...');
 app.use('/api/accommodations', accommodationRoutes);
+console.log('/api/accommodations montada');
 app.use('/api/users', userRoutes);
-
+console.log('/api/users montada');
 
 // Conexión a la base de datos MongoDB
 async function connectDB() {
   try {
-    const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}`;
+    console.log('Intentando conectar a MongoDB...');
+    const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`;
     await mongoose.connect(uri, {
       dbName: process.env.MONGODB_DATABASE
     });
@@ -38,15 +49,23 @@ async function connectDB() {
   }
 }
 connectDB();
+console.log('connectDB llamado');
 
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err);
   res.status(500).json({ error: 'Error interno del servidor' });
 });
+console.log('Middleware de errores montado');
 
 // Iniciar el servidor
-const PORT = process.env.PORT || 3000;
+const PORT = 8000;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+console.log('app.listen llamado');
+
+app.get('/', (req, res) => {
+  res.send('¡Bienvenido a la API de alojamiento!');
+});
+console.log('Ruta / definida');
