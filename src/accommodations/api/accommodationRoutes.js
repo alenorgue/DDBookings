@@ -4,6 +4,8 @@ import CreateAccommodation from '../application/CreateAccommodation.js';
 
 const router = express.Router();
 
+console.log('accommodationRoutes cargado');
+
 // Instanciamos el repositorio
 const accommodationRepo = new MongoAccommodationRepository();
 

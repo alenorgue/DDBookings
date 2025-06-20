@@ -7,14 +7,17 @@ import mongoose from 'mongoose';
 import userRoutes from './users/api/userRoutes.js';
 import accommodationRoutes from './accommodations/api/accommodationRoutes.js';
 
+dotenv.config(); // Cargar las variables de entorno desde el archivo .env
 // Configuración del servidor Express
 const app = express();
 app.use(express.json());
 
-dotenv.config(); // Cargar las variables de entorno desde el archivo .env
+
 // Rutas base de cada contexto
-app.use('/api/users', userRoutes);
+
 app.use('/api/accommodations', accommodationRoutes);
+app.use('/api/users', userRoutes);
+
 
 // Conexión a la base de datos MongoDB
 async function connectDB() {
