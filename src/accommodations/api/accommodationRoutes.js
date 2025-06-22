@@ -9,6 +9,7 @@ console.log('accommodationRoutes cargado');
 // Instanciamos el repositorio
 const accommodationRepo = new MongoAccommodationRepository();
 
+
 // Ruta: POST /api/accommodations
 // Crea un nuevo alojamiento
 

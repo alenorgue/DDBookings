@@ -7,6 +7,14 @@ import express from 'express';
 console.log('express importado');
 import mongoose from 'mongoose';
 console.log('mongoose importado');
+import path from 'path';
+console.log('path importado');
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // Importamos las rutas de cada contexto
 console.log('Antes de importar rutas');
 import userRoutes from './users/api/userRoutes.js';
@@ -21,6 +29,10 @@ const app = express();
 console.log('Express app creado');
 app.use(express.json());
 console.log('express.json habilitado');
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.urlencoded({ extended: true }));
 
 // Rutas base de cada contexto
 console.log('Montando rutas...');
@@ -28,6 +40,9 @@ app.use('/api/accommodations', accommodationRoutes);
 console.log('/api/accommodations montada');
 app.use('/api/users', userRoutes);
 console.log('/api/users montada');
+import viewRoutes from './web/routes/viewRoutes.js';
+app.use('/', viewRoutes);
+console.log('Rutas web montadas');
 
 // Conexión a la base de datos MongoDB
 async function connectDB() {
@@ -50,6 +65,7 @@ async function connectDB() {
 }
 connectDB();
 console.log('connectDB llamado');
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {

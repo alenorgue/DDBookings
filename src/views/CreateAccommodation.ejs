@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add new aparment</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+    <style>
+        form .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        form .grid > div {
+            width: 100%;
+        }
+        form .grid label {
+            margin-bottom: 0.2rem;
+        }
+        form .grid input,
+        form .grid textarea,
+        form .grid select {
+            width: 100%;
+        }
+        form button[type="submit"] {
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Add new aparment</h1>
+        <form action="/api/accommodations" method="POST">
+            <div class="grid">
+                <div>
+                    <label for="title">Name</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div>
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                <div>
+                    <label for="pricePerNight">Price per Night</label>
+                    <input type="number" id="pricePerNight" name="pricePerNight" required>
+                </div>
+                <div>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                <div>
+                    <label for="mainPhoto">Photo URL</label>
+                    <input type="text" id="image" name="mainPhoto" required></div>
+                <div>
+                    <label for="rooms">Rooms</label>
+                    <input type="number" id="rooms" name="rooms" required></div>
+                    <div>
+                    <label for="bathrooms">Bathrooms</label>
+                    <input type="number" id="bathrooms" name="bathrooms" required>
+                    </div>
+                <div><label for="petsAllowed">Pets Allowed</label>
+                    <select id="petsAllowed" name="petsAllowed" required>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select></div>
+                <div><label for="squareMeters">Square Meters</label>
+                    <input type="number" id="squareMeters" name="squareMeters" required></div>
+                <div>
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div>
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" required>
+                </div>
+                <div>
+                    <label for="postalCode">Postal Code</label>
+                    <input type="text" id="postalCode" name="postalCode" required>
+                </div>
+                <div>
+                    <label for="beds">Beds</label>
+                    <input type="number" id="beds" name="beds" required>
+                </div>
+                <div>
+                    <label for="propertyType">Property Type</label>
+                    <select id="propertyType" name="propertyType" required>
+                        <option value="Apartment">Apartment</option>
+                        <option value="House">House</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Loft">Loft</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Available Services (Amenities)</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <label><input type="checkbox" name="amenities" value="Wifi"> Wifi</label>
+                        <label><input type="checkbox" name="amenities" value="Piscina"> Piscina</label>
+                        <label><input type="checkbox" name="amenities" value="Plancha"> Plancha</label>
+                        <label><input type="checkbox" name="amenities" value="Aire acondicionado"> Aire acondicionado</label>
+                        <label><input type="checkbox" name="amenities" value="Calefacción"> Calefacción</label>
+                        <label><input type="checkbox" name="amenities" value="Cocina"> Cocina</label>
+                        <label><input type="checkbox" name="amenities" value="Lavadora"> Lavadora</label>
+                        <label><input type="checkbox" name="amenities" value="Secadora"> Secadora</label>
+                        <label><input type="checkbox" name="amenities" value="TV"> TV</label>
+                        <label><input type="checkbox" name="amenities" value="Aparcamiento"> Aparcamiento</label>
+                        <label><input type="checkbox" name="amenities" value="Ascensor"> Ascensor</label>
+                        <label><input type="checkbox" name="amenities" value="Gimnasio"> Gimnasio</label>
+                        <label><input type="checkbox" name="amenities" value="Terraza"> Terraza</label>
+                        <label><input type="checkbox" name="amenities" value="Jardín"> Jardín</label>
+                        <label><input type="checkbox" name="amenities" value="Cuna"> Cuna</label>
+                        <label><input type="checkbox" name="amenities" value="Barbacoa"> Barbacoa</label>
+                        <label><input type="checkbox" name="amenities" value="Chimenea"> Chimenea</label>
+                        <label><input type="checkbox" name="amenities" value="Lavavajillas"> Lavavajillas</label>
+                        <label><input type="checkbox" name="amenities" value="Microondas"> Microondas</label>
+                        <label><input type="checkbox" name="amenities" value="Cafetera"> Cafetera</label>
+                        <label><input type="checkbox" name="amenities" value="Secador de pelo"> Secador de pelo</label>
+                        <label><input type="checkbox" name="amenities" value="Toallas"> Toallas</label>
+                        <label><input type="checkbox" name="amenities" value="Ropa de cama"> Ropa de cama</label>
+                        <label><input type="checkbox" name="amenities" value="Otros"> Otros</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="photos">Additional Photo URLs (comma separated)</label>
+                    <input type="text" id="photos" name="photos">
+                </div>
+                <div>
+                    <label for="houseRules">House Rules</label>
+                    <textarea id="houseRules" name="houseRules"></textarea>
+                </div>
+                <div>
+                    <label for="cancellationPolicy">Cancellation Policy</label>
+                    <input type="text" id="cancellationPolicy" name="cancellationPolicy">
+                </div>
+                <div>
+                    <label for="checkIn">Check-in Time</label>
+                    <input type="time" id="checkIn" name="checkIn">
+                </div>
+                <div>
+                    <label for="checkOut">Check-out Time</label>
+                    <input type="time" id="checkOut" name="checkOut">
+                </div>
+            </div>
+            <button type="submit">Add Apartment</button>
+        </form>
+</body>
+</html>
