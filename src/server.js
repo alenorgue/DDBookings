@@ -81,7 +81,3 @@ app.listen(PORT, () => {
 });
 console.log('app.listen llamado');
 
-app.get('/', (req, res) => {
-  res.send('¡Bienvenido a la API de alojamiento!');
-});
-console.log('Ruta / definida');

@@ -8,11 +8,11 @@ class RegisterUser {
     this.userRepo = userRepo;
   }
 
-  async execute({ email, password, role }) {
+  async execute({ name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language }) {
     const exists = await this.userRepo.findByEmail(email);
     if (exists) throw new Error('Email ya registrado');
 
-    const user = new User({ email, password, role });
+    const user = new User({ name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language });
     return await this.userRepo.save(user);
   }
 }

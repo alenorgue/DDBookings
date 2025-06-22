@@ -10,10 +10,12 @@ const userRepo = new MongoUserRepository();
 
 // Ruta POST /api/users/register para registrar nuevos usuarios
 router.post('/register', async (req, res) => {
-  const { email, password, role } = req.body;
+  const { name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language } = req.body;
   try {
     const useCase = new RegisterUser(userRepo);
-    const result = await useCase.execute({ email, password, role });
+    const result = await useCase.execute({ 
+      name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language 
+    });
     res.status(201).json({ message: 'Usuario creado', userId: result._id });
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -3,6 +3,7 @@
 
 import UserModel from '../models/UserModel.js';
 import User from '../domain/User.js';
+import bcrypt from 'bcryptjs';
 
 class MongoUserRepository {
   async findByEmail(email) {
@@ -12,6 +13,10 @@ class MongoUserRepository {
   }
 
   async save(user) {
+    // Cifrar la contraseña antes de guardar
+    if (user.password) {
+      user.password = await bcrypt.hash(user.password, 10);
+    }
     const model = new UserModel(user);
     return await model.save();
   }
