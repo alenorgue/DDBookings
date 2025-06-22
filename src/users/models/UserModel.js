@@ -48,7 +48,8 @@ const userSchema = new Schema({
   profilePicture: {
     type: String,
     match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i,
-    default: ''
+    default: '',
+    required: false
   },
   bio: {
     type: String,
@@ -67,6 +68,7 @@ const userSchema = new Schema({
   },
   language: {
     type: String,
+     enum: ['es', 'cat', 'en'],
     default: 'es'
   }
 }, {

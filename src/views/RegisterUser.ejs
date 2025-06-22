@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register User</title>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
 </head>
+
 <body>
     <main class="container">
         <h1>Register User</h1>
@@ -20,7 +22,9 @@
             <input type="email" id="email" name="email" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$">
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\-={}[\]:;\"'<>?,./]).{8,}$" title="Min 8 chars, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo">
+            <input type="password" id="password" name="password" required minlength="8"
+                pattern="^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&*()_+-={}[]:;?,./]).{8,}$"
+                placeholder="Min 8 chars, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo">
 
             <label for="role">Role</label>
             <select id="role" name="role" required>
@@ -41,10 +45,14 @@
             <input type="text" id="country" name="country">
 
             <label for="language">Language</label>
-            <input type="text" id="language" name="language">
-
+            <select="text" id="language" name="language">
+                <option value="es">Castellano</option>
+                <option value="cat">Catala</option>
+                <option value="en">English</option>
+                </select>
             <button type="submit">Register</button>
         </form>
     </main>
 </body>
+
 </html>
