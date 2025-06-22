@@ -68,8 +68,7 @@ const userSchema = new Schema({
   },
   language: {
     type: String,
-     enum: ['es', 'cat', 'en'],
-    default: 'es'
+     enum: ['es', 'cat', 'en']
   }
 }, {
   timestamps: true
