@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title><%= accommodation.title %> - Detalles del alojamiento</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <style>
+    body {
+      padding: 1rem;
+    }
+    .photos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .photos img {
+      width: 200px;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1><%= accommodation.title %></h1>
+
+    <div><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>
+    <div><strong>Descripción:</strong> <%= accommodation.description %></div>
+    <div><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %> - <%= accommodation.location.postalCode %></div>
+    <div><strong>Metros cuadrados:</strong> <%= accommodation.squareMeters %> m²</div>
+    <div><strong>Habitaciones:</strong> <%= accommodation.rooms %></div>
+    <div><strong>Camas:</strong> <%= accommodation.beds %></div>
+    <div><strong>Baños:</strong> <%= accommodation.bathrooms %></div>
+    <div><strong>Tipo de propiedad:</strong> <%= accommodation.propertyType %></div>
+    <div><strong>Se permiten mascotas:</strong> <%= accommodation.petsAllowed ? 'Sí' : 'No' %></div>
+    <div><strong>Política de cancelación:</strong> <%= accommodation.cancellationPolicy %></div>
+    <div><strong>Check-in:</strong> <%= accommodation.checkIn %> | <strong>Check-out:</strong> <%= accommodation.checkOut %></div>
+    <div><strong>Reglas de la casa:</strong> <%= accommodation.houseRules || 'No especificadas' %></div>
+    <div><strong>Comodidades:</strong>
+      <ul>
+        <% accommodation.amenities.forEach(a => { %>
+          <li><%= a %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <h2>Fotos</h2>
+    <div class="photos">
+      <% if (accommodation.mainPhoto) { %>
+        <img src="<%= accommodation.mainPhoto %>" alt="Foto principal">
+      <% } %>
+      <% accommodation.photos.forEach(photo => { %>
+        <div>
+          <img src="<%= photo.url %>" alt="<%= photo.label || 'Foto adicional' %>">
+          <% if (photo.label) { %><div><%= photo.label %></div><% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <h2>Ubicación en el mapa</h2>
+    <div id="map"></div>
+  </main>
+
+  <script>
+    function initMap() {
+      const coords = { lat: <%= accommodation.location.coordinates.lat %>, lng: <%= accommodation.location.coordinates.lng %> };
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: coords,
+        zoom: 15,
+      });
+      new google.maps.Marker({
+        position: coords,
+        map: map,
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+</body>
+</html>

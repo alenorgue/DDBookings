@@ -1,36 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add new aparment</title>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+
     <style>
+        #map {
+            width: 100%;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
         form .grid {
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
         }
-        form .grid > div {
+
+        form .grid>div {
             width: 100%;
         }
+
         form .grid label {
             margin-bottom: 0.2rem;
         }
+
         form .grid input,
         form .grid textarea,
         form .grid select {
             width: 100%;
         }
+
         form button[type="submit"] {
             margin-top: 1.5rem;
         }
     </style>
 </head>
+
 <body>
     <main class="container">
         <h1>Add new aparment</h1>
-        <form action="/api/accommodations" method="POST">
+        <form action="/api/accommodations" method="POST" enctype="multipart/form-data">
             <div class="grid">
                 <div>
                     <label for="title">Name</label>
@@ -49,22 +63,39 @@
                     <textarea id="description" name="description" required></textarea>
                 </div>
                 <div>
-                    <label for="mainPhoto">Photo URL</label>
-                    <input type="text" id="image" name="mainPhoto" required></div>
+                    <label for="mainPhoto">Main Photo (Upload)</label>
+                    <input type="file" id="mainPhoto" name="mainPhoto" accept="image/*" required>
+                </div>
+                <div>
+                    <label for="mainPhotoLabel">Describe Main Photo</label>
+                    <input type="text" name="mainPhotoLabel" id="mainPhotoLabel"
+                        placeholder="e.g., cocina, baño, salón">
+                </div>
+                <div>
+                    <label for="photos">Upload Additional Photos</label>
+                    <input type="file" name="photos" id="photos" accept="image/*" multiple required>
+                </div>
+                <div>
+                    <label for="photoLabels">Describe Each Photo (separate with commas)</label>
+                    <input type="text" name="photoLabels" id="photoLabels" placeholder="e.g., cocina, baño, salón">
+                </div>
                 <div>
                     <label for="rooms">Rooms</label>
-                    <input type="number" id="rooms" name="rooms" required></div>
-                    <div>
+                    <input type="number" id="rooms" name="rooms" required>
+                </div>
+                <div>
                     <label for="bathrooms">Bathrooms</label>
                     <input type="number" id="bathrooms" name="bathrooms" required>
-                    </div>
+                </div>
                 <div><label for="petsAllowed">Pets Allowed</label>
                     <select id="petsAllowed" name="petsAllowed" required>
                         <option value="true">Yes</option>
                         <option value="false">No</option>
-                    </select></div>
+                    </select>
+                </div>
                 <div><label for="squareMeters">Square Meters</label>
-                    <input type="number" id="squareMeters" name="squareMeters" required></div>
+                    <input type="number" id="squareMeters" name="squareMeters" required>
+                </div>
                 <div>
                     <label for="city">City</label>
                     <input type="text" id="city" name="city" required>
@@ -77,6 +108,11 @@
                     <label for="postalCode">Postal Code</label>
                     <input type="text" id="postalCode" name="postalCode" required>
                 </div>
+                <h3>Select location on map</h3>
+                <div id="map"></div>
+
+                <input type="hidden" name="location.lat" id="lat">
+                <input type="hidden" name="location.lng" id="lng">
                 <div>
                     <label for="beds">Beds</label>
                     <input type="number" id="beds" name="beds" required>
@@ -94,10 +130,13 @@
                 <div>
                     <label>Available Services (Amenities)</label>
                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <label><input type="checkbox" name="amenities" value="Adaptada para movilidad reducida">
+                            Adaptada para movilidad reducida</label>
                         <label><input type="checkbox" name="amenities" value="Wifi"> Wifi</label>
                         <label><input type="checkbox" name="amenities" value="Piscina"> Piscina</label>
                         <label><input type="checkbox" name="amenities" value="Plancha"> Plancha</label>
-                        <label><input type="checkbox" name="amenities" value="Aire acondicionado"> Aire acondicionado</label>
+                        <label><input type="checkbox" name="amenities" value="Aire acondicionado"> Aire
+                            acondicionado</label>
                         <label><input type="checkbox" name="amenities" value="Calefacción"> Calefacción</label>
                         <label><input type="checkbox" name="amenities" value="Cocina"> Cocina</label>
                         <label><input type="checkbox" name="amenities" value="Lavadora"> Lavadora</label>
@@ -143,5 +182,33 @@
             </div>
             <button type="submit">Add Apartment</button>
         </form>
+    </main>
+<script>
+  function initMap() {
+    const defaultLocation = { lat: 41.3851, lng: 2.1734 }; // Barcelona
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: defaultLocation,
+      zoom: 10,
+    });
+
+    let marker;
+
+    map.addListener("click", function (e) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+
+      // Actualiza inputs ocultos
+      document.getElementById("lat").value = lat;
+      document.getElementById("lng").value = lng;
+
+      // Añade marcador
+      if (marker) marker.setMap(null);
+      marker = new google.maps.Marker({
+        position: { lat, lng },
+        map,
+      });
+    });
+  }
+</script>
 </body>
 </html>

@@ -18,6 +18,7 @@ class MongoAccommodationRepository {
             location: accommodation.location,
             rooms: accommodation.rooms,
             beds: accommodation.beds,
+            maxGuests: accommodation.maxGuests,
             bathrooms: accommodation.bathrooms,
             propertyType: accommodation.propertyType,
             amenities: accommodation.amenities,

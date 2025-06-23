@@ -65,7 +65,17 @@ const accommodationSchema = new mongoose.Schema({
         type: String,
         required: true,
         match: /^[A-Za-z0-9\- ]{3,12}$/
-    }},
+    }, coordinates: {
+  lat: {
+    type: Number,
+    required: true
+  },
+  lng: {
+    type: Number,
+    required: true
+  }
+}
+},
     rooms: {
         type: Number,
         required: true,
@@ -73,6 +83,12 @@ const accommodationSchema = new mongoose.Schema({
         max: 20
     },
     beds: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 40
+    },
+    maxGuests: {
         type: Number,
         required: true,
         min: 1,
@@ -92,7 +108,7 @@ const accommodationSchema = new mongoose.Schema({
     amenities: [{
         type: String,
         enum: [
-            'Wifi', 'Piscina', 'Plancha', 'Aire acondicionado', 'Calefacción', 'Cocina', 'Lavadora', 'Secadora', 'TV', 'Aparcamiento', 'Ascensor', 'Gimnasio', 'Terraza', 'Jardín', 'Cuna', 'Barbacoa', 'Chimenea', 'Lavavajillas', 'Microondas', 'Cafetera', 'Secador de pelo', 'Toallas', 'Ropa de cama', 'Otros'
+           'Adaptada para movilidad reducida', 'Wifi', 'Piscina', 'Plancha', 'Aire acondicionado', 'Calefacción', 'Cocina', 'Lavadora', 'Secadora', 'TV', 'Aparcamiento', 'Ascensor', 'Gimnasio', 'Terraza', 'Jardín', 'Cuna', 'Barbacoa', 'Chimenea', 'Lavavajillas', 'Microondas', 'Cafetera', 'Secador de pelo', 'Toallas', 'Ropa de cama', 'Otros'
         ]
     }],
     petsAllowed: {

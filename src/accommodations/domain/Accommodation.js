@@ -13,6 +13,7 @@ class Accommodation {
     location,
     rooms,
     beds,
+    maxGuests,
     bathrooms,
     propertyType,
     amenities,
@@ -34,6 +35,7 @@ class Accommodation {
     this.rooms = rooms;
     this.beds = beds;
     this.bathrooms = bathrooms;
+    this.maxGuests = this.maxGuests;
     this.propertyType = propertyType;
     this.amenities = amenities;
     this.petsAllowed = petsAllowed;

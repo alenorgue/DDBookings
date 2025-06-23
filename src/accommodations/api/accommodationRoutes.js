@@ -12,7 +12,11 @@ console.log('accommodationRoutes cargado');
 const accommodationRepo = new MongoAccommodationRepository();
 
 // Elimina la ruta POST anterior y usa el controller
-router.post('/', parser.array('photos'), createAccommodationController);
+router.post('/', parser.fields([
+  { name: 'mainPhoto', maxCount: 1 },
+  { name: 'photos', maxCount: 10 }
+]), createAccommodationController);
+
 // También puedes usar parser.array('photos') si tienes múltiples imágenes
 // Ruta: POST /api/accommodations
 // Crea un nuevo alojamiento
