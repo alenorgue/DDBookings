@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+</head>
+
+<body>
+    <main class="container">
+  <h1>Login</h1>
+  <% if (typeof error !== 'undefined') { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+  <form method="POST" action="/auth/login">
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    <label>Contraseña:</label>
+    <input type="password" name="password" required>
+    <button type="submit">Iniciar sesión</button>
+  </form>
+</main>

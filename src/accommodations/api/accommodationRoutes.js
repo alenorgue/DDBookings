@@ -1,6 +1,7 @@
 import express from 'express';
 import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRepository.js';
 import { createAccommodationController } from './createAccommodationController.js';
+import { updateAccommodationController } from './updateAccommodationController.js';
 import parser from '../../config/multerCloudinary.js';
 
 
@@ -45,5 +46,9 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el alojamiento' });
   }
 });
+
+// Ruta: PUT /api/accommodations/:id
+// Actualiza un alojamiento por ID
+router.put('/:id', updateAccommodationController);
 
 export default router;

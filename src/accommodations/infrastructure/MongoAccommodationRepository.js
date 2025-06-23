@@ -53,6 +53,18 @@ class MongoAccommodationRepository {
     const all = await AccommodationModel.find();
     return all.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
   }
+
+  /**
+   * Actualiza un alojamiento por ID
+   * @param {string} id
+   * @param {object} data
+   * @returns {Promise<Accommodation|null>}
+   */
+  async update(id, data) {
+    const updated = await AccommodationModel.findByIdAndUpdate(id, data, { new: true });
+    if (!updated) return null;
+    return new Accommodation({ ...updated.toObject(), id: updated._id });
+  }
 }
 
 export default MongoAccommodationRepository;

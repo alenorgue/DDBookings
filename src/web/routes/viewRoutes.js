@@ -14,4 +14,8 @@ router.get('/createAccommodation', (req, res) => {
 router.get('/registerUser', (req, res) => {
     res.render('RegisterUser');});
 
+// Renderiza el formulario de inicio de sesión
+router.get('/login', (req, res) => {
+    res.render('Login');});
+    
 export default router;

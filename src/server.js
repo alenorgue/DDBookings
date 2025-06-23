@@ -9,6 +9,10 @@ import mongoose from 'mongoose';
 console.log('mongoose importado');
 import path from 'path';
 console.log('path importado');
+import session from 'express-session';
+console.log('express-session importado');
+import MongoStore from 'connect-mongo';
+console.log('connect-mongo importado');
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -21,6 +25,8 @@ import userRoutes from './users/api/userRoutes.js';
 console.log('userRoutes importado');
 import accommodationRoutes from './accommodations/api/accommodationRoutes.js';
 console.log('accommodationRoutes importado');
+import authRoutes from './auth/api/authRoutes.js';
+console.log('authRoutes importado');
 
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
 console.log('dotenv.config ejecutado');
@@ -43,6 +49,8 @@ console.log('/api/users montada');
 import viewRoutes from './web/routes/viewRoutes.js';
 app.use('/', viewRoutes);
 console.log('Rutas web montadas');
+app.use('/auth', authRoutes);
+console.log('/auth montada');
 
 // Conexión a la base de datos MongoDB
 async function connectDB() {
