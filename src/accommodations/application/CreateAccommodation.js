@@ -26,10 +26,19 @@ class CreateAccommodation {
       throw new Error('La ubicación debe incluir país, ciudad, dirección y código postal');
     }
 
-    if (!data.mainPhoto || !/^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(data.mainPhoto)) {
-      throw new Error('La foto principal debe ser una URL válida que termine en jpg, jpeg, png o webp');
+    if (typeof data.location.country !== 'string' || data.location.country.length < 2 || data.location.country.length > 100) {
+      throw new Error('El país debe ser una cadena de texto entre 2 y 100 caracteres');
+    } 
+    if (typeof data.location.city !== 'string' || data.location.city.length < 2 || data.location.city.length > 100) {
+      throw new Error('La ciudad debe ser una cadena de texto entre 2 y 100 caracteres');
     }
-
+    if (typeof data.location.address !== 'string' || data.location.address.length < 5 || data.location.address.length > 200) {
+      throw new Error('La dirección debe ser una cadena de texto entre 5 y 200 caracteres');
+    }
+    if (typeof data.location.postalCode !== 'string' || data.location.postalCode.length < 2 || data.location.postalCode.length > 20) {
+      throw new Error('El código postal debe ser una cadena de texto entre 2 y 20 caracteres');
+    }
+    
     if (!Array.isArray(data.photos)) {
       data.photos = [];
     }
@@ -93,6 +102,9 @@ class CreateAccommodation {
     if (data.houseRules && data.houseRules.length > 1000) {
       throw new Error('Las reglas de la casa no pueden superar los 1000 caracteres');
     }
+    //Validación sobre si el user es un host
+    const user = await this.accommodationRepository.getUserById(data.hostId);
+    if (user.role !== 'host') throw new Error('Solo los hosts pueden crear alojamientos');
 
     // Crear la entidad Accommodation
     const accommodation = new Accommodation(data);

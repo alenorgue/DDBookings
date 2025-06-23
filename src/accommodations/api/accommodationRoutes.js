@@ -1,6 +1,8 @@
 import express from 'express';
 import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRepository.js';
-import CreateAccommodation from '../application/CreateAccommodation.js';
+import { createAccommodationController } from './createAccommodationController.js';
+import parser from '../../config/multerCloudinary.js';
+
 
 const router = express.Router();
 
@@ -9,19 +11,11 @@ console.log('accommodationRoutes cargado');
 // Instanciamos el repositorio
 const accommodationRepo = new MongoAccommodationRepository();
 
-
+// Elimina la ruta POST anterior y usa el controller
+router.post('/', parser.array('photos'), createAccommodationController);
+// También puedes usar parser.array('photos') si tienes múltiples imágenes
 // Ruta: POST /api/accommodations
 // Crea un nuevo alojamiento
-
-router.post('/', async (req, res) => {
-  try {
-    const createAccommodation = new CreateAccommodation(accommodationRepo);
-    const accommodation = await createAccommodation.execute(req.body);
-    res.status(201).json({ message: 'Alojamiento creado', accommodation });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
 // Ruta: GET /api/accommodations
 // Devuelve todos los alojamientos
