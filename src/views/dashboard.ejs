@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Perfil</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+  <style>
+    .container { max-width: 600px; margin: auto; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h2>Editar Perfil de Usuario</h2>
+
+    <form action="/users/update" method="POST">
+      <input type="hidden" name="userId" value="<%= user._id %>" />
+
+      <label for="name">Nombre</label>
+      <input type="text" name="name" id="name" required value="<%= user.name %>" />
+
+      <label for="surName">Apellido</label>
+      <input type="text" name="surName" id="surName" required value="<%= user.surName %>" />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" value="<%= user.email %>" disabled />
+
+      <label for="password">Nueva contraseña (opcional)</label>
+      <input type="password" name="password" id="password" placeholder="********" />
+
+      <label for="profilePicture">URL de Foto de Perfil</label>
+      <input type="url" name="profilePicture" id="profilePicture" value="<%= user.profilePicture %>" />
+
+      <label for="bio">Biografía</label>
+      <textarea name="bio" id="bio" maxlength="500"><%= user.bio %></textarea>
+
+      <label for="phoneNumber">Teléfono</label>
+      <input type="text" name="phoneNumber" id="phoneNumber" value="<%= user.phoneNumber %>" />
+
+      <label for="country">País</label>
+      <input type="text" name="country" id="country" value="<%= user.country %>" />
+
+      <label for="language">Idioma preferido</label>
+      <select name="language" id="language">
+        <option value="es" <%= user.language === 'es' ? 'selected' : '' %>>Español</option>
+        <option value="cat" <%= user.language === 'cat' ? 'selected' : '' %>>Català</option>
+        <option value="en" <%= user.language === 'en' ? 'selected' : '' %>>English</option>
+      </select>
+
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </main>
+</body>
+</html>

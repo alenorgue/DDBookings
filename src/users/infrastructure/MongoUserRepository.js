@@ -20,5 +20,38 @@ class MongoUserRepository {
     const model = new UserModel(user);
     return await model.save();
   }
+  async findById(id) {
+    const data = await UserModel.findById(id);
+    if (!data) return null;
+    return new User({ id: data._id, email: data.email, role: data.role });
+  }
+  async updateUser(userId, updateData) {
+    try {
+      // No permitir cambiar el email
+      delete updateData.email;
+
+      // Si hay nueva contraseña, la hasheamos
+      if (updateData.password && updateData.password.length > 0) {
+        const salt = await bcrypt.genSalt(10);
+        updateData.password = await bcrypt.hash(updateData.password, salt);
+      } else {
+        delete updateData.password; // No actualizar si no hay valor
+      }
+
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userId,
+        { $set: updateData },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedUser) {
+        throw new Error('Usuario no encontrado');
+      }
+
+      return updatedUser;
+    } catch (err) {
+      throw new Error('Error actualizando perfil: ' + err.message);
+    }
+  }
 }
 export default MongoUserRepository;

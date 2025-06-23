@@ -23,10 +23,10 @@ router.post('/login', async (req, res) => {
       role: user.role
     };
 
-    res.redirect('/dashboard');
-  } catch (err) {
-    res.status(500).render('login', { error: 'Error en el servidor' });
-  }
+  res.redirect(`/dashboard/${user._id}`);
+} catch (err) {
+  res.status(500).render('login', { error: 'Error en el servidor' });
+}
 });
 
 router.get('/logout', (req, res) => {
