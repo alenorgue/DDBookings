@@ -16,8 +16,8 @@ router.post('/register', async (req, res) => {
     const result = await useCase.execute({ 
       name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language 
     });
-     res.redirect(`/users/dashboard/${data.userId}`);
-     console.log('Usuario registrado:', result);
+    res.redirect('/login'); // Redirige a la página de login después del registro exitoso
+   // res.status(201).json({ message: 'Usuario creado', userId: result._id });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -25,13 +25,13 @@ router.post('/register', async (req, res) => {
 
 router.get('/dashboard/:id', async (req, res) => {
   const user = await userRepo.findById(req.params.id);
-  res.render('users/dashboard', { user });
+  res.render('dashboard', { user });
 });
 
 router.post('/update', async (req, res) => {
   const data = req.body;
   const updated = await userRepo.updateUser(data.userId, data); // sin cambiar email
-  res.redirect(`/users/dashboard/${data.userId}`);
+  res.redirect(`/dashboard/${updated.id}`);
 });
 
 export default router;

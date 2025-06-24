@@ -12,8 +12,8 @@
   <main class="container">
     <h2>Editar Perfil de Usuario</h2>
 
-    <form action="/users/update" method="POST">
-      <input type="hidden" name="userId" value="<%= user._id %>" />
+    <form action="/api/users/update" method="POST">
+      <input type="hidden" name="userId" value="<%= user.id %>" />
 
       <label for="name">Nombre</label>
       <input type="text" name="name" id="name" required value="<%= user.name %>" />

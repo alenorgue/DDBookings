@@ -6,27 +6,23 @@ import LoginUser from '../../auth/application/LoginUser.js';
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
+const loginUser = new LoginUser(userRepo);
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await userRepo.findByEmail(email);
-    if (!user) return res.status(400).render('login', { error: 'Usuario no encontrado' });
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) return res.status(400).render('login', { error: 'Contraseña incorrecta' });
-
+    const user = await loginUser.execute(email, password);
     // Guardar usuario en sesión
     req.session.user = {
-      id: user._id,
+      id: user.id,
       email: user.email,
       role: user.role
     };
-
-  res.redirect(`/dashboard/${user._id}`);
-} catch (err) {
-  res.status(500).render('login', { error: 'Error en el servidor' });
-}
+    res.redirect(`/dashboard/${user.id}`);
+  } catch (err) {
+    let errorMsg = err.message || 'Error en el servidor';
+    res.status(400).render('login', { error: errorMsg });
+  }
 });
 
 router.get('/logout', (req, res) => {

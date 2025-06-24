@@ -13,10 +13,7 @@ class MongoUserRepository {
   }
 
   async save(user) {
-    // Cifrar la contraseña antes de guardar
-    if (user.password) {
-      user.password = await bcrypt.hash(user.password, 10);
-    }
+    // El hash de la contraseña se realiza en el middleware de Mongoose (UserModel)
     const model = new UserModel(user);
     return await model.save();
   }

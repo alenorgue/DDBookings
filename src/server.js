@@ -40,6 +40,19 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 
+// Configuración de la sesión (debe ir antes de montar rutas que usen req.session)
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`,
+    dbName: process.env.MONGODB_DATABASE,
+    collectionName: 'userSessions' 
+  }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 día
+}));
+
 // Rutas base de cada contexto
 console.log('Montando rutas...');
 app.use('/api/accommodations', accommodationRoutes);
