@@ -134,6 +134,11 @@ const accommodationSchema = new mongoose.Schema({
         match: /^([01]\d|2[0-3]):([0-5]\d)$/
     },
     hostId: { type: String, required: true },
+    status: {
+        type: String,
+        enum: ['Available', 'Booked', 'Unavailable', 'Archived'],
+        default: 'Available'
+    }
 }, {
     timestamps: true
 });

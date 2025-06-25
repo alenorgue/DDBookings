@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new aparment</title>
+    <title>Add new accommodation</title>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.GOOGLE_MAPS_API_KEY %>&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
+
 
     <style>
         #map {
@@ -50,10 +51,7 @@
                     <label for="title">Name</label>
                     <input type="text" id="title" name="title" required>
                 </div>
-                <div>
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" required>
-                </div>
+             
                 <div>
                     <label for="pricePerNight">Price per Night</label>
                     <input type="number" id="pricePerNight" name="pricePerNight" required>
@@ -73,7 +71,7 @@
                 </div>
                 <div>
                     <label for="photos">Upload Additional Photos</label>
-                    <input type="file" name="photos" id="photos" accept="image/*" multiple required>
+                    <input type="file" name="photos" id="photos" accept="image/*" multiple>
                 </div>
                 <div>
                     <label for="photoLabels">Describe Each Photo (separate with commas)</label>
@@ -82,7 +80,13 @@
                 <div>
                     <label for="rooms">Rooms</label>
                     <input type="number" id="rooms" name="rooms" required>
+                </div>  
+                 <div>
+                    <label for="beds">Beds</label>
+                    <input type="number" id="beds" name="beds" required>
                 </div>
+                <div><label for="maxGuests">Max. Guests</label>
+                    <input type="number" id="maxGuests" name="maxGuests" min="1" required></div>
                 <div>
                     <label for="bathrooms">Bathrooms</label>
                     <input type="number" id="bathrooms" name="bathrooms" required>
@@ -96,7 +100,11 @@
                 <div><label for="squareMeters">Square Meters</label>
                     <input type="number" id="squareMeters" name="squareMeters" required>
                 </div>
-                <div>
+                  <div>
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                 <div>
                     <label for="city">City</label>
                     <input type="text" id="city" name="city" required>
                 </div>
@@ -113,10 +121,7 @@
 
                 <input type="hidden" name="location.lat" id="lat">
                 <input type="hidden" name="location.lng" id="lng">
-                <div>
-                    <label for="beds">Beds</label>
-                    <input type="number" id="beds" name="beds" required>
-                </div>
+             
                 <div>
                     <label for="propertyType">Property Type</label>
                     <select id="propertyType" name="propertyType" required>
@@ -159,10 +164,7 @@
                         <label><input type="checkbox" name="amenities" value="Otros"> Otros</label>
                     </div>
                 </div>
-                <div>
-                    <label for="photos">Additional Photo URLs (comma separated)</label>
-                    <input type="text" id="photos" name="photos">
-                </div>
+               
                 <div>
                     <label for="houseRules">House Rules</label>
                     <textarea id="houseRules" name="houseRules"></textarea>
@@ -180,7 +182,7 @@
                     <input type="time" id="checkOut" name="checkOut">
                 </div>
             </div>
-            <button type="submit">Add Apartment</button>
+            <button type="submit">Add accommodation</button>
         </form>
     </main>
 <script>

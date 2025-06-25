@@ -22,7 +22,8 @@ class Accommodation {
     cancellationPolicy,
     checkIn,
     checkOut,
-    hostId
+    hostId,
+    status
   }) {
     this.id = id;
     this.title = title;
@@ -31,11 +32,11 @@ class Accommodation {
     this.mainPhoto = mainPhoto;
     this.photos = photos;
     this.description = description;
-    this.location = location; // { address, city, country, postalCode }
+    this.location = location; // { address, city, country, postalCode, coordinates }
     this.rooms = rooms;
     this.beds = beds;
     this.bathrooms = bathrooms;
-    this.maxGuests = this.maxGuests;
+    this.maxGuests = maxGuests;
     this.propertyType = propertyType;
     this.amenities = amenities;
     this.petsAllowed = petsAllowed;
@@ -44,6 +45,7 @@ class Accommodation {
     this.checkIn = checkIn;
     this.checkOut = checkOut;
     this.hostId = hostId;
+    this.status = status;
   }
 }
 

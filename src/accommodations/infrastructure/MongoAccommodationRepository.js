@@ -27,7 +27,8 @@ class MongoAccommodationRepository {
             cancellationPolicy: accommodation.cancellationPolicy,
             checkIn: accommodation.checkIn,
             checkOut: accommodation.checkOut,
-            hostId: accommodation.hostId
+            hostId: accommodation.hostId,
+            status: accommodation.status 
         };
 
         const created = await AccommodationModel.create(data);

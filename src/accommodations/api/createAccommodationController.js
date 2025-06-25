@@ -43,6 +43,7 @@ export const createAccommodationController = async (req, res) => {
             houseRules: req.body.houseRules || '',
             checkIn: req.body.checkIn,
             checkOut: req.body.checkOut,
+            status: 'Available', // Por defecto, el alojamiento se crea como activo
             amenities: Array.isArray(req.body.amenities)
                 ? req.body.amenities
                 : req.body.amenities?.split(',').map(a => a.trim()) || [],

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alojamientos </title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    .accommodation-card {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+    }
+    .amenities i {
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Alojamientos</h1>
+
+ <% accommodations.forEach(acc => { %>
+  <div class="accommodation-card" data-id="<%= acc.id %>">
+    <h2><%= acc.title %></h2>
+    <img src="<%= acc.mainPhoto %>" alt="Foto principal" style="max-width: 100%; height: auto;" />
+    <p><strong>Precio por noche:</strong> <%= acc.pricePerNight %>€</p>
+    <p><strong>Metros cuadrados:</strong> <%= acc.squareMeters %> m²</p>
+    <p><strong>Ciudad:</strong> <%= acc.location.city %> </p>
+    
+    <p><strong>Servicios:</strong></p>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <% acc.amenities.forEach(a => { %>
+        <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
+        <i class="fas <%= icon %>" title="<%= a %>" style="font-size: 1.3rem; color: #444;"></i>
+      <% }) %>
+    </div>
+  </div>
+<% }) %>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.accommodation-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        if (id) {
+          window.location.href = `/accommodations/${id}`;
+        }
+      });
+    });
+  });
+  </script>
+</body>
+
+</html>
