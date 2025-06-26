@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title><%= accommodation.title %> - Detalles del alojamiento</title>
   <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
   <style>
     body {
       padding: 1rem;
@@ -55,14 +57,14 @@
       <% if (accommodation.mainPhoto) { %>
         <img src="<%= accommodation.mainPhoto %>" alt="Foto principal">
       <% } %>
-      <% accommodation.photos.forEach(photo => { %>
-        <div>
-          <img src="<%= photo.url %>" alt="<%= photo.label || 'Foto adicional' %>">
-          <% if (photo.label) { %><div><%= photo.label %></div><% } %>
-        </div>
-      <% }) %>
+     <% accommodation.photos.forEach(photo => { %>
+  <div>
+    <img src="<%= photo %>" alt="Foto adicional">
+  </div>
+<% }) %>
     </div>
-
+<h3>Disponibilidad</h3>
+<div id="calendar"></div>
     <h2>Ubicación en el mapa</h2>
     <div id="map"></div>
   </main>
@@ -80,9 +82,40 @@
       });
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+ <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
+
   <% } else { %>
   <p><em>Ubicación no disponible para este alojamiento.</em></p>
 <% } %>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+
+    const availability = <%- JSON.stringify(availability) %>;
+    const booked = <%- JSON.stringify(bookedDates) %>;
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      selectable: false,
+      events: [
+        ...availability.map(date => ({
+          title: 'Disponible',
+          start: date,
+          display: 'background',
+          color: '#d4edda' // verde claro
+        })),
+        ...booked.map(b => ({
+          title: 'Reservado',
+          start: b.start,
+          end: b.end,
+          color: '#f8d7da',// rojo claro
+          display:'background' 
+        }))
+      ]
+    });
+
+    calendar.render();
+  });
+</script>
 </body>
 </html>

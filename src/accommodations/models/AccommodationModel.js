@@ -136,9 +136,13 @@ const accommodationSchema = new mongoose.Schema({
     hostId: { type: String, required: true },
     status: {
         type: String,
-        enum: ['Available', 'Booked', 'Unavailable', 'Archived'],
+        enum: ['Available', 'Unavailable', 'Archived'],
         default: 'Available'
-    }
+    },
+    availability: {
+  type: [Date], // Lista de fechas disponibles
+  default: []
+}
 }, {
     timestamps: true
 });

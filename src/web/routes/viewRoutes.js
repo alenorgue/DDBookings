@@ -1,12 +1,12 @@
 import express from 'express';
 import MongoUserRepository from '../../users/infrastructure/MongoUserRepository.js';
 import MongoAccommodationRepository from '../../accommodations/infrastructure/MongoAccommodationRepository.js';
-import amenityIcons from '../../shared/amenityIcons.js';
 import MongoBookingRepository from '../../bookings/infrastructure/MongoBookingRepository.js';
+import amenityIcons from '../../shared/amenityIcons.js';
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
-
+const bookingRepo = new MongoBookingRepository();
 const accommodationRepo = new MongoAccommodationRepository();
 
 router.get('/', (req, res) => {
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 // Esta ruta se usa para mostrar la lista de alojamientos en la página principal
 
 router.get('/accommodations', async (req, res) => {
- try {
+  try {
     const { guests, maxPrice, city } = req.query;
     const filter = {};
 
@@ -40,7 +40,7 @@ router.get('/accommodations', async (req, res) => {
     res.render('accommodationsList', {
       accommodations,
       amenityIcons,
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       query: req.query // para persistencia en el formulario
     });
 
@@ -54,30 +54,49 @@ router.get('/accommodations/:id', async (req, res) => {
   try {
     const accommodation = await accommodationRepo.findById(req.params.id);
     if (!accommodation) return res.status(404).send('Alojamiento no encontrado');
-    console.log(JSON.stringify(accommodation, null, 2));
-    res.render('accommodationsDetails', { 
-      accommodation, 
+
+    // Obtener reservas relacionadas
+    const bookings = await bookingRepo.findByAccommodationId(req.params.id);
+
+    // Fechas reservadas (para el calendario)
+    const bookedDates = bookings.map(b => ({
+      start: b.startDate,
+      end: b.endDate
+    }));
+
+    // Fechas disponibles desde el alojamiento
+    const availableDates = accommodation.availability || [];
+
+    res.render('accommodationsDetails', {
+      accommodation,
       amenityIcons,
-    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY });  
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+      availability: availableDates,
+      bookedDates
+    });
   } catch (err) {
+    console.error('Error al cargar el alojamiento:', err);
     res.status(500).send('Error al cargar el alojamiento');
   }
 });
 
 // Renderiza el formulario para crear un nuevo alojamiento
 router.get('/createAccommodation', (req, res) => {
-    res.render('CreateAccommodation', {
+  res.render('CreateAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, amenityIcons: amenityIcons
-  });});
+  });
+});
 
 // Renderiza el formulario para registrar un nuevo usuario
 router.get('/register', (req, res) => {
-    res.render('RegisterUser');});
+  res.render('RegisterUser');
+});
 
 // Renderiza el formulario de inicio de sesión
 router.get('/login', (req, res) => {
-    res.render('Login');});
-    
+  res.render('Login');
+});
+
 // Renderiza el dashboard del usuario
 
 
