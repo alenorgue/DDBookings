@@ -18,6 +18,8 @@ import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+dotenv.config(); // Cargar las variables de entorno desde el archivo .env
+console.log('dotenv.config ejecutado');
 
 // Importamos las rutas de cada contexto
 console.log('Antes de importar rutas');
@@ -28,8 +30,7 @@ console.log('accommodationRoutes importado');
 import authRoutes from './auth/api/authRoutes.js';
 console.log('authRoutes importado');
 
-dotenv.config(); // Cargar las variables de entorno desde el archivo .env
-console.log('dotenv.config ejecutado');
+
 // Configuración del servidor Express
 const app = express();
 console.log('Express app creado');
@@ -101,4 +102,7 @@ app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
 console.log('app.listen llamado');
+
+
+
 

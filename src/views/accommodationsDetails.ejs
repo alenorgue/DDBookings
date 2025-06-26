@@ -66,7 +66,7 @@
     <h2>Ubicación en el mapa</h2>
     <div id="map"></div>
   </main>
-
+<% if (accommodation.location && accommodation.location.coordinates) { %>
   <script>
     function initMap() {
       const coords = { lat: <%= accommodation.location.coordinates.lat %>, lng: <%= accommodation.location.coordinates.lng %> };
@@ -81,5 +81,8 @@
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+  <% } else { %>
+  <p><em>Ubicación no disponible para este alojamiento.</em></p>
+<% } %>
 </body>
 </html>

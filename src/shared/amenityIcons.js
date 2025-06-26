@@ -8,7 +8,7 @@ const amenityIcons = {
   'Calefacción': 'fa-fire',
   'Cocina': 'fa-utensils',
   'Lavadora': 'fa-soap', // alternativa gratuita
-  'Secadora': 'fa-wind',
+  'Secadora': 'fa-recycle',
   'TV': 'fa-tv',
   'Aparcamiento': 'fa-square-parking',
   'Ascensor': 'fa-arrow-up-wide-short',
@@ -19,11 +19,9 @@ const amenityIcons = {
   'Barbacoa': 'fa-fire-burner', // o fa-fire
   'Chimenea': 'fa-fire',
   'Lavavajillas': 'fa-blender',
-  'Microondas': 'fa-microchip', // alternativa visual
+  'Microondas': 'fa-box', // alternativa visual
   'Cafetera': 'fa-mug-hot',
   'Secador de pelo': 'fa-wind',
-  'Toallas': 'fa-towel',
-  'Ropa de cama': 'fa-bed',
   'Otros': 'fa-circle-question'
 };
 export default amenityIcons;

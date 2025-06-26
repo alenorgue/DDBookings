@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalles de la Reserva</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <style>
+    .actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h2>Detalles de la Reserva</h2>
+
+    <section>
+      <h3>Alojamiento reservado</h3>
+      <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" style="width: 100%; max-width: 400px; border-radius: 10px;">
+      <p><strong>Título:</strong> <%= accommodation.title %></p>
+      <p><strong>Ciudad:</strong> <%= accommodation.location.city %></p>
+      <p><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></p>
+    </section>
+
+    <section>
+      <h3>Datos de la Reserva</h3>
+      <ul>
+        <li><strong>Entrada:</strong> <%= booking.startDate.toLocaleDateString() %></li>
+        <li><strong>Salida:</strong> <%= booking.endDate.toLocaleDateString() %></li>
+        <li><strong>Personas:</strong> <%= booking.guests %></li>
+        <li><strong>Estado:</strong> <%= booking.status %></li>
+      </ul>
+    </section>
+
+    <div class="actions">
+      <!-- Botón para cancelar la reserva -->
+      <% if (booking.status !== 'cancelled') { %>
+        <form action="/api/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+          <button type="submit" class="contrast">Cancelar reserva</button>
+        </form>
+      <% } else { %>
+        <p><strong>Reserva cancelada</strong></p>
+      <% } %>
+
+      <!-- Botón para contactar con el anfitrión -->
+      <a href="mailto:host@example.com" class="button">Contactar anfitrión</a>
+      <!-- Si tienes acceso al email real -->
+      <% /* <a href="mailto:<%= host.email %>" class="button">Contactar anfitrión</a> */ %>
+    </div>
+
+    <a href="/dashboard/<%= booking.guestId %>" class="button secondary">Volver al dashboard</a>
+  </main>
+</body>
+</html>

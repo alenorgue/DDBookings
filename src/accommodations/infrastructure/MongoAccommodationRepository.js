@@ -66,7 +66,25 @@ class MongoAccommodationRepository {
     if (!updated) return null;
     return new Accommodation({ ...updated.toObject(), id: updated._id });
   }
+
+  async findByFilter(filter = {}) { 
+    const filtered = await AccommodationModel.find(filter);
+    if (!filtered || filtered.length === 0) return [];
+  return filtered.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
 }
+  /**
+   * Devuelve todos los alojamientos donde el host es el usuario dado
+   * @param {string} hostId
+   * @returns {Promise<Accommodation[]>}
+   */
+  async findByHostId(hostId) {
+    const docs = await AccommodationModel.find({ hostId: hostId });
+    return docs.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
+  }
+
+}
+
+
 
 export default MongoAccommodationRepository;
 

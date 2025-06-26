@@ -5,27 +5,96 @@
   <title>Editar Perfil</title>
   <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
   <style>
-    .container { max-width: 600px; margin: auto; }
-  </style>
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .dashboard section {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .dashboard h3 {
+    margin-top: 0;
+  }
+
+  .accommodation-card, .reservation-card {
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 0;
+  }
+</style>
 </head>
 <body>
-  <main class="container">
-    <h2>Editar Perfil de Usuario</h2>
+ <main class="dashboard">
+  <!-- IZQUIERDA: Reservas -->
+  <section>
+    <h3>Tus Reservas</h3>
+    <% if (userReservations.length > 0) { %>
+      <% userReservations.forEach(res => { %>
+        <div class="reservation-card">
+          <strong><%= res.accommodationTitle %></strong><br>
+          Del <%= res.checkIn %> al <%= res.checkOut %><br>
+          Estado: <%= res.status %>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No tienes reservas aún.</p>
+    <% } %>
+    
+    <h3>Reservas en tus alojamientos</h3>
+    <% if (hostReservations.length > 0) { %>
+      <% hostReservations.forEach(res => { %>
+        <div class="reservation-card">
+          <strong><%= res.accommodationTitle %></strong><br>
+          Huesped: <%= res.guestName %><br>
+          Del <%= res.checkIn %> al <%= res.checkOut %>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No hay reservas aún.</p>
+    <% } %>
+  </section>
 
+  <!-- CENTRO: Alojamientos -->
+  <section>
+    <h3>Tus Alojamientos</h3>
+    <% if (userAccommodations.length > 0) { %>
+      <% userAccommodations.forEach(acc => { %>
+        <div class="accommodation-card">
+          <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>" style="max-width: 100px;">
+          <strong><%= acc.title %></strong> — <%= acc.city %><br>
+          <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No has publicado alojamientos todavía.</p>
+    <% } %>
+  </section>
+
+  <!-- DERECHA: Edición de perfil -->
+  <section>
+    <h3>Editar Perfil</h3>
     <form action="/api/users/update" method="POST">
-      <input type="hidden" name="userId" value="<%= user.id %>" />
-
+      <input type="hidden" name="userId" value="<%= user.id %>">
+  
       <label for="name">Nombre</label>
-      <input type="text" name="name" id="name" required value="<%= user.name %>" />
+      <input type="text" name="name" value="<%= user.name %>" required>
 
       <label for="surName">Apellido</label>
-      <input type="text" name="surName" id="surName" required value="<%= user.surName %>" />
+      <input type="text" name="surName" value="<%= user.surName %>" required>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" value="<%= user.email %>" disabled />
+     
+<input type="hidden" name="email" value="<%= user.email %>" />
+<input type="email" id="email" value="<%= user.email %>" disabled />
 
-      <label for="password">Nueva contraseña (opcional)</label>
+     <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
+
       <input type="password" name="password" id="password" placeholder="********" />
+      
 
       <label for="profilePicture">URL de Foto de Perfil</label>
       <input type="url" name="profilePicture" id="profilePicture" value="<%= user.profilePicture %>" />
@@ -48,6 +117,8 @@
 
       <button type="submit">Guardar Cambios</button>
     </form>
+  </section>
+
   </main>
 </body>
 </html>
