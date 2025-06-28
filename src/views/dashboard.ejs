@@ -1,142 +1,166 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Editar Perfil</title>
   <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
   <style>
-  .dashboard {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 2rem;
-    padding: 2rem;
-  }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
 
-  .dashboard section {
-    background: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-  }
+    .dashboard section {
+      background: #f9f9f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
 
-  .dashboard h3 {
-    margin-top: 0;
-  }
+    .dashboard h3 {
+      margin-top: 0;
+    }
 
-  .accommodation-card, .reservation-card {
-    border-bottom: 1px solid #ddd;
-    padding: 0.5rem 0;
-  }
-</style>
+    .accommodation-card,
+    .reservation-card {
+      border-bottom: 1px solid #ddd;
+      padding: 0.5rem 0;
+    }
+  </style>
 </head>
+
 <body>
- <main class="dashboard">
-  <!-- IZQUIERDA: Reservas -->
-  <section>
-    <h3>Tus Reservas</h3>
-    <% if (userBookings.length > 0) { %>
-      <% userBookings.forEach(res => { %>
-        <div class="reservation-card">
-          <strong><%= res.accommodationTitle %></strong><br>
-          Del <%= res.checkIn %> al <%= res.checkOut %><br>
-          Estado: <%= res.status %>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p>No tienes reservas aún.</p>
-    <% } %>
-    
-    <h3>Reservas en tus alojamientos</h3>
-    <% if (hostBookings.length > 0) { %>
-      <% hostBookings.forEach(res => { %>
-        <div class="reservation-card">
-          <strong><%= res.accommodationTitle %></strong><br>
-          Huesped: <%= res.guestName %><br>
-          Del <%= res.checkIn %> al <%= res.checkOut %>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p>No hay reservas aún.</p>
-    <% } %>
-  </section>
+  <main class="dashboard">
+    <!-- IZQUIERDA: Reservas -->
+    <section>
+      <h3>Tus Reservas</h3>
+      <% if (userBookings.length> 0) { %>
+        <% userBookings.forEach(res=> { %>
+          <div class="reservation-card">
+            <strong>
+              <%= res.accommodationTitle %>
+            </strong><br>
+            Del <%= res.checkIn %> al <%= res.checkOut %><br>
+                Estado: <%= res.status %>
+          </div>
+          <% }) %>
+            <% } else { %>
+              <p>No tienes reservas aún.</p>
+              <% } %>
 
-  <!-- CENTRO: Alojamientos -->
-  <section>
-    <h3>Tus Alojamientos</h3>
-    <a href="/createAccommodation" class="button">Publicar Nuevo Alojamiento</a>
-    <br><br>
-   
-    <% if (userAccommodations.length > 0) { %>
-      <% userAccommodations.forEach(acc => { %>
-        <% if (acc.id && acc.id.length === 24) { %>
-        <div class="accommodation-card">
-          <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>" style="max-width: 100px;">
-          <strong><%= acc.title %></strong> — <%= acc.city %><br>
-          <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
-        </div>
-        <% } %>
-      <% }) %>
-    <% } else { %>
-      <p>No has publicado alojamientos todavía.</p>
-    <% } %>
-  </section>
+                <h3>Reservas en tus alojamientos</h3>
+                <% if (hostBookings.length> 0) { %>
+                  <% hostBookings.forEach(res=> { %>
+                    <div class="reservation-card">
+                      <strong>
+                        <%= res.accommodationTitle %>
+                      </strong><br>
+                      Huesped: <%= res.guestName %><br>
+                        Del <%= res.checkIn %> al <%= res.checkOut %>
+                    </div>
+                    <% }) %>
+                      <% } else { %>
+                        <p>No hay reservas aún.</p>
+                        <% } %>
+    </section>
 
-  <!-- DERECHA: Edición de perfil -->
-  <section>
-    <h3>Editar Perfil</h3>
-    <form action="/api/users/update" method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="userId" value="<%= user.id %>">
-  
-      <label for="name">Nombre</label>
-      <input type="text" name="name" value="<%= user.name %>" required>
+    <!-- CENTRO: Alojamientos -->
+    <section>
+      <h3>Tus Alojamientos</h3>
+      <a href="/createAccommodation" class="button">Publicar Nuevo Alojamiento</a>
+      <br><br>
 
-      <label for="surName">Apellido</label>
-      <input type="text" name="surName" value="<%= user.surName %>" required>
+      <% if (userAccommodations.length> 0) { %>
+        <% userAccommodations.forEach(acc=> { %>
+          <% if (acc.id && acc.id.length===24) { %>
+            <div class="accommodation-card">
+              <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>" style="max-width: 100px;">
+              <strong>
+                <%= acc.title %>
+              </strong> — <%= acc.city %><br>
+                <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
+                <form action="/accommodations/<%= acc.id %>/availability" method="POST" style="margin-top:1em;">
+                  <label>Disponibilidad:</label><br>
+                  <input type="date" name="startDate" required>
+                  <input type="date" name="endDate" required>
+                  <button type="submit">Añadir rango</button>
+                </form>
+            </div>
+            <% } %>
+              <% }) %>
+                <% } else { %>
+                  <p>No has publicado alojamientos todavía.</p>
+                  <% } %>
+    </section>
 
-     
-<input type="hidden" name="email" value="<%= user.email %>" />
-<input type="email" id="email" value="<%= user.email %>" disabled />
+    <!-- DERECHA: Edición de perfil -->
+    <section>
+      <h3>Editar Perfil</h3>
+      <form action="/api/users/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="userId" value="<%= user.id %>">
 
-     <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
+        <label for="name">Nombre</label>
+        <input type="text" name="name" value="<%= user.name %>" required>
 
-      <input type="password" name="password" id="password" placeholder="********" />
-      
+        <label for="surName">Apellido</label>
+        <input type="text" name="surName" value="<%= user.surName %>" required>
 
-      <label for="profilePicture">Foto de Perfil</label>
-      <input type="file" name="profilePicture" id="profilePicture" accept="image/*" />
-      <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
 
-      <label for="bio">Biografía</label>
-      <textarea name="bio" id="bio" maxlength="500"><%= user.bio %></textarea>
+        <input type="hidden" name="email" value="<%= user.email %>" />
+        <input type="email" id="email" value="<%= user.email %>" disabled />
 
-      <label for="phoneNumber">Teléfono</label>
-      <input type="text" name="phoneNumber" id="phoneNumber" value="<%= user.phoneNumber %>" />
+        <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
 
-      <label for="country">País</label>
-      <input type="text" name="country" id="country" value="<%= user.country %>" />
+        <input type="password" name="password" id="password" placeholder="********" />
 
-      <label for="language">Idioma preferido</label>
-      <select name="language" id="language">
-        <option value="es" <%= user.language === 'es' ? 'selected' : '' %>>Español</option>
-        <option value="cat" <%= user.language === 'cat' ? 'selected' : '' %>>Català</option>
-        <option value="en" <%= user.language === 'en' ? 'selected' : '' %>>English</option>
-      </select>
 
-      <button type="submit">Guardar Cambios</button>
-    </form>
-  </section>
+        <label for="profilePicture">Foto de Perfil</label>
+        <input type="file" name="profilePicture" id="profilePicture" accept="image/*" />
+        <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
 
-  <!-- SECCIÓN: Perfil -->
-  <section>
-    <h3>Perfil</h3>
-    <% if (user.profilePicture) { %>
-      <img src="<%= user.profilePicture %>" alt="Foto de perfil" style="max-width:120px;border-radius:50%;margin-bottom:1rem;">
-    <% } else { %>
-      <div style="width:120px;height:120px;background:#eee;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;">Sin foto</div>
-    <% } %>
-    <p><strong><%= user.name %> <%= user.surName %></strong></p>
-    <p><%= user.email %></p>
-  </section>
+        <label for="bio">Biografía</label>
+        <textarea name="bio" id="bio" maxlength="500"><%= user.bio %></textarea>
+
+        <label for="phoneNumber">Teléfono</label>
+        <input type="text" name="phoneNumber" id="phoneNumber" value="<%= user.phoneNumber %>" />
+
+        <label for="country">País</label>
+        <input type="text" name="country" id="country" value="<%= user.country %>" />
+
+        <label for="language">Idioma preferido</label>
+        <select name="language" id="language">
+          <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
+          <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
+          <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
+        </select>
+
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </section>
+
+    <!-- SECCIÓN: Perfil -->
+    <section>
+      <h3>Perfil</h3>
+      <% if (user.profilePicture) { %>
+        <img src="<%= user.profilePicture %>" alt="Foto de perfil"
+          style="max-width:120px;border-radius:50%;margin-bottom:1rem;">
+        <% } else { %>
+          <div
+            style="width:120px;height:120px;background:#eee;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;">
+            Sin foto</div>
+          <% } %>
+            <p><strong>
+                <%= user.name %>
+                  <%= user.surName %>
+              </strong></p>
+            <p>
+              <%= user.email %>
+            </p>
+    </section>
 
   </main>
 </body>
+
 </html>

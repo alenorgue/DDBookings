@@ -3,7 +3,8 @@ import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRe
 import { createAccommodationController } from './createAccommodationController.js';
 import { updateAccommodationController } from './updateAccommodationController.js';
 import parser from '../../config/multerCloudinary.js';
-
+import { ensureAuthenticated } from '../../auth/middleware/auth.js';
+import updateAvailabilityController from './updateAvailabilityController.js';
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ console.log('accommodationRoutes cargado');
 const accommodationRepo = new MongoAccommodationRepository();
 
 // Elimina la ruta POST anterior y usa el controller
-router.post('/', parser.fields([
+router.post('/', ensureAuthenticated, parser.fields([
   { name: 'mainPhoto', maxCount: 1 },
   { name: 'photos', maxCount: 10 }
 ]), createAccommodationController);
@@ -49,6 +50,10 @@ router.get('/:id', async (req, res) => {
 
 // Ruta: PUT /api/accommodations/:id
 // Actualiza un alojamiento por ID
-router.put('/:id', updateAccommodationController);
+router.put('/:id', ensureAuthenticated, updateAccommodationController);
+
+
+
+router.post('/accommodations/:id/availability', ensureAuthenticated, updateAvailabilityController);
 
 export default router;
