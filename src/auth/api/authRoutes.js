@@ -15,9 +15,11 @@ router.post('/login', async (req, res) => {
     // Guardar usuario en sesión
     req.session.user = {
       id: user.id,
+      _id: user.id, // Para compatibilidad con vistas que esperan _id
       email: user.email,
       role: user.role
     };
+    console.log('user en sesión:', req.session.user);
     res.redirect(`/dashboard/${user.id}`);
   } catch (err) {
     let errorMsg = err.message || 'Error en el servidor';

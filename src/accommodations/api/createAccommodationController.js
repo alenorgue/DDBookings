@@ -2,15 +2,18 @@
 import CreateAccommodation from '../application/CreateAccommodation.js';
 import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRepository.js';
 import { findUserById } from '../../users/infrastructure/findUserById.js';
+import MongoUserRepository from '../../users/infrastructure/MongoUserRepository.js';
 
 const accommodationRepo = new MongoAccommodationRepository();
+const userRepo = new MongoUserRepository();
 
 export const createAccommodationController = async (req, res) => {
     try {
         const hostId = req.body.hostId;
+        console.log('hostId recibido:', hostId);
         const user = await findUserById(hostId);
-
-        if (!user || user.role !== 'host') {
+        console.log('user encontrado:', user);
+        if (!user || (user.role && user.role.toLowerCase() !== 'host')) {
             return res.status(403).json({ error: 'Solo los usuarios con rol host pueden crear alojamientos.' });
         }
 
@@ -58,19 +61,18 @@ export const createAccommodationController = async (req, res) => {
                 }
             },
             mainPhoto: mainPhotoUrl,
+            mainPhotoLabel: req.body.mainPhotoLabel || '',
             photos: photos,
             hostId: user._id.toString(),
         };
+console.log('Datos del alojamiento:', data);
 
-        const createAccommodation = new CreateAccommodation(accommodationRepo);
+        const createAccommodation = new CreateAccommodation(accommodationRepo, userRepo);
         const accommodation = await createAccommodation.execute(data);
 
-        return res.status(201).json({
-            message: 'Alojamiento creado correctamente.',
-            accommodation
-        });
+     return res.redirect('/dashboard/' + user._id.toString());
 
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
-};
+}

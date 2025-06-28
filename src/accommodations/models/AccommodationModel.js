@@ -29,9 +29,20 @@ const accommodationSchema = new mongoose.Schema({
         required: true,
         match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i
     },
-    photos: [{
+    mainPhotoLabel: {
         type: String,
-        match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i
+        default: ''
+    },
+    photos: [{
+        url: {
+            type: String,
+            required: true,
+            match: /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i
+        },
+        label: {
+            type: String,
+            default: ''
+        }
     }],
     description: {
         type: String,

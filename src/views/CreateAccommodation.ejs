@@ -46,6 +46,7 @@
   <main class="container">
     <h1>Add new accommodation</h1>
     <form action="/api/accommodations" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="hostId" value="<%= user._id || user.id %>">
       <div class="grid">
         <div>
           <label for="title">Name</label>
@@ -82,10 +83,10 @@
         </div>
         <div>
           <label for="beds">Beds</label>
-          <input type="number" id="beds" name="beds" required>
+          <input type="number" id="beds" name="beds" required min="1" max="40">
         </div>
         <div><label for="maxGuests">Max. Guests</label>
-          <input type="number" id="maxGuests" name="maxGuests" min="1" required>
+          <input type="number" id="maxGuests" name="maxGuests" min="1" max="40" required>
         </div>
         <div>
           <label for="bathrooms">Bathrooms</label>

@@ -4,8 +4,9 @@
 import Accommodation from '../domain/Accommodation.js';
 
 class CreateAccommodation {
-  constructor(accommodationRepository) {
+  constructor(accommodationRepository, userRepository) {
     this.accommodationRepository = accommodationRepository;
+    this.userRepository = userRepository;
   }
 
   async execute(data) {
@@ -75,8 +76,8 @@ class CreateAccommodation {
     if (typeof data.beds !== 'number' || data.beds < 1 || data.beds > 40) {
       throw new Error('El número de camas debe estar entre 1 y 40');
     }
-    if (typeof data.maxGuest !== 'number' || data.maxGuest < 1 || data.maxGuest > 40) {
-      throw new Error('El número de camas debe estar entre 1 y 40');
+    if (typeof data.maxGuests !== 'number' || data.maxGuests < 1 || data.maxGuests > 40) {
+      throw new Error('El número de inquilinos debe estar 1 y 40');
     }
     if (typeof data.bathrooms !== 'number' || data.bathrooms < 1 || data.bathrooms > 20) {
       throw new Error('El número de baños debe estar entre 1 y 20');
@@ -126,8 +127,13 @@ class CreateAccommodation {
       throw new Error('Las reglas de la casa no pueden superar los 1000 caracteres');
     }
     //Validación sobre si el user es un host
-    const user = await this.accommodationRepository.getUserById(data.hostId);
-    if (user.role !== 'host') throw new Error('Solo los hosts pueden crear alojamientos');
+    const user = await this.userRepository.getById(data.hostId);
+    if (!user || user.role !== 'host') throw new Error('Solo los hosts pueden crear alojamientos');
+
+    // Validación mainPhotoLabel (opcional, máximo 100 caracteres)
+    if (data.mainPhotoLabel && data.mainPhotoLabel.length > 100) {
+      throw new Error('La descripción de la foto principal no puede superar los 100 caracteres');
+    }
 
     // Crear la entidad Accommodation
     const accommodation = new Accommodation(data);

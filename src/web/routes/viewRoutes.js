@@ -4,6 +4,7 @@ import MongoAccommodationRepository from '../../accommodations/infrastructure/Mo
 import MongoBookingRepository from '../../bookings/infrastructure/MongoBookingRepository.js';
 import amenityIcons from '../../shared/amenityIcons.js';
 import { ensureAuthenticated } from '../../auth/middleware/auth.js';
+import { configDotenv } from 'dotenv';
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
@@ -88,7 +89,18 @@ router.get('/accommodations/:id', async (req, res) => {
 // Renderiza el formulario para crear un nuevo alojamiento
 router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
   res.render('createAccommodation', {
-    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, amenityIcons: amenityIcons
+    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, 
+    amenityIcons: amenityIcons,
+    user: req.session.user // <-- pasa el usuario logueado
+  });
+});
+
+// Renderiza el formulario para crear un nuevo alojamiento (ruta alternativa para dashboard)
+router.get('/accommodations/createAccommodation', ensureAuthenticated, (req, res) => {
+  res.render('createAccommodation', {
+    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+    amenityIcons: amenityIcons,
+    user: req.session.user // <-- pasa el usuario logueado
   });
 });
 
@@ -106,9 +118,11 @@ router.get('/login', (req, res) => {
 router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
   try {
     const user = await userRepo.findById(req.params.id);
+    console.log('DASHBOARD user.id:', user.id);
     if (!user) return res.status(404).send('Usuario no encontrado');
 
     const userAccommodations = await accommodationRepo.findByHostId(user.id);
+   
     const userBookings = await bookingRepo.findByGuestId(user.id);
     const hostBookings = await bookingRepo.findByHostId(user.id); // en alojamientos que son suyos
 

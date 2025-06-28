@@ -74,12 +74,12 @@
 
       <% if (userAccommodations.length> 0) { %>
         <% userAccommodations.forEach(acc=> { %>
-          <% if (acc.id && acc.id.length===24) { %>
+          <% if (acc.id) { %>
             <div class="accommodation-card">
               <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>" style="max-width: 100px;">
               <strong>
                 <%= acc.title %>
-              </strong> — <%= acc.city %><br>
+              </strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
                 <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
                 <form action="/accommodations/<%= acc.id %>/availability" method="POST" style="margin-top:1em;">
                   <label>Disponibilidad:</label><br>

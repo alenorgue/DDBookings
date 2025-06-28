@@ -50,5 +50,10 @@ class MongoUserRepository {
       throw new Error('Error actualizando perfil: ' + err.message);
     }
   }
+
+  async getById(id) {
+    // Reutiliza findById para mantener compatibilidad con el use case
+    return this.findById(id);
+  }
 }
 export default MongoUserRepository;

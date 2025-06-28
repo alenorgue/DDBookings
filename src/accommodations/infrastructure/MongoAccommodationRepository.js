@@ -13,6 +13,7 @@ class MongoAccommodationRepository {
             pricePerNight: accommodation.pricePerNight,
             squareMeters: accommodation.squareMeters,
             mainPhoto: accommodation.mainPhoto,
+            mainPhotoLabel: accommodation.mainPhotoLabel,
             photos: accommodation.photos,
             description: accommodation.description,
             location: accommodation.location,

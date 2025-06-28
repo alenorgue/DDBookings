@@ -8,6 +8,7 @@ class Accommodation {
     pricePerNight,
     squareMeters,
     mainPhoto,
+    mainPhotoLabel,
     photos,
     description,
     location,
@@ -30,6 +31,7 @@ class Accommodation {
     this.pricePerNight = pricePerNight;
     this.squareMeters = squareMeters;
     this.mainPhoto = mainPhoto;
+    this.mainPhotoLabel = mainPhotoLabel;
     this.photos = photos;
     this.description = description;
     this.location = location; // { address, city, country, postalCode, coordinates }
