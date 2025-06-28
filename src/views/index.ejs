@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bienvenido a Alojamientos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bienvenido a DDB</title>
   <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
   <style>
     main {
@@ -13,19 +14,23 @@
       padding-top: 3rem;
       text-align: center;
     }
+
     h1 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
     }
+
     p {
       font-size: 1.2rem;
       max-width: 600px;
     }
+
     a.button {
       margin-top: 2rem;
     }
   </style>
 </head>
+
 <body>
   <main class="container">
     <h1>Bienvenido a Dream Driven Bookings</h1>
@@ -33,12 +38,16 @@
 
     <p>Para comenzar, puedes acceder a tu perfil o explorar los alojamientos disponibles.</p>
     <p>Si eres un nuevo usuario, puedes registrarte y empezar a publicar tus alojamientos.</p>
+    <a href="/accommodations" class="button secondary">Explorar alojamientos</a>
     <a href="/register" class="button primary">Registrarse</a>
     <a href="/login" class="button secondary">Iniciar sesión</a>
-    <a href="/dashboard/:id" class="button primary">Ir a mi perfil</a>
-    <a href="/accommodations" class="button secondary">Explorar alojamientos</a>
-    <a href="/createAccommodation" class="button secondary">Publicar nuevo alojamiento</a>
-    <a href="/api/users/logout" class="button secondary">Cerrar sesión</a>
+    <% if (user && user.id) { %>
+      <a href="/dashboard/<%= user.id %>" class="button primary">Ir a mi perfil</a>
+      <a href="/createAccommodation" class="button secondary">Publicar nuevo alojamiento</a>
+      <a href="/auth/logout" class="button secondary">Cerrar sesión</a>
+      <% } %>
+
   </main>
 </body>
+
 </html>

@@ -81,6 +81,8 @@
                 <%= acc.title %>
               </strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
                 <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
+                <form action="/accommodations/<%= acc.id %>/update" method="GET" style="margin-top:1em;">
+                  <button type="submit">Editar</button>
                 <form action="/accommodations/<%= acc.id %>/availability" method="POST" style="margin-top:1em;">
                   <label>Disponibilidad:</label><br>
                   <input type="date" name="startDate" required>
