@@ -3,6 +3,7 @@ import MongoUserRepository from '../../users/infrastructure/MongoUserRepository.
 import MongoAccommodationRepository from '../../accommodations/infrastructure/MongoAccommodationRepository.js';
 import MongoBookingRepository from '../../bookings/infrastructure/MongoBookingRepository.js';
 import amenityIcons from '../../shared/amenityIcons.js';
+import { ensureAuthenticated } from '../../auth/middleware/auth.js';
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
@@ -51,6 +52,10 @@ router.get('/accommodations', async (req, res) => {
 });
 // Renderiza la página de detalles de un alojamiento específico
 router.get('/accommodations/:id', async (req, res) => {
+  // Validación de ObjectId para evitar CastError
+  if (!/^[a-fA-F0-9]{24}$/.test(req.params.id)) {
+    return res.status(400).send('ID de alojamiento no válido');
+  }
   try {
     const accommodation = await accommodationRepo.findById(req.params.id);
     if (!accommodation) return res.status(404).send('Alojamiento no encontrado');
@@ -81,8 +86,8 @@ router.get('/accommodations/:id', async (req, res) => {
 });
 
 // Renderiza el formulario para crear un nuevo alojamiento
-router.get('/createAccommodation', (req, res) => {
-  res.render('CreateAccommodation', {
+router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
+  res.render('createAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, amenityIcons: amenityIcons
   });
 });
@@ -98,9 +103,7 @@ router.get('/login', (req, res) => {
 });
 
 // Renderiza el dashboard del usuario
-
-
-router.get('/dashboard/:id', async (req, res) => {
+router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
   try {
     const user = await userRepo.findById(req.params.id);
     if (!user) return res.status(404).send('Usuario no encontrado');
@@ -159,6 +162,22 @@ router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error al obtener reservas del alojamiento');
+  }
+});
+
+// Vista para editar alojamiento
+router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) => {
+  try {
+    const accommodation = await accommodationRepo.findById(req.params.id);
+    if (!accommodation) return res.status(404).send('Alojamiento no encontrado');
+    // Solo el host propietario puede editar
+    if (!req.session.user || accommodation.hostId !== req.session.user.id) {
+      return res.status(403).send('No tienes permisos para editar este alojamiento');
+    }
+    res.render('updateAccommodation', { accommodation });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al cargar el formulario de edición');
   }
 });
 

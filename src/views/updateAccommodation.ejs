@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Alojamiento</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Editar Alojamiento</h1>
+    <form action="/api/accommodations/<%= accommodation.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      <label for="title">Título</label>
+      <input type="text" id="title" name="title" value="<%= accommodation.title %>" required minlength="5" maxlength="100">
+
+      <label for="description">Descripción</label>
+      <textarea id="description" name="description" required minlength="30" maxlength="2000"><%= accommodation.description %></textarea>
+
+      <label for="pricePerNight">Precio por noche</label>
+      <input type="number" id="pricePerNight" name="pricePerNight" value="<%= accommodation.pricePerNight %>" required min="10" max="100000">
+
+      <label for="squareMeters">Metros cuadrados</label>
+      <input type="number" id="squareMeters" name="squareMeters" value="<%= accommodation.squareMeters %>" required min="10" max="1000">
+
+      <label for="mainPhoto">Foto principal actual</label><br>
+      <% if (accommodation.mainPhoto) { %>
+        <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" style="max-width:150px;">
+      <% } %>
+      <br>
+      <label for="mainPhoto">Nueva foto principal (opcional)</label>
+      <input type="file" id="mainPhoto" name="mainPhoto" accept="image/*">
+
+      <label for="rooms">Habitaciones</label>
+      <input type="number" id="rooms" name="rooms" value="<%= accommodation.rooms %>" required min="1" max="20">
+
+      <label for="beds">Camas</label>
+      <input type="number" id="beds" name="beds" value="<%= accommodation.beds %>" required min="1" max="40">
+
+      <label for="bathrooms">Baños</label>
+      <input type="number" id="bathrooms" name="bathrooms" value="<%= accommodation.bathrooms %>" required min="1" max="20">
+
+      <label for="propertyType">Tipo de propiedad</label>
+      <select id="propertyType" name="propertyType" required>
+        <option value="Apartment" <%= accommodation.propertyType === 'Apartment' ? 'selected' : '' %>>Apartamento</option>
+        <option value="House" <%= accommodation.propertyType === 'House' ? 'selected' : '' %>>Casa</option>
+        <option value="Studio" <%= accommodation.propertyType === 'Studio' ? 'selected' : '' %>>Estudio</option>
+        <option value="Loft" <%= accommodation.propertyType === 'Loft' ? 'selected' : '' %>>Loft</option>
+        <option value="Other" <%= accommodation.propertyType === 'Other' ? 'selected' : '' %>>Otro</option>
+      </select>
+
+      <label for="petsAllowed">¿Se permiten mascotas?</label>
+      <select id="petsAllowed" name="petsAllowed" required>
+        <option value="true" <%= accommodation.petsAllowed ? 'selected' : '' %>>Sí</option>
+        <option value="false" <%= !accommodation.petsAllowed ? 'selected' : '' %>>No</option>
+      </select>
+
+      <label for="address">Dirección</label>
+      <input type="text" id="address" name="address" value="<%= accommodation.location.address %>" required>
+
+      <label for="city">Ciudad</label>
+      <input type="text" id="city" name="city" value="<%= accommodation.location.city %>" required>
+
+      <label for="country">País</label>
+      <input type="text" id="country" name="country" value="<%= accommodation.location.country %>" required>
+
+      <label for="postalCode">Código Postal</label>
+      <input type="text" id="postalCode" name="postalCode" value="<%= accommodation.location.postalCode %>" required>
+
+      <label for="checkIn">Check-in</label>
+      <input type="time" id="checkIn" name="checkIn" value="<%= accommodation.checkIn %>" required>
+
+      <label for="checkOut">Check-out</label>
+      <input type="time" id="checkOut" name="checkOut" value="<%= accommodation.checkOut %>" required>
+
+      <label for="houseRules">Reglas de la casa</label>
+      <textarea id="houseRules" name="houseRules" maxlength="1000"><%= accommodation.houseRules %></textarea>
+
+      <label for="cancellationPolicy">Política de cancelación</label>
+      <select id="cancellationPolicy" name="cancellationPolicy" required>
+        <option value="Flexible" <%= accommodation.cancellationPolicy === 'Flexible' ? 'selected' : '' %>>Flexible</option>
+        <option value="Moderate" <%= accommodation.cancellationPolicy === 'Moderate' ? 'selected' : '' %>>Moderada</option>
+        <option value="Strict" <%= accommodation.cancellationPolicy === 'Strict' ? 'selected' : '' %>>Estrica</option>
+        <option value="Super Strict" <%= accommodation.cancellationPolicy === 'Super Strict' ? 'selected' : '' %>>Super estricta</option>
+        <option value="No Refund" <%= accommodation.cancellationPolicy === 'No Refund' ? 'selected' : '' %>>Sin reembolso</option>
+        <option value="Other" <%= accommodation.cancellationPolicy === 'Other' ? 'selected' : '' %>>Otra</option>
+      </select>
+
+      <label for="amenities">Comodidades (amenities)</label>
+      <input type="text" id="amenities" name="amenities" value="<%= (accommodation.amenities || []).join(', ') %>" placeholder="Ej: Wifi, Piscina, TV" />
+
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </main>
+</body>
+</html>

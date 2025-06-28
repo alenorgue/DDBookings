@@ -68,10 +68,13 @@
     <h2>Ubicación en el mapa</h2>
     <div id="map"></div>
   </main>
+  <% if (typeof user !== 'undefined' && user && user.id === accommodation.hostId) { %>
+      <a href="/accommodations/<%= accommodation.id %>/update" class="button">Editar este alojamiento</a>
+    <% } %>
 <% if (accommodation.location && accommodation.location.coordinates) { %>
   <script>
     function initMap() {
-      const coords = { lat: <%= accommodation.location.coordinates.lat %>, lng: <%= accommodation.location.coordinates.lng %> };
+      const coords = { lat: <%= JSON.stringify(accommodation.location.coordinates.lat) %>, lng: <%= JSON.stringify(accommodation.location.coordinates.lng) %> };
       const map = new google.maps.Map(document.getElementById("map"), {
         center: coords,
         zoom: 15,
@@ -82,7 +85,7 @@
       });
     }
   </script>
- <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
 
   <% } else { %>
   <p><em>Ubicación no disponible para este alojamiento.</em></p>
@@ -90,10 +93,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
-
-    const availability = <%- JSON.stringify(availability) %>;
-    const booked = <%- JSON.stringify(bookedDates) %>;
-
+    const availability = <%= JSON.stringify(availability) %>;
+    const booked = <%= JSON.stringify(bookedDates) %>;
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       selectable: false,
@@ -102,18 +103,17 @@
           title: 'Disponible',
           start: date,
           display: 'background',
-          color: '#d4edda' // verde claro
+          color: '#d4edda'
         })),
         ...booked.map(b => ({
           title: 'Reservado',
           start: b.start,
           end: b.end,
-          color: '#f8d7da',// rojo claro
-          display:'background' 
+          color: '#f8d7da',
+          display:'background'
         }))
       ]
     });
-
     calendar.render();
   });
 </script>

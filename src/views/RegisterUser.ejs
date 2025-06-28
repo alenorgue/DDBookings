@@ -11,7 +11,7 @@
 <body>
     <main class="container">
         <h1>Register User</h1>
-        <form action="/api/users/register" method="POST">
+        <form action="/api/users/register" method="POST" enctype="multipart/form-data">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required minlength="2" maxlength="100">
 
@@ -32,8 +32,9 @@
                 <option value="host">Host</option>
             </select>
 
-            <label for="profilePicture">Profile Picture URL</label>
-            <input type="url" id="profilePicture" name="profilePicture">
+            <label for="profilePicture">Profile Picture</label>
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+            <span style="font-size:0.9em;">Puedes subir una imagen o dejar vacío para no añadir foto.</span>
 
             <label for="bio">Bio</label>
             <textarea id="bio" name="bio" maxlength="500"></textarea>
@@ -49,7 +50,6 @@
                 <option value="en">English</option>
                 <option value="es">Castellano</option>
                 <option value="cat">Catala</option>
-
             </select>
             <button type="submit">Register</button>
         </form>

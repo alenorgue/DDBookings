@@ -4,13 +4,19 @@
 import express from 'express';
 import MongoUserRepository from '../infrastructure/MongoUserRepository.js';
 import RegisterUser from '../application/RegisterUser.js';
+import parser from '../../config/multerCloudinary.js';
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
 
 // Ruta POST /api/users/register para registrar nuevos usuarios
-router.post('/register', async (req, res) => {
-  const { name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language } = req.body;
+router.post('/register', parser.single('profilePicture'), async (req, res) => {
+  const { name, surName, email, password, role, createdAt, bio, phoneNumber, country, language } = req.body;
+  let profilePicture = req.body.profilePicture;
+  // Si se subió archivo, usar la URL de Cloudinary
+  if (req.file && req.file.path) {
+    profilePicture = req.file.path;
+  }
   try {
     const useCase = new RegisterUser(userRepo);
     const result = await useCase.execute({ 
@@ -28,8 +34,12 @@ router.get('/dashboard/:id', async (req, res) => {
   res.render('dashboard', { user });
 });
 
-router.post('/update', async (req, res) => {
+router.post('/update', parser.single('profilePicture'), async (req, res) => {
   const data = req.body;
+  // Si se subió nueva imagen, usar la URL de Cloudinary
+  if (req.file && req.file.path) {
+    data.profilePicture = req.file.path;
+  }
   const updated = await userRepo.updateUser(data.userId, data); // sin cambiar email
   res.redirect(`/dashboard/${updated.id}`);
 });
