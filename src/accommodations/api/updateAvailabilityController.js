@@ -17,9 +17,11 @@ export default async function updateAvailabilityController(req, res) {
       dates.push(new Date(d));
     }
 
+    // Convert ISO strings to Date objects for saving
+    const newDates = dates.map(d => new Date(d));
     accommodation.availability = Array.from(new Set([
       ...(accommodation.availability || []),
-      ...dates.map(d => d.toISOString())
+      ...newDates
     ]));
 
     await accommodationRepo.update(req.params.id, { availability: accommodation.availability });

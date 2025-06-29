@@ -24,7 +24,8 @@ class Accommodation {
     checkIn,
     checkOut,
     hostId,
-    status
+    status,
+    availability
   }) {
     this.id = id;
     this.title = title;
@@ -48,6 +49,7 @@ class Accommodation {
     this.checkOut = checkOut;
     this.hostId = hostId;
     this.status = status;
+    this.availability = availability;
   }
 }
 

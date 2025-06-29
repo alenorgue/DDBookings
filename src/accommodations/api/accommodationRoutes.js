@@ -54,6 +54,6 @@ router.put('/:id', ensureAuthenticated, updateAccommodationController);
 
 
 
-router.post('/accommodations/:id/availability', ensureAuthenticated, updateAvailabilityController);
+router.post('/:id/availability', ensureAuthenticated, updateAvailabilityController);
 
 export default router;

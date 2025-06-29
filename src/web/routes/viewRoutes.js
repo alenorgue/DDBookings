@@ -71,7 +71,10 @@ router.get('/accommodations/:id', async (req, res) => {
     }));
 
     // Fechas disponibles desde el alojamiento
-    const availableDates = accommodation.availability || [];
+    const availableDates = (accommodation.availability || []).map(d => 
+      d instanceof Date ? d.toISOString().slice(0, 10) : 
+      (d && d.$date ? new Date(d.$date).toISOString().slice(0, 10) : d)
+    );
 
     res.render('accommodationsDetails', {
       accommodation,

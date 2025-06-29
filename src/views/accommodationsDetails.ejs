@@ -59,7 +59,7 @@
       <% } %>
      <% accommodation.photos.forEach(photo => { %>
   <div>
-    <img src="<%= photo %>" alt="Foto adicional">
+    <img src="<%= photo.url %>" alt="<%= photo.label || 'Foto adicional' %>">
   </div>
 <% }) %>
     </div>
@@ -74,7 +74,7 @@
 <% if (accommodation.location && accommodation.location.coordinates) { %>
   <script>
     function initMap() {
-      const coords = { lat: <%= JSON.stringify(accommodation.location.coordinates.lat) %>, lng: <%= JSON.stringify(accommodation.location.coordinates.lng) %> };
+      const coords = JSON.parse('<%- JSON.stringify(accommodation.location.coordinates) %>');
       const map = new google.maps.Map(document.getElementById("map"), {
         center: coords,
         zoom: 15,
@@ -93,8 +93,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
-    const availability = <%= JSON.stringify(availability) %>;
-    const booked = <%= JSON.stringify(bookedDates) %>;
+    const availability = <%- JSON.stringify(availability) %>;
+    const booked = <%- JSON.stringify(bookedDates) %>;
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       selectable: false,
