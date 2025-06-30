@@ -114,7 +114,7 @@ router.get('/register', (req, res) => {
 
 // Renderiza el formulario de inicio de sesión
 router.get('/login', (req, res) => {
-  res.render('Login');
+  res.render('login');
 });
 
 // Renderiza el dashboard del usuario
