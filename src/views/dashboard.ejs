@@ -104,6 +104,22 @@
 
     <!-- DERECHA: Edición de perfil -->
     <section>
+         <h3>Perfil</h3>
+      <% if (user.profilePicture) { %>
+        <img src="<%= user.profilePicture %>" alt="Foto de perfil"
+          style="max-width:120px;border-radius:50%;margin-bottom:1rem;">
+        <% } else { %>
+          <div
+            style="width:120px;height:120px;background:#eee;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;">
+            Sin foto</div>
+          <% } %>
+            <p><strong>
+                <%= user.name %>
+                  <%= user.surName %>
+              </strong></p>
+            <p>
+              <%= user.email %>
+            </p>
       <h3>Editar Perfil</h3>
       <form action="/api/users/update" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="userId" value="<%= user.id %>">
@@ -116,7 +132,6 @@
 
 
         <input type="hidden" name="email" value="<%= user.email %>" />
-        <input type="email" id="email" value="<%= user.email %>" disabled />
 
         <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
 
@@ -145,26 +160,6 @@
 
         <button type="submit">Guardar Cambios</button>
       </form>
-    </section>
-
-    <!-- SECCIÓN: Perfil -->
-    <section>
-      <h3>Perfil</h3>
-      <% if (user.profilePicture) { %>
-        <img src="<%= user.profilePicture %>" alt="Foto de perfil"
-          style="max-width:120px;border-radius:50%;margin-bottom:1rem;">
-        <% } else { %>
-          <div
-            style="width:120px;height:120px;background:#eee;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;">
-            Sin foto</div>
-          <% } %>
-            <p><strong>
-                <%= user.name %>
-                  <%= user.surName %>
-              </strong></p>
-            <p>
-              <%= user.email %>
-            </p>
     </section>
 
   </main>
