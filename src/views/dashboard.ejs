@@ -55,19 +55,21 @@
       <% } %>
 
         <h3>Reservas en tus alojamientos</h3>
-        <% if (hostBookings.length> 0) { %>
-          <% hostBookings.forEach(res=> { %>
+        <% if (hostBookings && hostBookings.length > 0) { %>
+          <% hostBookings.forEach(res => { %>
             <div class="reservation-card">
-              <strong>
-                <%= res.accommodationTitle %>
-              </strong><br>
-              Huesped: <%= res.guestName %><br>
-                Del <%= res.checkIn %> al <%= res.checkOut %>
+              <strong><%= res.id %></strong><br>
+              Huésped: <%= res.guestName || res.guestId %><br>
+              Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : (res.checkIn ? new Date(res.checkIn).toLocaleDateString() : '') %> 
+              al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : (res.checkOut ? new Date(res.checkOut).toLocaleDateString() : '') %>
+              <br>
+              Estado: <%= res.status || '' %>
+              <a href="/accommodations/<%= res.accommodationId %>">Ver alojamiento</a>
             </div>
-            <% }) %>
-              <% } else { %>
-                <p>No hay reservas aún.</p>
-                <% } %>
+          <% }) %>
+        <% } else { %>
+          <p>No hay reservas aún.</p>
+        <% } %>
     </section>
 
     <!-- CENTRO: Alojamientos -->

@@ -156,16 +156,8 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/bookings/:id/cancel', async (req, res) => {
-  try {
-    const updated = await bookingRepo.updateStatus(req.params.id, 'cancelled');
-    if (!updated) return res.status(404).send('Reserva no encontrada');
-    res.redirect(`/bookings/${req.params.id}`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al cancelar la reserva');
-  }
-});
+// Elimina este POST duplicado para evitar conflicto con el de bookingsRoutes
+// router.post('/bookings/:id/cancel', async (req, res) => { ... });
 
 router.get('/bookings/guest/:guestId', async (req, res) => {
   try {

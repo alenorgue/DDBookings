@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reserva confirmada</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1>¡Reserva cancelada!</h1>
+    <% if (!accommodation || !booking) { %>
+      <p>Error: No se pudo encontrar la reserva o el alojamiento.</p>
+      <a href="/dashboard/<%= user.id %>" class="button">Ir a mi dashboard</a>
+      <a href="/accommodations" class="button secondary">Ver alojamientos</a>
+      <% return; %>
+    <% } %>
+    <h2>Id de reserva: </h2><p><%= booking.id %></p>
+    <h2><%= accommodation.title %></h2>
+    <img src="<%= accommodation.mainPhoto %>" alt="Foto del alojamiento" style="max-width: 300px; border-radius: 6px; margin-bottom: 1em;">
+    <div><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %></div>
+    <div><strong>Fechas reservadas:</strong> <%= booking.startDate.toISOString().slice(0,10) %> a <%= booking.endDate.toISOString().slice(0,10) %></div>
+    <div><strong>Huéspedes:</strong> <%= booking.guests %></div>
+    <div><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>
+    <div><strong>Total estimado:</strong> €<%= (accommodation.pricePerNight * ((new Date(booking.endDate) - new Date(booking.startDate))/(1000*60*60*24))).toFixed(2) %></div>
+    <a href="/dashboard/<%= user.id %>" class="button">Ir a mi dashboard</a>
+    <a href="/accommodations/<%= accommodation.id %>" class="button secondary">Ver alojamiento</a>
+  </main>
+</body>
+</html>

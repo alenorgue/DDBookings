@@ -1,5 +1,6 @@
 import MongoBookingRepository from '../infrastructure/MongoBookingRepository.js';
 import MongoAccommodationRepository from '../../accommodations/infrastructure/MongoAccommodationRepository.js';
+import { getDateRangeArray, addToAvailability } from '../../accommodations/utils/availabilityUtils.js';
 
 const bookingRepo = new MongoBookingRepository();
 const accommodationRepo = new MongoAccommodationRepository();
@@ -17,25 +18,16 @@ export default async function cancelBookingController(req, res) {
     // Restaurar availability
     const accommodation = await accommodationRepo.findById(booking.accommodationId);
     if (accommodation && Array.isArray(accommodation.availability)) {
-      // Generar array de fechas a restaurar
-      const start = new Date(booking.startDate);
-      const end = new Date(booking.endDate);
-      let restoreDates = [];
-      let current = new Date(start);
-      while (current <= end) {
-        restoreDates.push(new Date(current));
-        current.setDate(current.getDate() + 1);
-      }
+      // Generar array de fechas a restaurar (YYYY-MM-DD)
+      const restoreDates = getDateRangeArray(booking.startDate, booking.endDate);
       // Añadir fechas restauradas a availability (sin duplicados)
-      const newAvailability = [
-        ...accommodation.availability,
-        ...restoreDates
-      ].map(d => (d instanceof Date ? d.toISOString().slice(0, 10) : new Date(d).toISOString().slice(0, 10)));
-      // Eliminar duplicados
-      const uniqueAvailability = Array.from(new Set(newAvailability)).map(d => new Date(d));
-      await accommodationRepo.update(accommodation.id, { availability: uniqueAvailability });
+      const updatedAvailability = addToAvailability(accommodation.availability, restoreDates);
+      await accommodationRepo.update(accommodation.id, { availability: updatedAvailability });
     }
-    res.redirect('/dashboard/' + req.session.user.id);
+    // Renderizar vista de cancelación de reserva
+    // Buscar el alojamiento para mostrar detalles en la vista
+    const accommodationDetails = accommodation;
+    return res.render('bookingsCancellation', { user: req.session.user, booking, accommodation: accommodationDetails });
   } catch (err) {
     console.error('Error al cancelar la reserva:', err);
     res.status(500).json({ error: 'Error al cancelar la reserva' });

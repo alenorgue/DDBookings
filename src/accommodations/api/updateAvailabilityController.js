@@ -1,4 +1,5 @@
 import MongoAccommodationRepository from '../infrastructure/MongoAccommodationRepository.js';
+import { getDateRangeArray, addToAvailability } from '../utils/availabilityUtils.js';
 
 const accommodationRepo = new MongoAccommodationRepository();
 
@@ -10,21 +11,10 @@ export default async function updateAvailabilityController(req, res) {
     if (!accommodation) return res.status(404).send('Alojamiento no encontrado');
     if (accommodation.hostId !== req.session.user.id) return res.status(403).send('No autorizado');
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    let dates = [];
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      dates.push(new Date(d));
-    }
-
-    // Convert ISO strings to Date objects for saving
-    const newDates = dates.map(d => new Date(d));
-    accommodation.availability = Array.from(new Set([
-      ...(accommodation.availability || []),
-      ...newDates
-    ]));
-
-    await accommodationRepo.update(req.params.id, { availability: accommodation.availability });
+    // Usar utilidades centralizadas
+    const range = getDateRangeArray(startDate, endDate);
+    const updatedAvailability = addToAvailability(accommodation.availability, range);
+    await accommodationRepo.update(req.params.id, { availability: updatedAvailability });
 
     res.redirect('/dashboard/' + req.session.user.id);
   } catch (err) {
