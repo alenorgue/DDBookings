@@ -40,4 +40,11 @@ router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
   }
 });
 
+// Manejo de rutas no encontradas (404)
+router.use((req, res, next) => {
+  const err = new Error('Página no encontrada');
+  err.status = 404;
+  next(err);
+});
+
 export default router;

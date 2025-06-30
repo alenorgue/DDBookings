@@ -5,13 +5,13 @@ import { getDateRangeArray, addToAvailability } from '../../accommodations/utils
 const bookingRepo = new MongoBookingRepository();
 const accommodationRepo = new MongoAccommodationRepository();
 
-export default async function cancelBookingController(req, res) {
+export default async function cancelBookingController(req, res, next) {
   try {
     const booking = await bookingRepo.findById(req.params.id);
-    if (!booking) return res.status(404).json({ error: 'Reserva no encontrada' });
+    if (!booking) return next({ status: 404, message: 'Reserva no encontrada' });
     // Solo el usuario dueño de la reserva puede cancelar
     if (!req.session.user || booking.guestId.toString() !== req.session.user.id) {
-      return res.status(403).json({ error: 'No autorizado' });
+      return next({ status: 403, message: 'No autorizado' });
     }
     // Cambiar estado
     const updated = await bookingRepo.updateStatus(req.params.id, 'cancelled');
@@ -29,7 +29,6 @@ export default async function cancelBookingController(req, res) {
     const accommodationDetails = accommodation;
     return res.render('bookingsCancellation', { user: req.session.user, booking, accommodation: accommodationDetails });
   } catch (err) {
-    console.error('Error al cancelar la reserva:', err);
-    res.status(500).json({ error: 'Error al cancelar la reserva' });
+    next(err);
   }
 }

@@ -48,7 +48,7 @@ router.get('/accommodations', async (req, res) => {
 
   } catch (err) {
     console.error('Error en GET /accommodations:', err);
-    res.status(500).send('Error al obtener alojamientos');
+    next(err);
   }
 });
 // Renderiza la página de detalles de un alojamiento específico
@@ -85,7 +85,7 @@ router.get('/accommodations/:id', async (req, res) => {
     });
   } catch (err) {
     console.error('Error al cargar el alojamiento:', err);
-    res.status(500).send('Error al cargar el alojamiento');
+    next(err);
   }
 });
 
@@ -152,7 +152,7 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al cargar el dashboard');
+    next(err);
   }
 });
 
@@ -165,7 +165,7 @@ router.get('/bookings/guest/:guestId', async (req, res) => {
     res.render('bookingsByGuest', { bookings });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al obtener reservas del huésped');
+    next(err);
   }
 });
 
@@ -175,7 +175,7 @@ router.get('/bookings/host/:hostId', async (req, res) => {
     res.render('bookingsByHost', { bookings });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al obtener reservas del anfitrión');
+    next(err);
   }
 });
 
@@ -185,7 +185,7 @@ router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
     res.render('bookingsByAccommodation', { bookings });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al obtener reservas del alojamiento');
+    next(err);
   }
 });
 
@@ -201,8 +201,15 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
     res.render('updateAccommodation', { accommodation });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al cargar el formulario de edición');
+    next(err);
   }
+});
+
+// Manejo de rutas no encontradas (404)
+router.use((req, res, next) => {
+  const err = new Error('Página no encontrada');
+  err.status = 404;
+  next(err);
 });
 
 export default router;

@@ -8,7 +8,7 @@ const router = express.Router();
 const userRepo = new MongoUserRepository();
 const loginUser = new LoginUser(userRepo);
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await loginUser.execute(email, password);
@@ -22,8 +22,7 @@ router.post('/login', async (req, res) => {
     console.log('user en sesión:', req.session.user);
     res.redirect(`/dashboard/${user.id}`);
   } catch (err) {
-    let errorMsg = err.message || 'Error en el servidor';
-    res.status(400).render('login', { error: errorMsg });
+    next(err);
   }
 });
 
@@ -34,5 +33,11 @@ router.get('/logout', (req, res) => {
   });
 });
 
+// Manejo de rutas no encontradas (404)
+router.use((req, res, next) => {
+  const err = new Error('Página no encontrada');
+  err.status = 404;
+  next(err);
+});
 
 export default router;

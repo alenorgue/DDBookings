@@ -54,6 +54,79 @@
             <button type="submit">Register</button>
         </form>
     </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const name = form.name;
+        const surName = form.surName;
+        const email = form.email;
+        const password = form.password;
+        const role = form.role;
+        const phone = form.phoneNumber;
+        const country = form.country;
+        const language = form.language;
+        const bio = form.bio;
+        const errorBox = document.createElement('div');
+        errorBox.style.color = '#c00';
+        errorBox.style.marginBottom = '1em';
+        form.prepend(errorBox);
+
+        function showError(msg) {
+          errorBox.textContent = msg;
+        }
+        function clearError() {
+          errorBox.textContent = '';
+        }
+
+        form.addEventListener('submit', function (e) {
+          clearError();
+          // Nombre y apellido
+          if (name.value.length < 2 || name.value.length > 100) {
+            showError('El nombre debe tener entre 2 y 100 caracteres.');
+            e.preventDefault(); return;
+          }
+          if (surName.value.length < 2 || surName.value.length > 100) {
+            showError('El apellido debe tener entre 2 y 100 caracteres.');
+            e.preventDefault(); return;
+          }
+          // Email
+          if (!/^\S+@\S+\.\S+$/.test(email.value)) {
+            showError('Introduce un email válido.');
+            e.preventDefault(); return;
+          }
+          // Password
+          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]:;?,./]).{8,}$/.test(password.value)) {
+            showError('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
+            e.preventDefault(); return;
+          }
+          // Rol
+          if (!role.value || (role.value !== 'guest' && role.value !== 'host')) {
+            showError('Selecciona un rol válido.');
+            e.preventDefault(); return;
+          }
+          // Teléfono (opcional)
+          if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) {
+            showError('Introduce un teléfono válido.');
+            e.preventDefault(); return;
+          }
+          // País (opcional)
+          if (country.value && (country.value.length < 2 || country.value.length > 100)) {
+            showError('El país debe tener entre 2 y 100 caracteres.');
+            e.preventDefault(); return;
+          }
+          // Idioma
+          if (!['en','es','cat'].includes(language.value)) {
+            showError('Selecciona un idioma válido.');
+            e.preventDefault(); return;
+          }
+          // Bio (opcional)
+          if (bio.value && bio.value.length > 500) {
+            showError('La biografía no puede superar los 500 caracteres.');
+            e.preventDefault(); return;
+          }
+        });
+      });
+    </script>
 </body>
 
 </html>

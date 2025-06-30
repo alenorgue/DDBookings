@@ -76,10 +76,22 @@ console.log('/bookings montada');
 connectDB();
 console.log('connectDB llamado');
 
+// Manejo de rutas no encontradas (404)
+app.use((req, res, next) => {
+  const err = new Error('Página no encontrada');
+  err.status = 404;
+  next(err);
+});
+
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err);
-  res.status(500).json({ error: 'Error interno del servidor' });
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message || 'Error interno del servidor',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    user: req.session && req.session.user ? req.session.user : null
+  });
 });
 console.log('Middleware de errores montado');
 

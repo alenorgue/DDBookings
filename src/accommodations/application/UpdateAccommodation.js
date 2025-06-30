@@ -2,8 +2,9 @@
 import Accommodation from '../domain/Accommodation.js';
 
 class UpdateAccommodation {
-  constructor(accommodationRepository) {
+  constructor(accommodationRepository, userRepository) {
     this.accommodationRepository = accommodationRepository;
+    this.userRepository = userRepository;
   }
 
   async execute(id, data) {
@@ -124,8 +125,8 @@ class UpdateAccommodation {
       throw new Error('Las reglas de la casa no pueden superar los 1000 caracteres');
     }
     //Validación sobre si el user es un host
-    const user = await this.accommodationRepository.getUserById(data.hostId);
-    if (user.role !== 'host') throw new Error('Solo los hosts pueden crear alojamientos');
+    const user = await this.userRepository.findById(data.hostId);
+    if (!user || user.role !== 'host') throw new Error('Solo los hosts pueden crear o actualizar alojamientos');
     // Verificar si el alojamiento existe
     const existingAccommodation = await this.accommodationRepository.findById(id);
     if (!existingAccommodation) {

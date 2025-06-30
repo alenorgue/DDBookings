@@ -25,18 +25,18 @@ router.post('/', ensureAuthenticated, parser.fields([
 
 // Ruta: GET /api/accommodations
 // Devuelve todos los alojamientos
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const accommodations = await accommodationRepo.findAll();
     res.status(200).json(accommodations);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener alojamientos' });
+    next(err);
   }
 });
 
 // Ruta: GET /api/accommodations/:id
 // Devuelve un alojamiento por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const accommodation = await accommodationRepo.findById(req.params.id);
     if (!accommodation) {
@@ -44,7 +44,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(accommodation);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener el alojamiento' });
+    next(err);
   }
 });
 
@@ -55,5 +55,12 @@ router.put('/:id', ensureAuthenticated, updateAccommodationController);
 
 
 router.post('/:id/availability', ensureAuthenticated, updateAvailabilityController);
+
+// Manejo de rutas no encontradas (404)
+router.use((req, res, next) => {
+  const err = new Error('Página no encontrada');
+  err.status = 404;
+  next(err);
+});
 
 export default router;
