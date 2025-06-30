@@ -1,6 +1,7 @@
 // server.js
 // Punto de entrada principal de la aplicación
 console.log('Iniciando server.js');
+import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 console.log('dotenv importado');
 import express from 'express';
@@ -15,6 +16,7 @@ import MongoStore from 'connect-mongo';
 console.log('connect-mongo importado');
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -71,27 +73,8 @@ app.use('/', bookingsRoutes);
 console.log('/bookings montada');
 
 // Conexión a la base de datos MongoDB
-async function connectDB() {
-  try {
-    console.log('Intentando conectar a MongoDB...');
-    const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`;
-    await mongoose.connect(uri, {
-      dbName: process.env.MONGODB_DATABASE
-    });
-    console.log('Conexión a MongoDB establecida');
-  } catch (error) {
-    console.error('Error de conexión a MongoDB:', error);
-    console.error('Variables de entorno:', {
-      user: process.env.MONGODB_USER ? 'definido' : 'indefinido',
-      password: process.env.MONGODB_PASSWORD ? 'definido' : 'indefinido',
-      cluster: process.env.MONGODB_CLUSTER ? 'definido' : 'indefinido',
-      database: process.env.MONGODB_DATABASE ? 'definido' : 'indefinido'
-    });
-  }
-}
 connectDB();
 console.log('connectDB llamado');
-
 
 // Manejo de errores
 app.use((err, req, res, next) => {
