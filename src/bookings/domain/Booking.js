@@ -18,7 +18,7 @@ class Booking {
     this.startDate = startDate;
     this.endDate = endDate;
     this.guests = guests;
-    this.status = status || 'pending';
+    this.status = status || 'confirmed'; // Default status is 'confirmed'
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }

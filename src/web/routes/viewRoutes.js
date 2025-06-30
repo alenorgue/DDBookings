@@ -126,8 +126,23 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
 
     const userAccommodations = await accommodationRepo.findByHostId(user.id);
    
-    const userBookings = await bookingRepo.findByGuestId(user.id);
-    const hostBookings = await bookingRepo.findByHostId(user.id); // en alojamientos que son suyos
+    // Enriquecer reservas del usuario con datos del alojamiento
+    const userBookingsRaw = await bookingRepo.findByGuestId(user.id);
+    const userBookings = await Promise.all(userBookingsRaw.map(async (res) => {
+      let acc = null;
+      try {
+        acc = await accommodationRepo.findById(res.accommodationId);
+      } catch (e) {}
+      return {
+        ...res,
+        accommodationTitle: acc ? acc.title : res.accommodationId,
+        mainPhoto: acc ? acc.mainPhoto : '',
+        guests: res.guests
+      };
+    }));
+
+    // Reservas en alojamientos del usuario (host)
+    const hostBookings = await bookingRepo.findByHostId(user.id);
 
     res.render('dashboard', {
       user,

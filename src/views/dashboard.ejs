@@ -36,34 +36,38 @@
     <!-- IZQUIERDA: Reservas -->
     <section>
       <h3>Tus Reservas</h3>
-      <% if (userBookings.length> 0) { %>
-        <% userBookings.forEach(res=> { %>
+      <% if (userBookings.length > 0) { %>
+        <% userBookings.forEach(res => { %>
           <div class="reservation-card">
-            <strong>
-              <%= res.accommodationTitle %>
-            </strong><br>
-            Del <%= res.checkIn %> al <%= res.checkOut %><br>
-                Estado: <%= res.status %>
+            <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento" style="max-width: 80px; border-radius: 6px; margin-bottom: 0.5em;">
+            <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
+            <span>Huéspedes: <%= res.guests %></span><br>
+            Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : '' %><br>
+            Estado: <%= res.status %><br>
+            <form action="/bookings/<%= res.id %>/cancel" method="POST" style="margin-top:0.5em;">
+              <button type="submit" <%= res.status === 'cancelled' ? 'disabled' : '' %>>Cancelar reserva</button>
+            </form>
+            <a href="/accommodations/<%= res.accommodationId %>">Ver alojamiento</a>
           </div>
-          <% }) %>
-            <% } else { %>
-              <p>No tienes reservas aún.</p>
-              <% } %>
+        <% }) %>
+      <% } else { %>
+        <p>No tienes reservas aún.</p>
+      <% } %>
 
-                <h3>Reservas en tus alojamientos</h3>
-                <% if (hostBookings.length> 0) { %>
-                  <% hostBookings.forEach(res=> { %>
-                    <div class="reservation-card">
-                      <strong>
-                        <%= res.accommodationTitle %>
-                      </strong><br>
-                      Huesped: <%= res.guestName %><br>
-                        Del <%= res.checkIn %> al <%= res.checkOut %>
-                    </div>
-                    <% }) %>
-                      <% } else { %>
-                        <p>No hay reservas aún.</p>
-                        <% } %>
+        <h3>Reservas en tus alojamientos</h3>
+        <% if (hostBookings.length> 0) { %>
+          <% hostBookings.forEach(res=> { %>
+            <div class="reservation-card">
+              <strong>
+                <%= res.accommodationTitle %>
+              </strong><br>
+              Huesped: <%= res.guestName %><br>
+                Del <%= res.checkIn %> al <%= res.checkOut %>
+            </div>
+            <% }) %>
+              <% } else { %>
+                <p>No hay reservas aún.</p>
+                <% } %>
     </section>
 
     <!-- CENTRO: Alojamientos -->
@@ -105,10 +109,10 @@
         <input type="hidden" name="userId" value="<%= user.id %>">
 
         <label for="name">Nombre</label>
-        <input type="text" name="name" value="<%= user.name %>" required>
+        <input type="text" name="name" placeholder="Deja vacío para mantener el actual" value="" />
 
         <label for="surName">Apellido</label>
-        <input type="text" name="surName" value="<%= user.surName %>" required>
+        <input type="text" name="surName" placeholder="Deja vacío para mantener el actual" value="" />
 
 
         <input type="hidden" name="email" value="<%= user.email %>" />

@@ -27,6 +27,13 @@ class MongoUserRepository {
       // No permitir cambiar el email
       delete updateData.email;
 
+      // Eliminar campos vacíos para no sobrescribir
+      Object.keys(updateData).forEach(key => {
+        if (typeof updateData[key] === 'string' && updateData[key].trim() === '') {
+          delete updateData[key];
+        }
+      });
+
       // Si hay nueva contraseña, la hasheamos
       if (updateData.password && updateData.password.length > 0) {
         const salt = await bcrypt.genSalt(10);

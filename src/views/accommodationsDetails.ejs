@@ -38,6 +38,7 @@
     <div><strong>Metros cuadrados:</strong> <%= accommodation.squareMeters %> m²</div>
     <div><strong>Habitaciones:</strong> <%= accommodation.rooms %></div>
     <div><strong>Camas:</strong> <%= accommodation.beds %></div>
+    <div><strong>Máximos huespedes:</strong> <%= accommodation.maxGuests %></div>
     <div><strong>Baños:</strong> <%= accommodation.bathrooms %></div>
     <div><strong>Tipo de propiedad:</strong> <%= accommodation.propertyType %></div>
     <div><strong>Se permiten mascotas:</strong> <%= accommodation.petsAllowed ? 'Sí' : 'No' %></div>
@@ -67,6 +68,47 @@
 <div id="calendar"></div>
     <h2>Ubicación en el mapa</h2>
     <div id="map"></div>
+<h3>Realizar reserva</h3>
+    <form id="bookingForm" method="POST" action="/bookings">
+      <input type="hidden" name="accommodationId" value="<%= accommodation.id %>">
+      <input type="hidden" name="hostId" value="<%= accommodation.hostId %>">
+      <label for="startDate">Fecha de entrada:</label>
+      <input type="date" id="startDate" name="startDate" required>
+      <label for="endDate">Fecha de salida:</label>
+      <input type="date" id="endDate" name="endDate" required>
+      <label for="guests">Huéspedes:</label>
+      <input type="number" id="guests" name="guests" min="1" max="<%= accommodation.maxGuests %>" value="1" required>
+      <button type="submit">Reservar</button>
+      <div id="bookingMessage" style="margin-top:1em;color:red;"></div>
+    </form>
+    <script>
+      const availableDates = JSON.parse('<%- JSON.stringify(availability) %>');
+      function isRangeAvailable(start, end) {
+      let current = new Date(start);
+      const last = new Date(end);
+      while (current <= last) {
+        const iso = current.toISOString().slice(0,10);
+        if (!availableDates.includes(iso)) return false;
+        current.setDate(current.getDate() + 1);
+      }
+      return true;
+      }
+      document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      if (!start || !end || start > end) {
+        document.getElementById('bookingMessage').textContent = 'Selecciona un rango de fechas válido.';
+        e.preventDefault();
+        return;
+      }
+      if (!isRangeAvailable(start, end)) {
+        document.getElementById('bookingMessage').textContent = 'Fechas no disponibles, elige fechas marcadas como disponibles.';
+        e.preventDefault();
+      } else {
+        document.getElementById('bookingMessage').textContent = '';
+      }
+      });
+    </script>
   </main>
   <% if (typeof user !== 'undefined' && user && user.id === accommodation.hostId) { %>
       <a href="/accommodations/<%= accommodation.id %>/update" class="button">Editar este alojamiento</a>
@@ -93,13 +135,13 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
-    const availability = <%- JSON.stringify(availability) %>;
-    const booked = <%- JSON.stringify(bookedDates) %>;
+    const calendarAvailability = JSON.parse('<%- JSON.stringify(availability) %>');
+    const booked = JSON.parse('<%- JSON.stringify(bookedDates) %>');
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       selectable: false,
       events: [
-        ...availability.map(date => ({
+        ...calendarAvailability.map(date => ({
           title: 'Disponible',
           start: date,
           display: 'background',

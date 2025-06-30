@@ -1,28 +1,14 @@
 import express from 'express';
-import createBookingController from '../../bookings/controllers/createBookingController.js';
-import getBookingByIdController from '../../bookings/controllers/getBookingByIdController.js';
+import createBookingController from '../api/createBookingController.js';
+import getBookingByIdController from '../api/getBookingByIdController.js';
+import cancelBookingController from '../api/cancelBookingController.js';
+import { ensureAuthenticated } from '../../auth/middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/bookings', createBookingController);
-
-router.get('/bookings/:id', getBookingByIdController);
-
-// Cancelar una reserva vía API
-router.post('/bookings/:id/cancel', async (req, res) => {
-  try {
-    const updated = await bookingRepo.updateStatus(req.params.id, 'cancelled');
-    if (!updated) return res.status(404).json({ error: 'Reserva no encontrada' });
-
-    res.json({
-      message: 'Reserva cancelada con éxito',
-      booking: updated
-    });
-  } catch (err) {
-    console.error('Error al cancelar la reserva:', err);
-    res.status(500).json({ error: 'Error al cancelar la reserva' });
-  }
-});
+router.post('/bookings', ensureAuthenticated, createBookingController);
+router.get('/bookings/:id', ensureAuthenticated, getBookingByIdController);
+router.post('/bookings/:id/cancel', ensureAuthenticated, cancelBookingController);
 
 router.get('/bookings/guest/:guestId', async (req, res) => {
   try {

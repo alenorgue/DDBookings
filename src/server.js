@@ -29,6 +29,8 @@ import accommodationRoutes from './accommodations/api/accommodationRoutes.js';
 console.log('accommodationRoutes importado');
 import authRoutes from './auth/api/authRoutes.js';
 console.log('authRoutes importado');
+import bookingsRoutes from './bookings/api/bookingsRoutes.js';
+console.log('bookingsRoutes importado');
 
 
 // Configuración del servidor Express
@@ -65,6 +67,8 @@ app.use('/', viewRoutes);
 console.log('Rutas web montadas');
 app.use('/auth', authRoutes);
 console.log('/auth montada');
+app.use('/', bookingsRoutes);
+console.log('/bookings montada');
 
 // Conexión a la base de datos MongoDB
 async function connectDB() {

@@ -24,7 +24,7 @@ async function createBooking(params, bookingRepository) {
     throw new Error('La fecha de entrada debe ser anterior a la de salida');
   }
   // 🔍 Verificar disponibilidad
-  const overlapping = await bookingRepository.findOverlappingBookings(accommodationId, start, end);
+  const overlapping = await bookingRepository.findOverlappingBookings(accommodationId, new Date(startDate), new Date(endDate));
   if (overlapping.length > 0) {
     throw new Error('El alojamiento no está disponible en las fechas seleccionadas');
   }
