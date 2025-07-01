@@ -19,13 +19,13 @@ router.post('/register', parser.single('profilePicture'), async (req, res) => {
   }
   try {
     const useCase = new RegisterUser(userRepo);
-    const result = await useCase.execute({ 
+    await useCase.execute({ 
       name, surName, email, password, role, createdAt, profilePicture, bio, phoneNumber, country, language 
     });
     res.redirect('/login'); // Redirige a la página de login después del registro exitoso
    // res.status(201).json({ message: 'Usuario creado', userId: result._id });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    next(err);
   }
 });
 
@@ -42,6 +42,17 @@ router.post('/update', parser.single('profilePicture'), async (req, res) => {
   }
   const updated = await userRepo.updateUser(data.userId, data); // sin cambiar email
   res.redirect(`/dashboard/${updated.id}`);
+});
+
+router.get('/check-email', async (req, res, next) => {
+  try {
+    const email = req.query.email;
+    if (!email) return res.status(400).json({ exists: false, error: 'Email requerido' });
+    const user = await userRepo.findByEmail(email);
+    res.json({ exists: !!user });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Manejo de rutas no encontradas (404)

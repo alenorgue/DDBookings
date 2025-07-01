@@ -39,83 +39,112 @@
     form button[type="submit"] {
       margin-top: 1.5rem;
     }
+
+    .input-error {
+      border-color: #c00 !important;
+    }
+
+    .field-error {
+      color: #c00;
+      font-size: 0.9em;
+      min-height: 1.2em;
+      display: block;
+    }
   </style>
 </head>
 
 <body>
   <main class="container">
     <h1>Add new accommodation</h1>
+    <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>
     <form action="/api/accommodations" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="hostId" value="<%= user._id || user.id %>">
       <div class="grid">
         <div>
           <label for="title">Name</label>
           <input type="text" id="title" name="title" required>
+          <span class="field-error" id="titleError"></span>
         </div>
 
         <div>
           <label for="pricePerNight">Price per Night</label>
           <input type="number" id="pricePerNight" name="pricePerNight" required>
+          <span class="field-error" id="priceError"></span>
         </div>
         <div>
           <label for="description">Description</label>
           <textarea id="description" name="description" required></textarea>
+          <span class="field-error" id="descriptionError"></span>
         </div>
         <div>
           <label for="mainPhoto">Main Photo (Upload)</label>
           <input type="file" id="mainPhoto" name="mainPhoto" accept="image/*" required>
+          <span class="field-error" id="mainPhotoError"></span>
         </div>
         <div>
           <label for="mainPhotoLabel">Describe Main Photo</label>
           <input type="text" name="mainPhotoLabel" id="mainPhotoLabel" placeholder="e.g., cocina, baño, salón">
+          <span class="field-error" id="mainPhotoLabelError"></span>
         </div>
         <div>
           <label for="photos">Upload Additional Photos</label>
           <input type="file" name="photos" id="photos" accept="image/*" multiple>
+          <span class="field-error" id="photosError"></span>
         </div>
         <div>
           <label for="photoLabels">Describe Each Photo (separate with commas)</label>
           <input type="text" name="photoLabels" id="photoLabels" placeholder="e.g., cocina, baño, salón">
+          <span class="field-error" id="photoLabelsError"></span>
         </div>
         <div>
           <label for="rooms">Rooms</label>
           <input type="number" id="rooms" name="rooms" required>
+          <span class="field-error" id="roomsError"></span>
         </div>
         <div>
           <label for="beds">Beds</label>
           <input type="number" id="beds" name="beds" required min="1" max="40">
+          <span class="field-error" id="bedsError"></span>
         </div>
         <div><label for="maxGuests">Max. Guests</label>
           <input type="number" id="maxGuests" name="maxGuests" min="1" max="40" required>
+          <span class="field-error" id="maxGuestsError"></span>
         </div>
         <div>
           <label for="bathrooms">Bathrooms</label>
           <input type="number" id="bathrooms" name="bathrooms" required>
+          <span class="field-error" id="bathroomsError"></span>
         </div>
         <div><label for="petsAllowed">Pets Allowed</label>
           <select id="petsAllowed" name="petsAllowed" required>
             <option value="true">Yes</option>
             <option value="false">No</option>
           </select>
+          <span class="field-error" id="petsAllowedError"></span>
         </div>
         <div><label for="squareMeters">Square Meters</label>
           <input type="number" id="squareMeters" name="squareMeters" required>
+          <span class="field-error" id="squareMetersError"></span>
         </div>
         <div>
           <label for="address">Address</label>
           <input type="text" id="address" name="address" required>
+          <span class="field-error" id="addressError"></span>
         </div>
         <div>
           <label for="city">City</label>
           <input type="text" id="city" name="city" required>
+          <span class="field-error" id="cityError"></span>
         </div>
         <div>
           <label for="country">Country</label>
           <input type="text" id="country" name="country" required>
+          <span class="field-error" id="countryError"></span>
         </div>
         <div>
           <label for="postalCode">Postal Code</label>
           <input type="text" id="postalCode" name="postalCode" required>
+          <span class="field-error" id="postalCodeError"></span>
         </div>
         <h3>Select location on map</h3>
         <div id="map"></div>
@@ -132,41 +161,42 @@
             <option value="Loft">Loft</option>
             <option value="Other">Other</option>
           </select>
+          <span class="field-error" id="propertyTypeError"></span>
         </div>
         <div>
-  <label>Available Services (Amenities)</label>
-  <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
-    <% Object.entries(amenityIcons).forEach(([label, icon]) => { %>
-      <div style="display: flex; flex-direction: column; align-items: center; width: 70px; text-align: center;">
-        <label style="cursor: pointer;" title="<%= label %>">
-          <i class="fas <%= icon %>" style="font-size: 1.6rem; color: #444;"></i><br>
-          <input type="checkbox" name="amenities" value="<%= label %>" style="margin-top: 0.4rem;">
-        </label>
-      </div>
-    <% }) %>
-  </div>
-</div>
-
-
-
-          <div>
-            <label for="houseRules">House Rules</label>
-            <textarea id="houseRules" name="houseRules"></textarea>
-          </div>
-          <div>
-            <label for="cancellationPolicy">Cancellation Policy</label>
-            <input type="text" id="cancellationPolicy" name="cancellationPolicy">
-          </div>
-          <div>
-            <label for="checkIn">Check-in Time</label>
-            <input type="time" id="checkIn" name="checkIn">
-          </div>
-          <div>
-            <label for="checkOut">Check-out Time</label>
-            <input type="time" id="checkOut" name="checkOut">
+          <label>Available Services (Amenities)</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+            <% Object.entries(amenityIcons).forEach(([label, icon]) => { %>
+              <div style="display: flex; flex-direction: column; align-items: center; width: 70px; text-align: center;">
+                <label style="cursor: pointer;" title="<%= label %>">
+                  <i class="fas <%= icon %>" style="font-size: 1.6rem; color: #444;"></i><br>
+                  <input type="checkbox" name="amenities" value="<%= label %>" style="margin-top: 0.4rem;">
+                </label>
+              </div>
+            <% }) %>
           </div>
         </div>
-        <button type="submit">Add accommodation</button>
+
+
+
+        <div>
+          <label for="houseRules">House Rules</label>
+          <textarea id="houseRules" name="houseRules"></textarea>
+        </div>
+        <div>
+          <label for="cancellationPolicy">Cancellation Policy</label>
+          <input type="text" id="cancellationPolicy" name="cancellationPolicy">
+        </div>
+        <div>
+          <label for="checkIn">Check-in Time</label>
+          <input type="time" id="checkIn" name="checkIn">
+        </div>
+        <div>
+          <label for="checkOut">Check-out Time</label>
+          <input type="time" id="checkOut" name="checkOut">
+        </div>
+      </div>
+      <button type="submit">Add accommodation</button>
     </form>
   </main>
   <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async
@@ -198,6 +228,239 @@
         });
       });
     }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.querySelector('form');
+      const errorBox = document.getElementById('formErrorBox');
+      // Get all fields
+      const fields = {
+        title: form.title,
+        pricePerNight: form.pricePerNight,
+        description: form.description,
+        mainPhoto: form.mainPhoto,
+        mainPhotoLabel: form.mainPhotoLabel,
+        photos: form.photos,
+        photoLabels: form.photoLabels,
+        rooms: form.rooms,
+        beds: form.beds,
+        maxGuests: form.maxGuests,
+        bathrooms: form.bathrooms,
+        petsAllowed: form.petsAllowed,
+        squareMeters: form.squareMeters,
+        address: form.address,
+        city: form.city,
+        country: form.country,
+        postalCode: form.postalCode,
+        propertyType: form.propertyType
+      };
+      const errors = {
+        title: document.getElementById('titleError'),
+        pricePerNight: document.getElementById('priceError'),
+        description: document.getElementById('descriptionError'),
+        mainPhoto: document.getElementById('mainPhotoError'),
+        mainPhotoLabel: document.getElementById('mainPhotoLabelError'),
+        photos: document.getElementById('photosError'),
+        photoLabels: document.getElementById('photoLabelsError'),
+        rooms: document.getElementById('roomsError'),
+        beds: document.getElementById('bedsError'),
+        maxGuests: document.getElementById('maxGuestsError'),
+        bathrooms: document.getElementById('bathroomsError'),
+        petsAllowed: document.getElementById('petsAllowedError'),
+        squareMeters: document.getElementById('squareMetersError'),
+        address: document.getElementById('addressError'),
+        city: document.getElementById('cityError'),
+        country: document.getElementById('countryError'),
+        postalCode: document.getElementById('postalCodeError'),
+        propertyType: document.getElementById('propertyTypeError')
+      };
+      function setFieldError(input, errorSpan, msg) {
+        errorSpan.textContent = msg;
+        if (msg) {
+          input.classList.add('input-error');
+        } else {
+          input.classList.remove('input-error');
+        }
+      }
+      function clearError() {
+        errorBox.textContent = '';
+      }
+      // Real-time validation for each field
+      fields.title.addEventListener('input', function () {
+        if (!fields.title.value || fields.title.value.length < 3) {
+          setFieldError(fields.title, errors.title, 'Name must be at least 3 characters.');
+        } else {
+          setFieldError(fields.title, errors.title, '');
+        }
+      });
+      fields.pricePerNight.addEventListener('input', function () {
+        if (!fields.pricePerNight.value || Number(fields.pricePerNight.value) <= 0) {
+          setFieldError(fields.pricePerNight, errors.pricePerNight, 'Price must be a positive number.');
+        } else {
+          setFieldError(fields.pricePerNight, errors.pricePerNight, '');
+        }
+      });
+      fields.description.addEventListener('input', function () {
+        if (!fields.description.value || fields.description.value.length < 10) {
+          setFieldError(fields.description, errors.description, 'Description must be at least 10 characters.');
+        } else {
+          setFieldError(fields.description, errors.description, '');
+        }
+      });
+      fields.mainPhoto.addEventListener('change', function () {
+        if (!fields.mainPhoto.files || fields.mainPhoto.files.length === 0) {
+          setFieldError(fields.mainPhoto, errors.mainPhoto, 'Main photo is required.');
+        } else {
+          setFieldError(fields.mainPhoto, errors.mainPhoto, '');
+        }
+      });
+      fields.rooms.addEventListener('input', function () {
+        if (!fields.rooms.value || Number(fields.rooms.value) < 0) {
+          setFieldError(fields.rooms, errors.rooms, 'Rooms must be 0 or more.');
+        } else {
+          setFieldError(fields.rooms, errors.rooms, '');
+        }
+      });
+      fields.beds.addEventListener('input', function () {
+        if (!fields.beds.value || Number(fields.beds.value) < 1 || Number(fields.beds.value) > 40) {
+          setFieldError(fields.beds, errors.beds, 'Beds must be between 1 and 40.');
+        } else {
+          setFieldError(fields.beds, errors.beds, '');
+        }
+      });
+      fields.maxGuests.addEventListener('input', function () {
+        if (!fields.maxGuests.value || Number(fields.maxGuests.value) < 1 || Number(fields.maxGuests.value) > 40) {
+          setFieldError(fields.maxGuests, errors.maxGuests, 'Max guests must be between 1 and 40.');
+        } else {
+          setFieldError(fields.maxGuests, errors.maxGuests, '');
+        }
+      });
+      fields.bathrooms.addEventListener('input', function () {
+        if (!fields.bathrooms.value || Number(fields.bathrooms.value) < 0) {
+          setFieldError(fields.bathrooms, errors.bathrooms, 'Bathrooms must be 0 or more.');
+        } else {
+          setFieldError(fields.bathrooms, errors.bathrooms, '');
+        }
+      });
+      fields.petsAllowed.addEventListener('change', function () {
+        if (!fields.petsAllowed.value) {
+          setFieldError(fields.petsAllowed, errors.petsAllowed, 'Select if pets are allowed.');
+        } else {
+          setFieldError(fields.petsAllowed, errors.petsAllowed, '');
+        }
+      });
+      fields.squareMeters.addEventListener('input', function () {
+        if (!fields.squareMeters.value || Number(fields.squareMeters.value) <= 0) {
+          setFieldError(fields.squareMeters, errors.squareMeters, 'Square meters must be positive.');
+        } else {
+          setFieldError(fields.squareMeters, errors.squareMeters, '');
+        }
+      });
+      fields.address.addEventListener('input', function () {
+        if (!fields.address.value || fields.address.value.length < 3) {
+          setFieldError(fields.address, errors.address, 'Address must be at least 3 characters.');
+        } else {
+          setFieldError(fields.address, errors.address, '');
+        }
+      });
+      fields.city.addEventListener('input', function () {
+        if (!fields.city.value || fields.city.value.length < 2) {
+          setFieldError(fields.city, errors.city, 'City must be at least 2 characters.');
+        } else {
+          setFieldError(fields.city, errors.city, '');
+        }
+      });
+      fields.country.addEventListener('input', function () {
+        if (!fields.country.value || fields.country.value.length < 2) {
+          setFieldError(fields.country, errors.country, 'Country must be at least 2 characters.');
+        } else {
+          setFieldError(fields.country, errors.country, '');
+        }
+      });
+      fields.postalCode.addEventListener('input', function () {
+        if (!fields.postalCode.value || fields.postalCode.value.length < 3) {
+          setFieldError(fields.postalCode, errors.postalCode, 'Postal code must be at least 3 characters.');
+        } else {
+          setFieldError(fields.postalCode, errors.postalCode, '');
+        }
+      });
+      fields.propertyType.addEventListener('change', function () {
+        if (!fields.propertyType.value) {
+          setFieldError(fields.propertyType, errors.propertyType, 'Select a property type.');
+        } else {
+          setFieldError(fields.propertyType, errors.propertyType, '');
+        }
+      });
+      // On submit, check all fields again
+      form.addEventListener('submit', function (e) {
+        clearError();
+        let hasError = false;
+        if (!fields.title.value || fields.title.value.length < 3) {
+          setFieldError(fields.title, errors.title, 'Name must be at least 3 characters.');
+          hasError = true;
+        }
+        if (!fields.pricePerNight.value || Number(fields.pricePerNight.value) <= 0) {
+          setFieldError(fields.pricePerNight, errors.pricePerNight, 'Price must be a positive number.');
+          hasError = true;
+        }
+        if (!fields.description.value || fields.description.value.length < 10) {
+          setFieldError(fields.description, errors.description, 'Description must be at least 10 characters.');
+          hasError = true;
+        }
+        if (!fields.mainPhoto.files || fields.mainPhoto.files.length === 0) {
+          setFieldError(fields.mainPhoto, errors.mainPhoto, 'Main photo is required.');
+          hasError = true;
+        }
+        if (!fields.rooms.value || Number(fields.rooms.value) < 0) {
+          setFieldError(fields.rooms, errors.rooms, 'Rooms must be 0 or more.');
+          hasError = true;
+        }
+        if (!fields.beds.value || Number(fields.beds.value) < 1 || Number(fields.beds.value) > 40) {
+          setFieldError(fields.beds, errors.beds, 'Beds must be between 1 and 40.');
+          hasError = true;
+        }
+        if (!fields.maxGuests.value || Number(fields.maxGuests.value) < 1 || Number(fields.maxGuests.value) > 40) {
+          setFieldError(fields.maxGuests, errors.maxGuests, 'Max guests must be between 1 and 40.');
+          hasError = true;
+        }
+        if (!fields.bathrooms.value || Number(fields.bathrooms.value) < 0) {
+          setFieldError(fields.bathrooms, errors.bathrooms, 'Bathrooms must be 0 or more.');
+          hasError = true;
+        }
+        if (!fields.petsAllowed.value) {
+          setFieldError(fields.petsAllowed, errors.petsAllowed, 'Select if pets are allowed.');
+          hasError = true;
+        }
+        if (!fields.squareMeters.value || Number(fields.squareMeters.value) <= 0) {
+          setFieldError(fields.squareMeters, errors.squareMeters, 'Square meters must be positive.');
+          hasError = true;
+        }
+        if (!fields.address.value || fields.address.value.length < 3) {
+          setFieldError(fields.address, errors.address, 'Address must be at least 3 characters.');
+          hasError = true;
+        }
+        if (!fields.city.value || fields.city.value.length < 2) {
+          setFieldError(fields.city, errors.city, 'City must be at least 2 characters.');
+          hasError = true;
+        }
+        if (!fields.country.value || fields.country.value.length < 2) {
+          setFieldError(fields.country, errors.country, 'Country must be at least 2 characters.');
+          hasError = true;
+        }
+        if (!fields.postalCode.value || fields.postalCode.value.length < 3) {
+          setFieldError(fields.postalCode, errors.postalCode, 'Postal code must be at least 3 characters.');
+          hasError = true;
+        }
+        if (!fields.propertyType.value) {
+          setFieldError(fields.propertyType, errors.propertyType, 'Select a property type.');
+          hasError = true;
+        }
+        if (hasError) {
+          errorBox.textContent = 'Please fix the errors before submitting.';
+          e.preventDefault();
+        }
+      });
+    });
   </script>
 </body>
 

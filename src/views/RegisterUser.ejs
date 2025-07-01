@@ -2,131 +2,242 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register User</title>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register User</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
 </head>
 
 <body>
-    <main class="container">
-        <h1>Register User</h1>
-        <form action="/api/users/register" method="POST" enctype="multipart/form-data">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required minlength="2" maxlength="100">
+  <main class="container">
+    <h1>Register User</h1>
+    <!-- Error message box for validation errors -->
+    <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>
+    <form action="/api/users/register" method="POST" enctype="multipart/form-data">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required minlength="2" maxlength="40">
+      <span class="field-error" id="nameError"></span>
 
-            <label for="surName">Surname</label>
-            <input type="text" id="surName" name="surName" required minlength="2" maxlength="100">
+      <label for="surName">Surname</label>
+      <input type="text" id="surName" name="surName" required minlength="2" maxlength="100">
+      <span class="field-error" id="surNameError"></span>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$">
+      <span class="field-error" id="emailError"></span>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required minlength="8"
-                pattern="^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&*()_+-={}[]:;?,./]).{8,}$"
-                placeholder="Min 8 chars, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required minlength="8"
+        pattern="^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&*()_+-={}[]:;?,./]).{8,}$"
+        placeholder="Min 8 chars, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo">
+      <span class="field-error" id="passwordError"></span>
 
-            <label for="role">Role</label>
-            <select id="role" name="role" required>
-                <option value="guest">Guest</option>
-                <option value="host">Host</option>
-            </select>
+      <label for="role">Role</label>
+      <select id="role" name="role" required>
+        <option value="guest">Guest</option>
+        <option value="host">Host</option>
+      </select>
+      <span class="field-error" id="roleError"></span>
 
-            <label for="profilePicture">Profile Picture</label>
-            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-            <span style="font-size:0.9em;">Puedes subir una imagen o dejar vacío para no añadir foto.</span>
+      <label for="profilePicture">Profile Picture</label>
+      <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+      <span style="font-size:0.9em;">Puedes subir una imagen o dejar vacío para no añadir foto.</span>
 
-            <label for="bio">Bio</label>
-            <textarea id="bio" name="bio" maxlength="500"></textarea>
+      <label for="bio">Bio</label>
+      <textarea id="bio" name="bio" maxlength="500"></textarea>
+      <span class="field-error" id="bioError"></span>
 
-            <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" pattern="^[0-9+\-() ]{7,20}$">
+      <label for="phoneNumber">Phone Number</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" pattern="^[0-9+\-() ]{7,20}$">
+      <span class="field-error" id="phoneError"></span>
 
-            <label for="country">Country</label>
-            <input type="text" id="country" name="country">
+      <label for="country">Country</label>
+      <input type="text" id="country" name="country">
+      <span class="field-error" id="countryError"></span>
 
-            <label for="language">Language</label>
-            <select id="language" name="language">
-                <option value="en">English</option>
-                <option value="es">Castellano</option>
-                <option value="cat">Catala</option>
-            </select>
-            <button type="submit">Register</button>
-        </form>
-    </main>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('form');
-        const name = form.name;
-        const surName = form.surName;
-        const email = form.email;
-        const password = form.password;
-        const role = form.role;
-        const phone = form.phoneNumber;
-        const country = form.country;
-        const language = form.language;
-        const bio = form.bio;
-        const errorBox = document.createElement('div');
-        errorBox.style.color = '#c00';
-        errorBox.style.marginBottom = '1em';
-        form.prepend(errorBox);
+      <label for="language">Language</label>
+      <select id="language" name="language">
+        <option value="en">English</option>
+        <option value="es">Castellano</option>
+        <option value="cat">Catala</option>
+      </select>
+      <span class="field-error" id="languageError"></span>
+      <button type="submit">Register</button>
+    </form>
+  </main>
+  <style>
+    .input-error {
+      border-color: #c00 !important;
+    }
 
-        function showError(msg) {
-          errorBox.textContent = msg;
+    .field-error {
+      color: #c00;
+      font-size: 0.9em;
+      min-height: 1.2em;
+      display: block;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.querySelector('form');
+      const name = form.name;
+      const surName = form.surName;
+      const email = form.email;
+      const password = form.password;
+      const role = form.role;
+      const phone = form.phoneNumber;
+      const country = form.country;
+      const language = form.language;
+      const bio = form.bio;
+      const errorBox = document.getElementById('formErrorBox');
+      // Field error spans
+      const nameError = document.getElementById('nameError');
+      const surNameError = document.getElementById('surNameError');
+      const emailError = document.getElementById('emailError');
+      const passwordError = document.getElementById('passwordError');
+      const roleError = document.getElementById('roleError');
+      const phoneError = document.getElementById('phoneError');
+      const countryError = document.getElementById('countryError');
+      const languageError = document.getElementById('languageError');
+      const bioError = document.getElementById('bioError');
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+      }
+      function clearError() {
+        errorBox.textContent = '';
+      }
+      function setFieldError(input, errorSpan, msg) {
+        errorSpan.textContent = msg;
+        if (msg) {
+          input.classList.add('input-error');
+        } else {
+          input.classList.remove('input-error');
         }
-        function clearError() {
-          errorBox.textContent = '';
+      }
+      // Real-time validation functions
+      name.addEventListener('input', function () {
+        if (name.value.length < 2 || name.value.length > 100) {
+          setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.');
+        } else {
+          setFieldError(name, nameError, '');
         }
-
-        form.addEventListener('submit', function (e) {
-          clearError();
-          // Nombre y apellido
-          if (name.value.length < 2 || name.value.length > 100) {
-            showError('El nombre debe tener entre 2 y 100 caracteres.');
-            e.preventDefault(); return;
-          }
-          if (surName.value.length < 2 || surName.value.length > 100) {
-            showError('El apellido debe tener entre 2 y 100 caracteres.');
-            e.preventDefault(); return;
-          }
-          // Email
-          if (!/^\S+@\S+\.\S+$/.test(email.value)) {
-            showError('Introduce un email válido.');
-            e.preventDefault(); return;
-          }
-          // Password
-          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]:;?,./]).{8,}$/.test(password.value)) {
-            showError('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
-            e.preventDefault(); return;
-          }
-          // Rol
-          if (!role.value || (role.value !== 'guest' && role.value !== 'host')) {
-            showError('Selecciona un rol válido.');
-            e.preventDefault(); return;
-          }
-          // Teléfono (opcional)
-          if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) {
-            showError('Introduce un teléfono válido.');
-            e.preventDefault(); return;
-          }
-          // País (opcional)
-          if (country.value && (country.value.length < 2 || country.value.length > 100)) {
-            showError('El país debe tener entre 2 y 100 caracteres.');
-            e.preventDefault(); return;
-          }
-          // Idioma
-          if (!['en','es','cat'].includes(language.value)) {
-            showError('Selecciona un idioma válido.');
-            e.preventDefault(); return;
-          }
-          // Bio (opcional)
-          if (bio.value && bio.value.length > 500) {
-            showError('La biografía no puede superar los 500 caracteres.');
-            e.preventDefault(); return;
-          }
-        });
       });
-    </script>
+      surName.addEventListener('input', function () {
+        if (surName.value.length < 2 || surName.value.length > 100) {
+          setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.');
+        } else {
+          setFieldError(surName, surNameError, '');
+        }
+      });
+      email.addEventListener('input', async function () {
+        const value = email.value.trim();
+        if (!/^\S+@\S+\.\S+$/.test(value)) {
+          setFieldError(email, emailError, 'Introduce un email válido.');
+          return;
+        }
+        // Validación en backend
+        try {
+          const res = await fetch(`/api/users/check-email?email=${encodeURIComponent(value)}`);
+          const data = await res.json();
+          if (data.exists) {
+            setFieldError(email, emailError, 'Este email ya está registrado.');
+          } else {
+            setFieldError(email, emailError, '');
+          }
+        } catch (e) {
+          setFieldError(email, emailError, 'Error al comprobar el email.');
+        }
+      });
+      password.addEventListener('input', function () {
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) {
+          setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
+        } else {
+          setFieldError(password, passwordError, '');
+        }
+      });
+      role.addEventListener('change', function () {
+        if (!role.value || (role.value !== 'guest' && role.value !== 'host')) {
+          setFieldError(role, roleError, 'Selecciona un rol válido.');
+        } else {
+          setFieldError(role, roleError, '');
+        }
+      });
+      phone.addEventListener('input', function () {
+        if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) {
+          setFieldError(phone, phoneError, 'Introduce un teléfono válido.');
+        } else {
+          setFieldError(phone, phoneError, '');
+        }
+      });
+      country.addEventListener('input', function () {
+        if (country.value && (country.value.length < 2 || country.value.length > 100)) {
+          setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.');
+        } else {
+          setFieldError(country, countryError, '');
+        }
+      });
+      language.addEventListener('change', function () {
+        if (!['en', 'es', 'cat'].includes(language.value)) {
+          setFieldError(language, languageError, 'Selecciona un idioma válido.');
+        } else {
+          setFieldError(language, languageError, '');
+        }
+      });
+      bio.addEventListener('input', function () {
+        if (bio.value && bio.value.length > 500) {
+          setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.');
+        } else {
+          setFieldError(bio, bioError, '');
+        }
+      });
+      // On submit, check all fields again
+      form.addEventListener('submit', function (e) {
+        clearError();
+        let hasError = false;
+        if (name.value.length < 2 || name.value.length > 100) {
+          setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.');
+          hasError = true;
+        }
+        if (surName.value.length < 2 || surName.value.length > 100) {
+          setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.');
+          hasError = true;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email.value)) {
+          setFieldError(email, emailError, 'Introduce un email válido.');
+          hasError = true;
+        }
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) {
+          setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
+          hasError = true;
+        }
+        if (!role.value || (role.value !== 'guest' && role.value !== 'host')) {
+          setFieldError(role, roleError, 'Selecciona un rol válido.');
+          hasError = true;
+        }
+        if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) {
+          setFieldError(phone, phoneError, 'Introduce un teléfono válido.');
+          hasError = true;
+        }
+        if (country.value && (country.value.length < 2 || country.value.length > 100)) {
+          setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.');
+          hasError = true;
+        }
+        if (!['en', 'es', 'cat'].includes(language.value)) {
+          setFieldError(language, languageError, 'Selecciona un idioma válido.');
+          hasError = true;
+        }
+        if (bio.value && bio.value.length > 500) {
+          setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.');
+          hasError = true;
+        }
+        if (hasError) {
+          showError('Por favor, corrige los errores antes de enviar el formulario.');
+          e.preventDefault();
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

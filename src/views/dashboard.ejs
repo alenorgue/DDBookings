@@ -28,6 +28,17 @@
       border-bottom: 1px solid #ddd;
       padding: 0.5rem 0;
     }
+
+    .input-error {
+      border-color: #c00 !important;
+    }
+
+    .field-error {
+      color: #c00;
+      font-size: 0.9em;
+      min-height: 1.2em;
+      display: block;
+    }
   </style>
 </head>
 
@@ -123,45 +134,112 @@
               <%= user.email %>
             </p>
       <h3>Editar Perfil</h3>
+      <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>
       <form action="/api/users/update" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="userId" value="<%= user.id %>">
-
         <label for="name">Nombre</label>
-        <input type="text" name="name" placeholder="Deja vacío para mantener el actual" value="" />
-
+        <input type="text" name="name" id="name" placeholder="Deja vacío para mantener el actual" value="" />
+        <span class="field-error" id="nameError"></span>
         <label for="surName">Apellido</label>
-        <input type="text" name="surName" placeholder="Deja vacío para mantener el actual" value="" />
-
-
+        <input type="text" name="surName" id="surName" placeholder="Deja vacío para mantener el actual" value="" />
+        <span class="field-error" id="surNameError"></span>
         <input type="hidden" name="email" value="<%= user.email %>" />
-
         <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
-
         <input type="password" name="password" id="password" placeholder="********" />
-
-
+        <span class="field-error" id="passwordError"></span>
         <label for="profilePicture">Foto de Perfil</label>
         <input type="file" name="profilePicture" id="profilePicture" accept="image/*" />
+        <span class="field-error" id="profilePictureError"></span>
         <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
-
         <label for="bio">Biografía</label>
         <textarea name="bio" id="bio" maxlength="500"><%= user.bio %></textarea>
-
+        <span class="field-error" id="bioError"></span>
         <label for="phoneNumber">Teléfono</label>
         <input type="text" name="phoneNumber" id="phoneNumber" value="<%= user.phoneNumber %>" />
-
+        <span class="field-error" id="phoneError"></span>
         <label for="country">País</label>
         <input type="text" name="country" id="country" value="<%= user.country %>" />
-
+        <span class="field-error" id="countryError"></span>
         <label for="language">Idioma preferido</label>
         <select name="language" id="language">
           <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
           <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
           <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
         </select>
-
+        <span class="field-error" id="languageError"></span>
         <button type="submit">Guardar Cambios</button>
       </form>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const form = document.querySelector('form[action="/api/users/update"]');
+          const errorBox = document.getElementById('formErrorBox');
+          const name = form.name;
+          const surName = form.surName;
+          const password = form.password;
+          const profilePicture = form.profilePicture;
+          const bio = form.bio;
+          const phone = form.phoneNumber;
+          const country = form.country;
+          const language = form.language;
+          // Error spans
+          const nameError = document.getElementById('nameError');
+          const surNameError = document.getElementById('surNameError');
+          const passwordError = document.getElementById('passwordError');
+          const profilePictureError = document.getElementById('profilePictureError');
+          const bioError = document.getElementById('bioError');
+          const phoneError = document.getElementById('phoneError');
+          const countryError = document.getElementById('countryError');
+          const languageError = document.getElementById('languageError');
+          function setFieldError(input, errorSpan, msg) {
+            errorSpan.textContent = msg;
+            if (msg) input.classList.add('input-error');
+            else input.classList.remove('input-error');
+          }
+          function clearError() { errorBox.textContent = ''; }
+          // Real-time validation
+          name.addEventListener('input', function () {
+            if (name.value && (name.value.length < 2 || name.value.length > 100)) setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.');
+            else setFieldError(name, nameError, '');
+          });
+          surName.addEventListener('input', function () {
+            if (surName.value && (surName.value.length < 2 || surName.value.length > 100)) setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.');
+            else setFieldError(surName, surNameError, '');
+          });
+          password.addEventListener('input', function () {
+            if (password.value && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
+            else setFieldError(password, passwordError, '');
+          });
+          phone.addEventListener('input', function () {
+            if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) setFieldError(phone, phoneError, 'Introduce un teléfono válido.');
+            else setFieldError(phone, phoneError, '');
+          });
+          country.addEventListener('input', function () {
+            if (country.value && (country.value.length < 2 || country.value.length > 100)) setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.');
+            else setFieldError(country, countryError, '');
+          });
+          language.addEventListener('change', function () {
+            if (!['en','es','cat'].includes(language.value)) setFieldError(language, languageError, 'Selecciona un idioma válido.');
+            else setFieldError(language, languageError, '');
+          });
+          bio.addEventListener('input', function () {
+            if (bio.value && bio.value.length > 500) setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.');
+            else setFieldError(bio, bioError, '');
+          });
+          // On submit, check all fields
+          form.addEventListener('submit', function (e) {
+            clearError();
+            let hasError = false;
+            if (name.value && (name.value.length < 2 || name.value.length > 100)) { setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.'); hasError = true; }
+            if (surName.value && (surName.value.length < 2 || surName.value.length > 100)) { setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.'); hasError = true; }
+            if (password.value && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) { setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.'); hasError = true; }
+            if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) { setFieldError(phone, phoneError, 'Introduce un teléfono válido.'); hasError = true; }
+            if (country.value && (country.value.length < 2 || country.value.length > 100)) { setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.'); hasError = true; }
+            if (!['en','es','cat'].includes(language.value)) { setFieldError(language, languageError, 'Selecciona un idioma válido.'); hasError = true; }
+            if (bio.value && bio.value.length > 500) { setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.'); hasError = true; }
+            if (hasError) { errorBox.textContent = 'Corrige los errores antes de guardar.'; e.preventDefault(); }
+          });
+        });
+      </script>
     </section>
 
   </main>

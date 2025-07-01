@@ -33,7 +33,8 @@ import authRoutes from './auth/api/authRoutes.js';
 console.log('authRoutes importado');
 import bookingsRoutes from './bookings/api/bookingsRoutes.js';
 console.log('bookingsRoutes importado');
-
+import viewRoutes from './web/routes/viewRoutes.js';
+console.log('viewRoutes importado');
 
 // Configuración del servidor Express
 const app = express();
@@ -64,14 +65,14 @@ app.use('/api/accommodations', accommodationRoutes);
 console.log('/api/accommodations montada');
 app.use('/api/users', userRoutes);
 console.log('/api/users montada');
-import viewRoutes from './web/routes/viewRoutes.js';
-app.use('/', viewRoutes);
-console.log('Rutas web montadas');
+
+
 app.use('/auth', authRoutes);
 console.log('/auth montada');
-app.use('/', bookingsRoutes);
+app.use('/bookings', bookingsRoutes);
 console.log('/bookings montada');
-
+app.use('/', viewRoutes);
+console.log('Rutas web montadas');
 // Conexión a la base de datos MongoDB
 connectDB();
 console.log('connectDB llamado');

@@ -3,8 +3,10 @@ import createBookingController from '../api/createBookingController.js';
 import getBookingByIdController from '../api/getBookingByIdController.js';
 import cancelBookingController from '../api/cancelBookingController.js';
 import { ensureAuthenticated } from '../../auth/middleware/auth.js';
+import MongoBookingRepository from '../infrastructure/MongoBookingRepository.js';
 
 const router = express.Router();
+const bookingRepo = new MongoBookingRepository();
 
 router.post('/bookings', ensureAuthenticated, createBookingController);
 router.get('/bookings/:id', ensureAuthenticated, getBookingByIdController);
