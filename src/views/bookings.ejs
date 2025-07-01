@@ -7,6 +7,7 @@
 </head>
 <body>
   <main class="container">
+      <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
     <h1>¡Reserva confirmada!</h1>
     <% if (!accommodation || !booking) { %>
       <p>Error: No se pudo encontrar la reserva o el alojamiento.</p>

@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Register User</h1>
     <!-- Error message box for validation errors -->

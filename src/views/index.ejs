@@ -32,6 +32,7 @@
 </head>
 
 <body>
+  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Bienvenido a Dream Driven Bookings</h1>
     <p>Explora, publica y gestiona alojamientos turísticos con facilidad.</p>

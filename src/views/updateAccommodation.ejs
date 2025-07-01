@@ -55,6 +55,7 @@
 </head>
 
 <body>
+    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Editar Alojamiento</h1>
     <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>

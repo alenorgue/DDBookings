@@ -43,6 +43,7 @@
 </head>
 
 <body>
+    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="dashboard">
     <!-- IZQUIERDA: Reservas -->
     <section>

@@ -14,6 +14,7 @@
   </style>
 </head>
 <body>
+    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h2>Detalles de la Reserva</h2>
 

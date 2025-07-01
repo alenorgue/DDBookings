@@ -1,0 +1,22 @@
+<nav style="width:100%;background:#f8f9fa;padding:0.7em 0 0.7em 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:2em;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:1.5em;">
+      <a href="/" style="font-weight:bold;font-size:1.2em;color:#333;text-decoration:none;">🏠 Home</a>
+      <a href="/accommodations" style="color:#333;text-decoration:none;">Alojamientos</a>
+      <% if (user) { %>
+        <a href="/dashboard/<%= user.id || user._id %>" style="color:#333;text-decoration:none;">Mi Panel</a>
+        <a href="/createAccommodation" style="color:#333;text-decoration:none;">Nuevo alojamiento</a>
+      <% } %>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.2em;">
+      <% if (user) { %>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button type="submit" style="background:none;border:none;color:#c00;font-weight:bold;cursor:pointer;">Cerrar sesión</button>
+        </form>
+      <% } else { %>
+        <a href="/register" style="color:#333;text-decoration:none;">Registrar usuario</a>
+        <a href="/login" style="color:#333;text-decoration:none;">Iniciar sesión</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

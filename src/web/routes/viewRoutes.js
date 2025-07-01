@@ -97,6 +97,9 @@ router.get('/accommodations/:id', async (req, res) => {
 
 // Renderiza el formulario para crear un nuevo alojamiento
 router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
+  if (req.session.user.role !== 'host') {
+    return res.render('onlyHosts');
+  }
   res.render('createAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, 
     amenityIcons: amenityIcons,
@@ -106,6 +109,9 @@ router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
 
 // Renderiza el formulario para crear un nuevo alojamiento (ruta alternativa para dashboard)
 router.get('/accommodations/createAccommodation', ensureAuthenticated, (req, res) => {
+  if (req.session.user.role !== 'host') {
+    return res.render('onlyHosts');
+  }
   res.render('createAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
     amenityIcons: amenityIcons,

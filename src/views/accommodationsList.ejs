@@ -19,6 +19,7 @@
   </style>
 </head>
 <body>
+  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Alojamientos</h1>
     <form method="GET" action="/accommodations" style="margin-bottom: 2rem;">
