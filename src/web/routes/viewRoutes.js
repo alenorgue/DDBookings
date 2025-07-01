@@ -4,7 +4,7 @@ import MongoAccommodationRepository from '../../accommodations/infrastructure/Mo
 import MongoBookingRepository from '../../bookings/infrastructure/MongoBookingRepository.js';
 import amenityIcons from '../../shared/amenityIcons.js';
 import { ensureAuthenticated } from '../../auth/middleware/auth.js';
-import { configDotenv } from 'dotenv';
+
 
 const router = express.Router();
 const userRepo = new MongoUserRepository();
@@ -19,25 +19,31 @@ router.get('/', (req, res) => {
 
 router.get('/accommodations', async (req, res) => {
   try {
-    const { guests, maxPrice, city } = req.query;
+    const { guests, maxPrice, city, checkIn, checkOut } = req.query;
     const filter = {};
+    if (guests) filter.maxGuests = { $gte: parseInt(guests) };
+    if (maxPrice) filter.pricePerNight = { $lte: parseFloat(maxPrice) };
+    if (city) filter['location.city'] = { $regex: new RegExp(city, 'i') };
 
-    // Aplica filtros solo si existen en la query
-    if (guests) {
-      filter.maxGuests = { $gte: parseInt(guests) };
-    }
-
-    if (maxPrice) {
-      filter.pricePerNight = { $lte: parseFloat(maxPrice) };
-    }
-
-    if (city) {
-      filter['location.city'] = { $regex: new RegExp(city, 'i') };
-    }
-
-    const accommodations = Object.keys(filter).length > 0
+    let accommodations = Object.keys(filter).length > 0
       ? await accommodationRepo.findByFilter(filter)
-      : await accommodationRepo.findAll(); // sin filtro → todos
+      : await accommodationRepo.findAll();
+
+    // Filtrado por rango de fechas disponibles
+    if (checkIn && checkOut) {
+      // Importa la utilidad para rango de fechas
+      const { getDateRangeArray } = await import('../../accommodations/utils/availabilityUtils.js');
+      const range = getDateRangeArray(checkIn, checkOut);
+      accommodations = accommodations.filter(acc => {
+        // Convierte availability a array de YYYY-MM-DD
+        const available = (acc.availability || []).map(d =>
+          d instanceof Date ? d.toISOString().slice(0, 10) :
+          (d && d.$date ? new Date(d.$date).toISOString().slice(0, 10) : d)
+        );
+        // Todas las fechas del rango deben estar en availability
+        return range.every(date => available.includes(date));
+      });
+    }
 
     res.render('accommodationsList', {
       accommodations,

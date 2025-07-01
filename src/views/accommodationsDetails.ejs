@@ -45,7 +45,7 @@
     <div><strong>Política de cancelación:</strong> <%= accommodation.cancellationPolicy %></div>
     <div><strong>Check-in:</strong> <%= accommodation.checkIn %> | <strong>Check-out:</strong> <%= accommodation.checkOut %></div>
     <div><strong>Reglas de la casa:</strong> <%= accommodation.houseRules || 'No especificadas' %></div>
-    <div><strong>Comodidades:</strong>
+    <div><strong>Servicios:</strong>
       <ul>
         <% accommodation.amenities.forEach(a => { %>
           <li><%= a %></li>
@@ -69,7 +69,7 @@
     <h2>Ubicación en el mapa</h2>
     <div id="map"></div>
 <h3>Realizar reserva</h3>
-    <form id="bookingForm" method="POST" action="/bookings">
+    <form id="bookingForm" method="POST" action="/bookings/">
       <input type="hidden" name="accommodationId" value="<%= accommodation.id %>">
       <input type="hidden" name="hostId" value="<%= accommodation.hostId %>">
       <label for="startDate">Fecha de entrada:</label>
@@ -133,6 +133,11 @@
   <p><em>Ubicación no disponible para este alojamiento.</em></p>
 <% } %>
 <script>
+  function addOneDay(dateStr) {
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  }
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     const calendarAvailability = JSON.parse('<%- JSON.stringify(availability) %>');
@@ -150,7 +155,7 @@
         ...booked.map(b => ({
           title: 'Reservado',
           start: b.start,
-          end: b.end,
+          end: addOneDay(b.end), // Suma un día para que el rango sea inclusivo
           color: '#f8d7da',
           display:'background'
         }))

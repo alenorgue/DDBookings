@@ -8,37 +8,35 @@ import MongoBookingRepository from '../infrastructure/MongoBookingRepository.js'
 const router = express.Router();
 const bookingRepo = new MongoBookingRepository();
 
-router.post('/bookings', ensureAuthenticated, createBookingController);
-router.get('/bookings/:id', ensureAuthenticated, getBookingByIdController);
-router.post('/bookings/:id/cancel', ensureAuthenticated, cancelBookingController);
+// RESTful: all routes are relative to /bookings
+router.post('/', ensureAuthenticated, createBookingController);
+router.get('/:id', ensureAuthenticated, getBookingByIdController);
+router.post('/:id/cancel', ensureAuthenticated, cancelBookingController);
 
-router.get('/bookings/guest/:guestId', async (req, res) => {
+router.get('/guest/:guestId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByGuestId(req.params.guestId);
-   res.json(bookings);
+    res.json(bookings);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al obtener reservas del huésped');
+    next(err);
   }
 });
 
-router.get('/bookings/host/:hostId', async (req, res) => {
+router.get('/host/:hostId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByHostId(req.params.hostId);
-   res.json(bookings);
+    res.json(bookings);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al obtener reservas del anfitrión');
+    next(err);
   }
 });
 
-router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
+router.get('/accommodation/:accommodationId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByAccommodationId(req.params.accommodationId);
     res.json(bookings);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al obtener reservas del alojamiento');
+    next(err);
   }
 });
 
