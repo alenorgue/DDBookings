@@ -67,13 +67,13 @@ router.get('/accommodations/:id', async (req, res) => {
     const accommodation = await accommodationRepo.findById(req.params.id);
     if (!accommodation) return res.status(404).send('Alojamiento no encontrado');
 
-    // Obtener reservas relacionadas
-    const bookings = await bookingRepo.findByAccommodationId(req.params.id);
+    // Obtener solo reservas confirmadas para el calendario
+    const bookings = await bookingRepo.findConfirmedByAccommodationId(req.params.id);
 
     // Fechas reservadas (para el calendario)
     const bookedDates = bookings.map(b => ({
-      start: b.startDate,
-      end: b.endDate
+      start: b.startDate instanceof Date ? b.startDate.toISOString().slice(0, 10) : (b.startDate ? b.startDate.toString().slice(0, 10) : null),
+      end: b.endDate instanceof Date ? b.endDate.toISOString().slice(0, 10) : (b.endDate ? b.endDate.toString().slice(0, 10) : null)
     }));
 
     // Fechas disponibles desde el alojamiento

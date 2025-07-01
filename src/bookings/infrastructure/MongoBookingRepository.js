@@ -36,6 +36,10 @@ class MongoBookingRepository {
         const found = await BookingModel.find({ accommodationId });
         return found.map(doc => new Booking({ ...doc.toObject(), id: doc._id }));
     }
+    async findConfirmedByAccommodationId(accommodationId) {
+        const found = await BookingModel.find({ accommodationId, status: 'confirmed' });
+        return found.map(doc => new Booking({ ...doc.toObject(), id: doc._id }));
+    }
     async findOverlappingBookings(accommodationId, startDate, endDate) {
         return await BookingModel.find({
             accommodationId,
