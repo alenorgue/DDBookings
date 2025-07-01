@@ -16,6 +16,7 @@ import MongoStore from 'connect-mongo';
 console.log('connect-mongo importado');
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import methodOverride from 'method-override';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -45,6 +46,8 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
+// Habilita method-override para soportar PUT y DELETE en formularios HTML
+app.use(methodOverride('_method'));
 
 // Configuración de la sesión (debe ir antes de montar rutas que usen req.session)
 app.use(session({

@@ -204,7 +204,12 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
     if (!req.session.user || accommodation.hostId !== req.session.user.id) {
       return res.status(403).send('No tienes permisos para editar este alojamiento');
     }
-    res.render('updateAccommodation', { accommodation });
+   res.render('updateAccommodation', {
+  accommodation,
+  user: req.session.user, // corregido para que siempre haya user
+  amenityIcons,
+  googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // corregido para que siempre haya valor
+});
   } catch (err) {
     console.error(err);
     next(err);

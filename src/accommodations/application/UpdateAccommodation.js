@@ -8,6 +8,57 @@ class UpdateAccommodation {
   }
 
   async execute(id, data) {
+    // Reconstruir location si viene plano desde el formulario
+    if (!data.location && data.country && data.city && data.address && data.postalCode) {
+      data.location = {
+        country: data.country,
+        city: data.city,
+        address: data.address,
+        postalCode: data.postalCode,
+        coordinates: {
+          lat: Number(data.lat),
+          lng: Number(data.lng)
+        }
+      };
+    }
+    // Cast de campos numéricos (por si vienen como string del formulario)
+    data.pricePerNight = Number(data.pricePerNight);
+    data.squareMeters = Number(data.squareMeters);
+    data.rooms = Number(data.rooms);
+    data.beds = Number(data.beds);
+    data.maxGuests = Number(data.maxGuests);
+    data.bathrooms = Number(data.bathrooms);
+    if (data.location && data.location.coordinates) {
+      data.location.coordinates.lat = Number(data.location.coordinates.lat);
+      data.location.coordinates.lng = Number(data.location.coordinates.lng);
+    }
+    // amenities: split si es string
+    if (typeof data.amenities === 'string') {
+      data.amenities = data.amenities.split(',').map(a => a.trim()).filter(Boolean);
+    }
+    // petsAllowed: convertir a booleano
+    if (typeof data.petsAllowed === 'string') {
+      data.petsAllowed = data.petsAllowed === 'true';
+    }
+    // mainPhoto: si no se sube nueva, usar la existente
+    if (!data.mainPhoto && data.existingMainPhoto) {
+      data.mainPhoto = data.existingMainPhoto;
+    }
+    // photos: si no se suben nuevas, usar las existentes
+    if (!data.photos && data.existingPhotos) {
+      data.photos = data.existingPhotos;
+    }
+    if (typeof data.photos === 'string') {
+      try {
+        data.photos = JSON.parse(data.photos);
+      } catch {
+        data.photos = [];
+      }
+    }
+    if (!Array.isArray(data.photos)) {
+      data.photos = [];
+    }
+
     // Validaciones similares a CreateAccommodation (puedes refactorizar para reutilizar)
     // Aquí solo se validan los campos que se permiten actualizar
     if (data.title && (data.title.length < 5 || data.title.length > 100)) {
@@ -44,7 +95,7 @@ class UpdateAccommodation {
     ) {
       throw new Error('Las coordenadas del alojamiento son obligatorias y deben ser números válidos');
     }
-    if (!data.mainPhoto || typeof data.mainPhoto !== 'string' || !/^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(data.mainPhoto)) {
+   if (!data.mainPhoto || typeof data.mainPhoto !== 'string' || !/^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(data.mainPhoto)) {
       throw new Error('La foto principal debe ser una URL válida que termine en jpg, jpeg, png o webp');
     }
     if (!Array.isArray(data.photos)) {
@@ -67,15 +118,11 @@ class UpdateAccommodation {
       throw new Error('El tipo de propiedad no es válido');
     }
 
-    if (typeof data.rooms !== 'number' || data.rooms < 1 || data.rooms > 20) {
-      throw new Error('El número de habitaciones debe estar entre 1 y 20');
-    }
-
     if (typeof data.beds !== 'number' || data.beds < 1 || data.beds > 40) {
       throw new Error('El número de camas debe estar entre 1 y 40');
     }
-    if (typeof data.maxGuest !== 'number' || data.maxGuest < 1 || data.maxGuest > 40) {
-      throw new Error('El número de camas debe estar entre 1 y 40');
+    if (typeof data.maxGuests !== 'number' || data.maxGuests < 1 || data.maxGuests > 40) {
+      throw new Error('El número de huéspedes debe estar entre 1 y 40');
     }
     if (typeof data.bathrooms !== 'number' || data.bathrooms < 1 || data.bathrooms > 20) {
       throw new Error('El número de baños debe estar entre 1 y 20');

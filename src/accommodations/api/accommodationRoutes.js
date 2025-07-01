@@ -50,9 +50,10 @@ router.get('/:id', async (req, res, next) => {
 
 // Ruta: PUT /api/accommodations/:id
 // Actualiza un alojamiento por ID
-router.put('/:id', ensureAuthenticated, updateAccommodationController);
-
-
+router.put('/:id', ensureAuthenticated, parser.fields([
+  { name: 'mainPhoto', maxCount: 1 },
+  { name: 'photos', maxCount: 10 }
+]), updateAccommodationController);
 
 router.post('/:id/availability', ensureAuthenticated, updateAvailabilityController);
 
