@@ -49,8 +49,6 @@ console.log('Express app creado');
 app.use(express.json());
 console.log('express.json habilitado');
 app.set('view engine', 'ejs');
-console.log('__dirname =', __dirname);
-console.log('Vista path =', path.join(__dirname, 'views'));
 
 // Ajuste para que funcione en local y en Render.com
 app.set('views', path.join(__dirname, 'views'));
