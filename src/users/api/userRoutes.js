@@ -48,6 +48,8 @@ router.post('/update', parser.single('profilePicture'), async (req, res, next) =
       data.profilePicture = req.file.path;
     }
     const updated = await userRepo.updateUser(data.userId, data); // sin cambiar email
+    // Refresca el usuario actualizado en sesión
+    req.session.user = updated;
     res.redirect(`/dashboard/${updated.id}`);
   } catch (err) {
     next(err);

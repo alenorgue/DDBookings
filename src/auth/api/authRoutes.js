@@ -29,6 +29,16 @@ router.post('/login', async (req, res, next) => {
 router.get('/logout', (req, res, next) => {
   req.session.destroy(err => {
     if (err) return next({ status: 500, message: 'Error al cerrar sesión', error: err });
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  });
+});
+
+// Ruta POST /logout para cerrar sesión correctamente desde el formulario
+router.post('/logout', (req, res, next) => {
+  req.session.destroy(err => {
+    if (err) return next({ status: 500, message: 'Error al cerrar sesión', error: err });
+    res.clearCookie('connect.sid');
     res.redirect('/login');
   });
 });
@@ -41,3 +51,4 @@ router.use((req, res, next) => {
 });
 
 export default router;
+

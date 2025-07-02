@@ -20,7 +20,20 @@ class MongoUserRepository {
   async findById(id) {
     const data = await UserModel.findById(id);
     if (!data) return null;
-    return new User({ id: data._id, email: data.email, role: data.role });
+    // Devuelve todos los campos relevantes del usuario
+    return new User({
+      id: data._id,
+      name: data.name,
+      surName: data.surName,
+      email: data.email,
+      role: data.role,
+      profilePicture: data.profilePicture,
+      bio: data.bio,
+      phoneNumber: data.phoneNumber,
+      country: data.country,
+      language: data.language
+      // Agrega aquí cualquier otro campo que uses en la vista
+    });
   }
   async updateUser(userId, updateData) {
     try {
