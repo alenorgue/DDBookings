@@ -1,6 +1,6 @@
 // src/web/routes/adminRoutes.js
 import express from 'express';
-import { ensureAdmin } from '../middleware/authMiddleware.js';
+import { ensureAdmin } from '../../auth/middleware/auth.js';
 import MongoUserRepository from '../../users/infrastructure/MongoUserRepository.js';
 import MongoAccommodationRepository from '../../accommodations/infrastructure/MongoAccommodationRepository.js';
 import MongoBookingRepository from '../../bookings/infrastructure/MongoBookingRepository.js';
