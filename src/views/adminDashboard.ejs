@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel de Administración</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    table {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    table td, table th {
+      white-space: nowrap;
+    }
+    form.inline {
+      display: inline;
+    }
+    h2 {
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Panel de Administración</h1>
+    <% if (typeof message !== 'undefined' && message) { %>
+      <% const bg = isError ? '#ffdddd' : '#ddffdd'; const color = isError ? '#a00' : '#070'; const border = isError ? '#a00' : '#070'; const style = `margin-bottom:1rem; padding:0.7rem; border-radius:5px; background:${bg}; color:${color}; border:1px solid ${border};`; %>
+      <div style="<%= style %>">
+        <%= message %>
+      </div>
+    <% } %>
+    <div class="grid">
+      <!-- USUARIOS -->
+      <section>
+        <h2>Usuarios</h2>
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <% users.forEach(user => { %>
+              <tr>
+                <td><%= user.name %> <%= user.surName %></td>
+                <td><%= user.email %></td>
+                <td><%= user.role %></td>
+                <td>
+                  <% if (user.role !== 'admin') { %>
+                    <form class="inline" method="POST" action="/admin/users/<%= user.id %>/make-host">
+                      <button>Host</button>
+                    </form>
+                    <form class="inline" method="POST" action="/admin/users/<%= user.id %>/make-guest">
+                      <button>Guest</button>
+                    </form>
+                    <form class="inline" method="POST" action="/admin/users/<%= user.id %>/delete" onsubmit="return confirm('Seguro que quieres eliminar este usuario?');">
+                      <button class="secondary">Eliminar</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ALOJAMIENTOS -->
+      <section>
+        <h2>Alojamientos</h2>
+        <table>
+          <thead>
+            <tr><th>Título</th><th>Ciudad</th><th>Precio</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <% accommodations.forEach(acc => { %>
+              <tr>
+                <td><%= acc.title %></td>
+                <td><%= acc.location.city %></td>
+                <td>€<%= acc.pricePerNight %></td>
+                <td>
+                  <a href="/accommodations/<%= acc.id %>" target="_blank">Ver</a>
+                  <form class="inline" method="POST" action="/admin/accommodations/<%= acc.id %>/delete" onsubmit="return confirm('Eliminar este alojamiento?');">
+                    <button class="secondary">Eliminar</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- RESERVAS -->
+      <section>
+        <h2>Reservas</h2>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Alojamiento</th><th>Huesped</th><th>Fechas</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(b => { %>
+              <tr>
+                <td><%= b.id %></td>
+                <td><%= b.accommodationId %></td>
+                <td><%= b.guestId %></td>
+                <td><%= b.startDate %> a <%= b.endDate %></td>
+                <td><%= b.status %></td>
+                <td>
+                  <% if (b.status !== 'cancelled') { %>
+                    <form class="inline" method="POST" action="/api/bookings/<%= b.id %>/cancel">
+                      <button class="secondary">Cancelar</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

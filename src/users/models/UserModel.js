@@ -41,6 +41,10 @@ const userSchema = new Schema({
     enum: ['guest', 'host'],
     default: 'guest'
   },
+    isAdmin: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

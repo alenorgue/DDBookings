@@ -83,6 +83,11 @@ class MongoAccommodationRepository {
     return docs.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
   }
 
+  async deleteAccommodation(id) {
+    const deleted = await AccommodationModel.findByIdAndDelete(id);
+    if (!deleted) throw new Error('Alojamiento no encontrado');
+    return true;
+  }
 }
 
 

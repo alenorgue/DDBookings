@@ -75,5 +75,11 @@ class MongoUserRepository {
     // Reutiliza findById para mantener compatibilidad con el use case
     return this.findById(id);
   }
+
+  async deleteUser(id) {
+    const deleted = await UserModel.findByIdAndDelete(id);
+    if (!deleted) throw new Error('Usuario no encontrado');
+    return true;
+  }
 }
 export default MongoUserRepository;
