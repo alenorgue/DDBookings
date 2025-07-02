@@ -38,6 +38,10 @@ import adminRoutes from './web/adminRoutes/adminRoutes.js';
 console.log('adminRoutes importado');
 import viewRoutes from './web/routes/viewRoutes.js';
 console.log('viewRoutes importado');
+import fs from 'fs';
+
+
+
 
 // Configuración del servidor Express
 const app = express();
@@ -45,6 +49,9 @@ console.log('Express app creado');
 app.use(express.json());
 console.log('express.json habilitado');
 app.set('view engine', 'ejs');
+console.log('__dirname =', __dirname);
+console.log('Vista path =', path.join(__dirname, 'views'));
+
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
@@ -101,6 +108,12 @@ app.use((err, req, res, next) => {
 });
 console.log('Middleware de errores montado');
 
+app.get('/debug/views', (req, res) => {
+  fs.readdir(path.join(__dirname, 'views'), (err, files) => {
+    if (err) return res.status(500).send('Error leyendo carpeta views');
+    res.json(files);
+  });
+});
 // Iniciar el servidor
 const PORT = 8000;
 app.listen(PORT, () => {
