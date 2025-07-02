@@ -53,7 +53,7 @@ console.log('__dirname =', __dirname);
 console.log('Vista path =', path.join(__dirname, 'views'));
 
 // Ajuste para que funcione en local y en Render.com
-app.set('views', path.join(process.cwd(), 'src/views'));
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 // Habilita method-override para soportar PUT y DELETE en formularios HTML

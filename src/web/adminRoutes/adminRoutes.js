@@ -11,7 +11,7 @@ const accommodationRepo = new MongoAccommodationRepository();
 const bookingRepo = new MongoBookingRepository();
 
 // Utilidad para mostrar mensajes en el dashboard
-function renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, message, isError = false) {
+function renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, message, isError = false, user = null) {
   Promise.all([
     userRepo.findAll(),
     accommodationRepo.findAll(),
@@ -22,7 +22,8 @@ function renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRep
       accommodations,
       bookings,
       message,
-      isError
+      isError,
+      user // <-- Pasar el usuario a la vista
     });
   }).catch(err => {
     res.status(500).send('Error al cargar el panel de administración');
@@ -31,16 +32,16 @@ function renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRep
 
 router.get('/dashboard', ensureAdmin, async (req, res) => {
   console.log('Usuario en sesión:', req.session.user); // DEBUG
-  renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, null);
+  renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, null, false, req.session.user);
 });
 
 // Cambiar rol a host
 router.post('/users/:id/make-host', ensureAdmin, async (req, res) => {
   try {
     await userRepo.updateUser(req.params.id, { role: 'host' });
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Rol cambiado a host correctamente.');
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Rol cambiado a host correctamente.', false, req.session.user);
   } catch (err) {
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al cambiar el rol a host: ' + err.message, true);
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al cambiar el rol a host: ' + err.message, true, req.session.user);
   }
 });
 
@@ -48,9 +49,9 @@ router.post('/users/:id/make-host', ensureAdmin, async (req, res) => {
 router.post('/users/:id/make-guest', ensureAdmin, async (req, res) => {
   try {
     await userRepo.updateUser(req.params.id, { role: 'guest' });
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Rol cambiado a guest correctamente.');
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Rol cambiado a guest correctamente.', false, req.session.user);
   } catch (err) {
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al cambiar el rol a guest: ' + err.message, true);
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al cambiar el rol a guest: ' + err.message, true, req.session.user);
   }
 });
 
@@ -58,9 +59,9 @@ router.post('/users/:id/make-guest', ensureAdmin, async (req, res) => {
 router.post('/users/:id/delete', ensureAdmin, async (req, res) => {
   try {
     await userRepo.deleteUser(req.params.id);
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Usuario eliminado correctamente.');
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Usuario eliminado correctamente.', false, req.session.user);
   } catch (err) {
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al eliminar usuario: ' + err.message, true);
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al eliminar usuario: ' + err.message, true, req.session.user);
   }
 });
 
@@ -68,9 +69,9 @@ router.post('/users/:id/delete', ensureAdmin, async (req, res) => {
 router.post('/accommodations/:id/delete', ensureAdmin, async (req, res) => {
   try {
     await accommodationRepo.deleteAccommodation(req.params.id);
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Alojamiento eliminado correctamente.');
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Alojamiento eliminado correctamente.', false, req.session.user);
   } catch (err) {
-    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al eliminar alojamiento: ' + err.message, true);
+    renderDashboardWithMessage(res, userRepo, accommodationRepo, bookingRepo, 'Error al eliminar alojamiento: ' + err.message, true, req.session.user);
   }
 });
 
