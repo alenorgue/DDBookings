@@ -31,6 +31,17 @@
 <body>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
+    <% if (successMessage) { %>
+      <div id="successModal" style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin-bottom:1em;text-align:center;">
+        <%= successMessage %>
+      </div>
+      <script>
+        setTimeout(() => {
+          const modal = document.getElementById('successModal');
+          if(modal) modal.style.display = 'none';
+        }, 3000);
+      </script>
+    <% } %>
     <h1><%= accommodation.title %></h1>
 
     <div><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>

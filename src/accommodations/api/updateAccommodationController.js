@@ -18,7 +18,9 @@ export const updateAccommodationController = async (req, res, next) => {
     }
     const updateAccommodation = new UpdateAccommodation(accommodationRepo, userRepo);
     const updated = await updateAccommodation.execute(req.params.id, req.body);
-    res.status(200).json({ message: 'Alojamiento actualizado', accommodation: updated });
+    // Flash message para mostrar en la vista de detalles
+    req.session.successMessage = 'Alojamiento editado correctamente';
+    res.redirect(`/accommodations/${updated.id}`);
   } catch (err) {
     next(err);
   }

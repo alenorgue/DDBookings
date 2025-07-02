@@ -69,8 +69,8 @@ console.log('Datos del alojamiento:', data);
 
         const createAccommodation = new CreateAccommodation(accommodationRepo, userRepo);
         const accommodation = await createAccommodation.execute(data);
-
-     return res.redirect('/dashboard/' + user._id.toString());
+        req.session.successMessage = 'Alojamiento creado correctamente';
+        return res.redirect('/dashboard/' + user._id.toString());
 
     } catch (err) {
         return res.status(400).json({ error: err.message });

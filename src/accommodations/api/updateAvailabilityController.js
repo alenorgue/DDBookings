@@ -15,7 +15,7 @@ export default async function updateAvailabilityController(req, res) {
     const range = getDateRangeArray(startDate, endDate);
     const updatedAvailability = addToAvailability(accommodation.availability, range);
     await accommodationRepo.update(req.params.id, { availability: updatedAvailability });
-
+    req.session.successMessage = 'Disponibilidad actualizada correctamente';
     res.redirect('/dashboard/' + req.session.user.id);
   } catch (err) {
     console.error(err);

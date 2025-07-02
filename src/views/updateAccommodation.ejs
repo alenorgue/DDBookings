@@ -206,28 +206,31 @@
       <button type="submit">Guardar cambios</button>
     </form>
   </main>
-  <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async
-    defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
   <script>
-
+    // Definir la ubicación inicial usando EJS para pasar los datos al JS del navegador
+    const accommodationLocation = {
+      lat: parseFloat('<%= accommodation.location && accommodation.location.coordinates ? accommodation.location.coordinates.lat : 41.3851 %>'),
+      lng: parseFloat('<%= accommodation.location && accommodation.location.coordinates ? accommodation.location.coordinates.lng : 2.1734 %>')
+    };
     function initMap() {
-      const defaultLocation = { lat: 41.3851, lng: 2.1734 }; // Barcelona
       const map = new google.maps.Map(document.getElementById("map"), {
-        center: defaultLocation,
+        center: accommodationLocation,
         zoom: 10,
       });
-
       let marker;
-
+      // Si hay coordenadas, mostrar el marcador inicial
+      if (accommodationLocation.lat && accommodationLocation.lng) {
+        marker = new google.maps.Marker({
+          position: accommodationLocation,
+          map,
+        });
+      }
       map.addListener("click", function (e) {
         const lat = e.latLng.lat();
         const lng = e.latLng.lng();
-
-        // Actualiza inputs ocultos
         document.getElementById("lat").value = lat;
         document.getElementById("lng").value = lng;
-
-        // Añade marcador
         if (marker) marker.setMap(null);
         marker = new google.maps.Marker({
           position: { lat, lng },
@@ -235,8 +238,7 @@
         });
       });
     }
-  </script>
-  <script>
+
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.querySelector('form');
       const errorBox = document.getElementById('formErrorBox');
@@ -462,8 +464,15 @@
           setFieldError(fields.propertyType, errors.propertyType, 'Select a property type.');
           hasError = true;
         }
+        // Validación de lat/lng
+        const lat = document.getElementById('lat').value;
+        const lng = document.getElementById('lng').value;
+        if (!lat || isNaN(Number(lat)) || !lng || isNaN(Number(lng))) {
+          errorBox.textContent = 'Debes seleccionar una ubicación válida en el mapa (latitud y longitud).';
+          hasError = true;
+        }
         if (hasError) {
-          errorBox.textContent = 'Please fix the errors before submitting.';
+          errorBox.textContent = errorBox.textContent || 'Please fix the errors before submitting.';
           e.preventDefault();
         }
       });

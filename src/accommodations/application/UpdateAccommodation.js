@@ -8,6 +8,11 @@ class UpdateAccommodation {
   }
 
   async execute(id, data) {
+    // Obtener el alojamiento actual
+    const existingAccommodation = await this.accommodationRepository.findById(id);
+    if (!existingAccommodation) {
+      throw new Error('Alojamiento no encontrado');
+    }
     // Reconstruir location si viene plano desde el formulario
     if (!data.location && data.country && data.city && data.address && data.postalCode) {
       data.location = {
@@ -16,21 +21,29 @@ class UpdateAccommodation {
         address: data.address,
         postalCode: data.postalCode,
         coordinates: {
-          lat: Number(data.lat),
-          lng: Number(data.lng)
+          lat: data.lat !== undefined && data.lat !== '' ? Number(data.lat) : existingAccommodation.location?.coordinates?.lat,
+          lng: data.lng !== undefined && data.lng !== '' ? Number(data.lng) : existingAccommodation.location?.coordinates?.lng
         }
       };
     }
-    // Cast de campos numéricos (por si vienen como string del formulario)
-    data.pricePerNight = Number(data.pricePerNight);
-    data.squareMeters = Number(data.squareMeters);
-    data.rooms = Number(data.rooms);
-    data.beds = Number(data.beds);
-    data.maxGuests = Number(data.maxGuests);
-    data.bathrooms = Number(data.bathrooms);
+    // Cast de campos numéricos solo si existen
+    if (data.pricePerNight !== undefined && data.pricePerNight !== '') data.pricePerNight = Number(data.pricePerNight);
+    if (data.squareMeters !== undefined && data.squareMeters !== '') data.squareMeters = Number(data.squareMeters);
+    if (data.rooms !== undefined && data.rooms !== '') data.rooms = Number(data.rooms);
+    if (data.beds !== undefined && data.beds !== '') data.beds = Number(data.beds);
+    if (data.maxGuests !== undefined && data.maxGuests !== '') data.maxGuests = Number(data.maxGuests);
+    if (data.bathrooms !== undefined && data.bathrooms !== '') data.bathrooms = Number(data.bathrooms);
     if (data.location && data.location.coordinates) {
-      data.location.coordinates.lat = Number(data.location.coordinates.lat);
-      data.location.coordinates.lng = Number(data.location.coordinates.lng);
+      if (data.location.coordinates.lat !== undefined && data.location.coordinates.lat !== '') {
+        data.location.coordinates.lat = Number(data.location.coordinates.lat);
+      } else {
+        data.location.coordinates.lat = existingAccommodation.location?.coordinates?.lat;
+      }
+      if (data.location.coordinates.lng !== undefined && data.location.coordinates.lng !== '') {
+        data.location.coordinates.lng = Number(data.location.coordinates.lng);
+      } else {
+        data.location.coordinates.lng = existingAccommodation.location?.coordinates?.lng;
+      }
     }
     // amenities: split si es string
     if (typeof data.amenities === 'string') {
@@ -174,17 +187,61 @@ class UpdateAccommodation {
     //Validación sobre si el user es un host
     const user = await this.userRepository.findById(data.hostId);
     if (!user || user.role !== 'host') throw new Error('Solo los hosts pueden crear o actualizar alojamientos');
-    // Verificar si el alojamiento existe
-    const existingAccommodation = await this.accommodationRepository.findById(id);
-    if (!existingAccommodation) {
-      throw new Error('Alojamiento no encontrado');
-    }
-    if(data.status && !['Available', 'Booked', 'Unavailable', 'Archived'].includes(data.status)) {
-      throw new Error('El estado del alojamiento no es válido');
-    }
 
-    // Actualizar en el repositorio
-    const updated = await this.accommodationRepository.update(id, data);
+    // Solo actualizar los campos modificados
+    const fieldsToUpdate = {};
+    // Helper para comparar valores simples
+    function isDifferent(a, b) {
+      return a !== b && !(a == null && b == null);
+    }
+    // Helper para comparar arrays simples
+    function arrayDiff(a, b) {
+      if (!Array.isArray(a) || !Array.isArray(b)) return true;
+      if (a.length !== b.length) return true;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return true;
+      }
+      return false;
+    }
+    // Comparar y asignar solo si cambia
+    if (isDifferent(data.title, existingAccommodation.title)) fieldsToUpdate.title = data.title;
+    if (isDifferent(data.description, existingAccommodation.description)) fieldsToUpdate.description = data.description;
+    if (isDifferent(data.pricePerNight, existingAccommodation.pricePerNight)) fieldsToUpdate.pricePerNight = data.pricePerNight;
+    if (isDifferent(data.squareMeters, existingAccommodation.squareMeters)) fieldsToUpdate.squareMeters = data.squareMeters;
+    if (isDifferent(data.rooms, existingAccommodation.rooms)) fieldsToUpdate.rooms = data.rooms;
+    if (isDifferent(data.beds, existingAccommodation.beds)) fieldsToUpdate.beds = data.beds;
+    if (isDifferent(data.maxGuests, existingAccommodation.maxGuests)) fieldsToUpdate.maxGuests = data.maxGuests;
+    if (isDifferent(data.bathrooms, existingAccommodation.bathrooms)) fieldsToUpdate.bathrooms = data.bathrooms;
+    if (isDifferent(data.petsAllowed, existingAccommodation.petsAllowed)) fieldsToUpdate.petsAllowed = data.petsAllowed;
+    if (isDifferent(data.mainPhoto, existingAccommodation.mainPhoto)) fieldsToUpdate.mainPhoto = data.mainPhoto;
+    if (isDifferent(data.propertyType, existingAccommodation.propertyType)) fieldsToUpdate.propertyType = data.propertyType;
+    if (isDifferent(data.houseRules, existingAccommodation.houseRules)) fieldsToUpdate.houseRules = data.houseRules;
+    if (isDifferent(data.cancellationPolicy, existingAccommodation.cancellationPolicy)) fieldsToUpdate.cancellationPolicy = data.cancellationPolicy;
+    if (isDifferent(data.checkIn, existingAccommodation.checkIn)) fieldsToUpdate.checkIn = data.checkIn;
+    if (isDifferent(data.checkOut, existingAccommodation.checkOut)) fieldsToUpdate.checkOut = data.checkOut;
+    if (isDifferent(data.status, existingAccommodation.status)) fieldsToUpdate.status = data.status;
+    // Comparar amenities y photos como arrays
+    if (arrayDiff(data.amenities, existingAccommodation.amenities)) fieldsToUpdate.amenities = data.amenities;
+    if (arrayDiff(data.photos, existingAccommodation.photos)) fieldsToUpdate.photos = data.photos;
+    // Comparar location (deep)
+    if (data.location) {
+      const loc = existingAccommodation.location || {};
+      if (isDifferent(data.location.country, loc.country)) fieldsToUpdate['location.country'] = data.location.country;
+      if (isDifferent(data.location.city, loc.city)) fieldsToUpdate['location.city'] = data.location.city;
+      if (isDifferent(data.location.address, loc.address)) fieldsToUpdate['location.address'] = data.location.address;
+      if (isDifferent(data.location.postalCode, loc.postalCode)) fieldsToUpdate['location.postalCode'] = data.location.postalCode;
+      if (data.location.coordinates) {
+        const coords = loc.coordinates || {};
+        if (isDifferent(data.location.coordinates.lat, coords.lat)) fieldsToUpdate['location.coordinates.lat'] = data.location.coordinates.lat;
+        if (isDifferent(data.location.coordinates.lng, coords.lng)) fieldsToUpdate['location.coordinates.lng'] = data.location.coordinates.lng;
+      }
+    }
+    // Si no hay cambios, lanzar error
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      throw new Error('No se detectaron cambios para actualizar');
+    }
+    // Actualizar en el repositorio solo los campos modificados
+    const updated = await this.accommodationRepository.update(id, fieldsToUpdate);
     if (!updated) throw new Error('Alojamiento no encontrado o no actualizado');
     return updated;
   }

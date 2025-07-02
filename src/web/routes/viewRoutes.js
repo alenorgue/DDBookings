@@ -49,7 +49,8 @@ router.get('/accommodations', async (req, res) => {
       accommodations,
       amenityIcons,
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-      query: req.query // para persistencia en el formulario
+      query: req.query, // para persistencia en el formulario
+      user: req.session.user || null
     });
 
   } catch (err) {
@@ -87,8 +88,12 @@ router.get('/accommodations/:id', async (req, res) => {
       amenityIcons,
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       availability: availableDates,
-      bookedDates
+      bookedDates,
+      user: req.session.user || null,
+      successMessage: req.session.successMessage || null
     });
+    // Limpia el mensaje flash después de mostrarlo
+    if (req.session.successMessage) delete req.session.successMessage;
   } catch (err) {
     console.error('Error al cargar el alojamiento:', err);
     next(err);
@@ -121,12 +126,12 @@ router.get('/accommodations/createAccommodation', ensureAuthenticated, (req, res
 
 // Renderiza el formulario para registrar un nuevo usuario
 router.get('/register', (req, res) => {
-  res.render('RegisterUser');
+  res.render('RegisterUser', { user: req.session.user || null });
 });
 
 // Renderiza el formulario de inicio de sesión
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', { user: req.session.user || null });
 });
 
 // Renderiza el dashboard del usuario
@@ -160,8 +165,10 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
       user,
       userAccommodations,
       userBookings,
-      hostBookings
+      hostBookings,
+      successMessage: req.session.successMessage || null
     });
+    if (req.session.successMessage) delete req.session.successMessage;
   } catch (err) {
     console.error(err);
     next(err);
@@ -174,7 +181,7 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
 router.get('/bookings/guest/:guestId', async (req, res) => {
   try {
     const bookings = await bookingRepo.findByGuestId(req.params.guestId);
-    res.render('bookingsByGuest', { bookings });
+    res.render('bookingsByGuest', { bookings, user: req.session.user || null });
   } catch (err) {
     console.error(err);
     next(err);
@@ -184,7 +191,7 @@ router.get('/bookings/guest/:guestId', async (req, res) => {
 router.get('/bookings/host/:hostId', async (req, res) => {
   try {
     const bookings = await bookingRepo.findByHostId(req.params.hostId);
-    res.render('bookingsByHost', { bookings });
+    res.render('bookingsByHost', { bookings, user: req.session.user || null });
   } catch (err) {
     console.error(err);
     next(err);
@@ -194,7 +201,7 @@ router.get('/bookings/host/:hostId', async (req, res) => {
 router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
   try {
     const bookings = await bookingRepo.findByAccommodationId(req.params.accommodationId);
-    res.render('bookingsByAccommodation', { bookings });
+    res.render('bookingsByAccommodation', { bookings, user: req.session.user || null });
   } catch (err) {
     console.error(err);
     next(err);

@@ -45,6 +45,17 @@
 <body>
     <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="dashboard">
+    <% if (successMessage) { %>
+      <div id="successModal" style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin-bottom:1em;text-align:center;">
+        <%= successMessage %>
+      </div>
+      <script>
+        setTimeout(() => {
+          const modal = document.getElementById('successModal');
+          if(modal) modal.style.display = 'none';
+        }, 3000);
+      </script>
+    <% } %>
     <!-- IZQUIERDA: Reservas -->
     <section>
       <h3>Tus Reservas</h3>
