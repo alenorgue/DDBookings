@@ -86,6 +86,7 @@
   </style>
 </head>
 <body>
+    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Panel de Administración</h1>
     <% if (typeof message !== 'undefined' && message) { %>
