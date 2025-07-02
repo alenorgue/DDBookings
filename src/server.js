@@ -107,6 +107,7 @@ app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
 console.log('app.listen llamado');
+console.log('Vistas buscadas en:', path.join(__dirname, 'views'));
 
 
 
