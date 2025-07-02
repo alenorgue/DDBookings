@@ -45,7 +45,8 @@ console.log('Express app creado');
 app.use(express.json());
 console.log('express.json habilitado');
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'src', 'views'));
+console.log('Motor de vistas EJS configurado');
 
 app.use(express.urlencoded({ extended: true }));
 // Habilita method-override para soportar PUT y DELETE en formularios HTML
