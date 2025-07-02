@@ -27,7 +27,7 @@ router.get('/accommodations', async (req, res) => {
 
     let accommodations = Object.keys(filter).length > 0
       ? await accommodationRepo.findByFilter(filter)
-      : await accommodationRepo.findAll();
+      : await accommodationRepo.findAllAvailable();
 
     // Filtrado por rango de fechas disponibles
     if (checkIn && checkOut) {

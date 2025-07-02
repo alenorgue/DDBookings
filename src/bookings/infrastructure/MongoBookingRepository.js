@@ -57,6 +57,11 @@ class MongoBookingRepository {
         if (!updated) return null;
         return new Booking({ ...updated.toObject(), id: updated._id });
     }
+
+    async findAll() {
+        const found = await BookingModel.find();
+        return found.map(doc => new Booking({ ...doc.toObject(), id: doc._id }));
+    }
 }
 
 export default MongoBookingRepository;

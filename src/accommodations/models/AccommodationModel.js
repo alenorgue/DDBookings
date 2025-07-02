@@ -1,9 +1,6 @@
 import mongoose from "mongoose";
 
-// This file defines the schema for an apartment listing in a real estate application.
-// const { Schema, model } = mongoose;
-
-
+// Definimos el esquema de Mongoose para el modelo de alojamiento
 const accommodationSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -76,7 +73,8 @@ const accommodationSchema = new mongoose.Schema({
         type: String,
         required: true,
         match: /^[A-Za-z0-9\- ]{3,12}$/
-    }, coordinates: {
+    }, 
+    coordinates: {
   lat: {
     type: Number,
     required: true
@@ -147,7 +145,7 @@ const accommodationSchema = new mongoose.Schema({
     hostId: { type: String, required: true },
     status: {
         type: String,
-        enum: ['Available', 'Unavailable', 'Archived'],
+        enum: ['Available', 'Archived'],
         default: 'Available'
     },
     availability: {

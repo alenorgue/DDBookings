@@ -25,6 +25,7 @@ class LoginUser {
       id: user.id,
       email: user.email,
       role: user.role,
+      isAdmin: user.isAdmin !== undefined ? user.isAdmin : false // Asegura booleano
     };
   }
 }

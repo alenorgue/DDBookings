@@ -69,7 +69,12 @@ class MongoAccommodationRepository {
   }
 
   async findByFilter(filter = {}) { 
-    const filtered = await AccommodationModel.find(filter);
+     const finalFilter = {
+    ...filter,
+    status: 'Available'
+  };
+
+  const filtered = await AccommodationModel.find(finalFilter);
     if (!filtered || filtered.length === 0) return [];
   return filtered.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
 }
@@ -88,6 +93,10 @@ class MongoAccommodationRepository {
     if (!deleted) throw new Error('Alojamiento no encontrado');
     return true;
   }
+  async findAllAvailable() {
+  const all = await AccommodationModel.find({ status: 'Available' });
+  return all.map(doc => new Accommodation({ ...doc.toObject(), id: doc._id }));
+}
 }
 
 

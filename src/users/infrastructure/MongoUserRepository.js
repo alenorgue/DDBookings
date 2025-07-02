@@ -9,7 +9,13 @@ class MongoUserRepository {
   async findByEmail(email) {
     const data = await UserModel.findOne({ email });
     if (!data) return null;
-    return new User({ id: data._id, email: data.email, password: data.password, role: data.role });
+    return new User({
+      id: data._id,
+      email: data.email,
+      password: data.password,
+      role: data.role,
+      isAdmin: data.isAdmin // <-- añadido para sesión admin
+    });
   }
 
   async save(user) {
@@ -31,7 +37,8 @@ class MongoUserRepository {
       bio: data.bio,
       phoneNumber: data.phoneNumber,
       country: data.country,
-      language: data.language
+      language: data.language,
+      isAdmin: data.isAdmin // Agregado para disponibilidad en la sesión
       // Agrega aquí cualquier otro campo que uses en la vista
     });
   }
@@ -80,6 +87,23 @@ class MongoUserRepository {
     const deleted = await UserModel.findByIdAndDelete(id);
     if (!deleted) throw new Error('Usuario no encontrado');
     return true;
+  }
+
+  async findAll() {
+    const users = await UserModel.find();
+    return users.map(data => new User({
+      id: data._id,
+      name: data.name,
+      surName: data.surName,
+      email: data.email,
+      role: data.role,
+      profilePicture: data.profilePicture,
+      bio: data.bio,
+      phoneNumber: data.phoneNumber,
+      country: data.country,
+      language: data.language,
+      isAdmin: data.isAdmin
+    }));
   }
 }
 export default MongoUserRepository;

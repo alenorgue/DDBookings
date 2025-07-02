@@ -17,7 +17,8 @@ router.post('/login', async (req, res, next) => {
       id: user.id,
       _id: user.id, // Para compatibilidad con vistas que esperan _id
       email: user.email,
-      role: user.role
+      role: user.role,
+      isAdmin: user.isAdmin,
     };
     console.log('user en sesión:', req.session.user);
     res.redirect(`/dashboard/${user.id}`);
