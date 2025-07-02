@@ -1,68 +1,115 @@
-<nav style="width:100%;background:#fff;padding:0.35em 0;box-shadow:0 2px 8px rgba(0,0,0,0.07);margin-bottom:2em;position:sticky;top:0;z-index:100;">
-  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
-    <div style="display:flex;align-items:center;gap:1.5em;">
-      <a href="/" style="font-weight:bold;font-size:1.15em;color:#2d3748;text-decoration:none;letter-spacing:0.5px;">🏠 Home</a>
-      <a href="/accommodations" style="color:#4a5568;text-decoration:none;font-weight:500;transition:color 0.2s;">Alojamientos</a>
+<nav>
+  <div>
+    <div class="navbar-left">
+      <a href="/" class="home-link">🏠 Home</a>
+      <a href="/accommodations">Alojamientos</a>
       <% if (user) { %>
-        <a href="/dashboard/<%= user.id || user._id %>" style="color:#4a5568;text-decoration:none;font-weight:500;transition:color 0.2s;">Mi Panel</a>
-        <a href="/createAccommodation" style="color:#4a5568;text-decoration:none;font-weight:500;transition:color 0.2s;">Añadir alojamiento</a>
+        <a href="/dashboard/<%= user.id || user._id %>">Mi Panel</a>
+        <a href="/createAccommodation">Añadir alojamiento</a>
         <% if (user.isAdmin) { %>
-          <a href="/admin/dashboard" style="color:#3182ce;font-weight:bold;text-decoration:none;">Admin Panel</a>
+          <a href="/admin/dashboard" class="admin-link">Admin Panel</a>
         <% } %>
       <% } %>
     </div>
-    <div class="navbar-right-block">
+    <div class="navbar-right">
       <% if (user) { %>
         <form action="/auth/logout" method="POST" style="display:flex;align-items:center;margin:0;padding:0;">
           <button type="submit" class="logout-link">Cerrar sesión</button>
         </form>
       <% } else { %>
-        <a href="/register" class="register-link" style="color:#4a5568;text-decoration:none;font-weight:500;">Registrar usuario</a>
+        <a href="/register" class="register-link">Registrar usuario</a>
         <a href="/login" style="color:#3182ce;text-decoration:none;font-weight:bold;">Iniciar sesión</a>
       <% } %>
     </div>
   </div>
 </nav>
 <style>
+nav {
+  width: 100%;
+  background: #fff;
+  padding: 0.35em 0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin-bottom: 2em;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 0;
+}
+nav .navbar-left, nav .navbar-right {
+  display: flex;
+  align-items: center;
+}
+nav .navbar-left {
+  gap: 1.5em;
+}
+nav .navbar-right {
+  gap: 2.2em;
+}
+nav a {
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1em !important;
+  line-height: 1.5 !important;
+  border: none !important;
+}
+nav a.home-link {
+  font-weight: bold;
+  font-size: 1.15em !important;
+  color: #2d3748;
+  letter-spacing: 0.5px;
+}
+nav a.admin-link {
+  color: #3182ce;
+  font-weight: bold;
+}
 nav a:hover {
   color: #3182ce !important;
   text-decoration: underline;
 }
 .logout-link {
-  background: none;
-  border: none;
-  color: #e53e3e;
-  font-weight: bold;
-  font-size: 1em;
-  padding: 0;
-  margin: 0 0 0 0.7em;
+  background: none !important;
+  border: none !important;
+  color: #e53e3e !important;
+  font-weight: bold !important;
+  font-size: 1em !important;
+  padding: 0 !important;
+  margin: 0 0 0 0.7em !important;
   cursor: pointer;
   transition: color 0.2s, text-decoration 0.2s;
   text-decoration: none;
   outline: none;
+  height: auto !important;
+  line-height: 1.5 !important;
+  display: inline !important;
+  box-shadow: none !important;
 }
 .logout-link:hover {
-  color: #c53030;
+  color: #c53030 !important;
   text-decoration: underline;
 }
-nav button:hover {
-  background: none !important;
-}
-.navbar-right-block {
-  display: flex;
-  align-items: center;
-  gap: 2.2em;
-}
 .register-link {
-  margin-left: 2.5em;
+  margin-left: 2.5em !important;
 }
 @media (max-width: 700px) {
-  nav div[style*='display:flex'] {
+  nav > div {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 0.7em !important;
   }
-  .navbar-right-block {
+  nav .navbar-right {
     width: 100%;
     justify-content: flex-start;
     margin-left: 0 !important;
