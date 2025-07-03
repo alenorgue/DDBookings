@@ -16,6 +16,7 @@
       <% return; %>
     <% } %>
     <h2>Id de reserva: </h2><p><%= booking.id %></p>
+    <a href="/bookings/<%= booking.id %>/pdf" class="button secondary" style="margin-bottom:1em;">Descargar confirmación en PDF</a>
     <h2><%= accommodation.title %></h2>
     <img src="<%= accommodation.mainPhoto %>" alt="Foto del alojamiento" style="max-width: 300px; border-radius: 6px; margin-bottom: 1em;">
     <div><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %></div>

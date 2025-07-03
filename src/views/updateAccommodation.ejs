@@ -58,8 +58,18 @@
     <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main class="container">
     <h1>Editar Alojamiento</h1>
+    <p>Completa el formulario para actualizar los detalles del alojamiento.</p>
+
     <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>
     <form action="/api/accommodations/<%= accommodation.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      <div>
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+          <option value="Available" <%= accommodation.status === 'Available' ? 'selected' : '' %>>En activo</option>
+          <option value="Archived" <%= accommodation.status === 'Archived' ? 'selected' : '' %>>Archivado</option>
+          </select>
+        <span class="field-error" id="statusError"></span>
+      </div>
       <input type="hidden" name="hostId" value="<%= user._id || user.id %>">
       <div class="grid">
         <div>

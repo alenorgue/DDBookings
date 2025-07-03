@@ -4,6 +4,7 @@ import getBookingByIdController from '../api/getBookingByIdController.js';
 import cancelBookingController from '../api/cancelBookingController.js';
 import { ensureAuthenticated } from '../../auth/middleware/auth.js';
 import MongoBookingRepository from '../infrastructure/MongoBookingRepository.js';
+import { generateBookingConfirmationController } from './generateBookingConfirmationController.js';
 
 const router = express.Router();
 const bookingRepo = new MongoBookingRepository();
@@ -39,12 +40,6 @@ router.get('/accommodation/:accommodationId', async (req, res, next) => {
     next(err);
   }
 });
-
-// Manejo de rutas no encontradas (404)
-router.use((req, res, next) => {
-  const err = new Error('Página no encontrada');
-  err.status = 404;
-  next(err);
-});
+router.get('/:id/pdf', ensureAuthenticated, generateBookingConfirmationController);
 
 export default router;

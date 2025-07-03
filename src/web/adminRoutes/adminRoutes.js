@@ -75,4 +75,5 @@ router.post('/accommodations/:id/delete', ensureAdmin, async (req, res) => {
   }
 });
 
+
 export default router;

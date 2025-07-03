@@ -7,29 +7,47 @@ import MongoUserRepository from '../../users/infrastructure/MongoUserRepository.
 const accommodationRepo = new MongoAccommodationRepository();
 const userRepo = new MongoUserRepository();
 
-export const createAccommodationController = async (req, res) => {
+export const createAccommodationController = async (req, res, next) => {
     try {
         const hostId = req.body.hostId;
         console.log('hostId recibido:', hostId);
         const user = await findUserById(hostId);
         console.log('user encontrado:', user);
         if (!user || (user.role && user.role.toLowerCase() !== 'host')) {
-            return res.status(403).json({ error: 'Solo los usuarios con rol host pueden crear alojamientos.' });
+            req.session.errorMessage = 'Solo los usuarios con rol host pueden crear alojamientos.';
+            return res.redirect('back');
         }
 
         // Obtener imágenes y etiquetas
         const mainPhotoUrl = req.files?.mainPhoto?.[0]?.path;
         const additionalPhotos = req.files?.photos || [];
+        console.log('FOTOS ADICIONALES RECIBIDAS:', additionalPhotos);
+        // Log para ver los paths reales
+        additionalPhotos.forEach((file, i) => {
+            console.log(`Foto adicional [${i}]: path=${file.path}`);
+        });
         const labels = req.body.photoLabels?.split(',').map(l => l.trim()) || [];
 
         if (!mainPhotoUrl) {
-            return res.status(400).json({ error: 'Se requiere una foto principal.' });
+            req.session.errorMessage = 'Se requiere una foto principal.';
+            return res.redirect('back');
+        }
+
+        // Adaptar path a URL si es necesario (aceptar tanto http(s) como URLs de Cloudinary sin extensión)
+        function isValidPhotoUrl(url) {
+            // Permite http(s) y también URLs de Cloudinary que pueden no tener extensión
+            return /^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i.test(url) || /^https?:\/\/.+\/v\d+\/.+/.test(url);
         }
 
         const photos = additionalPhotos.map((file, i) => ({
             url: file.path,
             label: labels[i] || ''
-        }));
+        })).filter(photo => isValidPhotoUrl(photo.url));
+
+        if (additionalPhotos.length > 0 && photos.length === 0) {
+            req.session.errorMessage = 'Las fotos adicionales no tienen una URL válida.';
+            return res.redirect('back');
+        }
 
         const data = {
             title: req.body.title,
@@ -65,14 +83,14 @@ export const createAccommodationController = async (req, res) => {
             photos: photos,
             hostId: user._id.toString(),
         };
-console.log('Datos del alojamiento:', data);
+        console.log('Datos del alojamiento:', data);
 
         const createAccommodation = new CreateAccommodation(accommodationRepo, userRepo);
         const accommodation = await createAccommodation.execute(data);
         req.session.successMessage = 'Alojamiento creado correctamente';
         return res.redirect('/dashboard/' + user._id.toString());
-
     } catch (err) {
-        return res.status(400).json({ error: err.message });
+        req.session.errorMessage = err.message;
+        return res.redirect('back');
     }
 }

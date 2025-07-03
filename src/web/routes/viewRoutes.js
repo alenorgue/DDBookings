@@ -229,6 +229,11 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
   }
 });
 
+// Excepción para dejar pasar /bookings/:id/pdf al siguiente router (API)
+router.get('/bookings/:id/pdf', (req, res, next) => {
+  return next();
+});
+
 // Manejo de rutas no encontradas (404)
 router.use((req, res, next) => {
   const err = new Error('Página no encontrada');
