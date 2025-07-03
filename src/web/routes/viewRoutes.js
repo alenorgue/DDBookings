@@ -136,9 +136,10 @@ router.get('/login', (req, res) => {
 
 // Renderiza el dashboard del usuario
 router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
+  console.log('DASHBOARD - req.session.user:', req.session.user);
   try {
     const user = await userRepo.findById(req.params.id);
-    console.log('DASHBOARD user.id:', user.id);
+    console.log('DASHBOARD user.id:', user && user.id);
     if (!user) return res.status(404).send('Usuario no encontrado');
 
     const userAccommodations = await accommodationRepo.findByHostId(user.id);
