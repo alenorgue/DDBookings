@@ -10,7 +10,7 @@
 
 <body>
     <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-    <main class="container">
+    <main class="container" style="height: 75vh;">
   <h1>Login</h1>
   <% if (typeof error !== 'undefined') { %>
     <p style="color:red;"><%= error %></p>
