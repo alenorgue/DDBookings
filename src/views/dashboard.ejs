@@ -182,6 +182,7 @@
         <span class="field-error" id="languageError"></span>
         <button type="submit">Guardar Cambios</button>
       </form>
+
       <script>
         document.addEventListener('DOMContentLoaded', function () {
           const form = document.querySelector('form[action="/api/users/update"]');
@@ -254,7 +255,7 @@
         });
       </script>
     </section>
-
+  <%- include('partials/footer') %>
   </main>
 </body>
 
