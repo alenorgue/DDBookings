@@ -54,6 +54,6 @@ export default async function createBookingController(req, res) {
     res.redirect(`/bookings/${booking.id}`);
   } catch (error) {
     console.error('Error al crear la reserva:', error.message);
-    res.status(400).render('errorPage', { message: error.message });
+    res.status(400).render('error', { message: error.message });
   }
 }
