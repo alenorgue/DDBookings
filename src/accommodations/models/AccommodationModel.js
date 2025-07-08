@@ -131,7 +131,7 @@ const accommodationSchema = new mongoose.Schema({
     },
     cancellationPolicy: {
         type: String,
-        enum: ['Flexible', 'Moderate', 'Strict', 'Super Strict', 'No Refund', 'Other'],
+        enum: ['Flexible', 'Moderate', 'Strict', 'Super Strict', 'No Refund'],
         default: 'Flexible'
     },
     checkIn: {

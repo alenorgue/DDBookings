@@ -1,0 +1,201 @@
+/* styles.css: Layout base para sticky footer en todas las vistas y estilos globales */
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1 0 auto;
+}
+main.container {
+  width: 100%;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente el contenido si hay poco */
+}
+.main-footer {
+  margin-top: auto;
+}
+
+body, .container, .row, .lead, .card, .card-title, .card-text, h3, h4, h5, h6, p, a, .btn, .typing {
+  font-size: 115% !important;
+}
+
+.video-bg-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.typing {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: .15em solid orange;
+  animation: typing 3s steps(40, end), blink .75s step-end infinite;
+}
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+.card .card-title, .card .card-text, .card .d-flex {
+  font-size: 90% !important;
+}
+
+#destacados {
+  margin-top: 5rem !important;
+}
+
+.como-funciona-card {
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.como-funciona-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+  border-radius: 1rem;
+}
+.como-funciona-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+nav, nav.custom-navbar {
+  width: 100%;
+  background: #fff;
+  padding: 0.35em 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin-bottom: 2em;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav > div, .navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 0;
+}
+nav .navbar-left, nav .navbar-right, .navbar-links, .navbar-right-block {
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+}
+nav .navbar-right, .navbar-right-block {
+  gap: 2.2em;
+}
+nav a, nav.custom-navbar a {
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  font-size: 115% !important;
+}
+nav a.home-link, nav.custom-navbar a.home-link {
+  font-weight: bold;
+  font-size: 1.25em;
+  color: #2d3748;
+  letter-spacing: 0.5px;
+}
+nav a.admin-link, nav.custom-navbar a.admin-link {
+  color: #3182ce;
+  font-weight: bold;
+}
+nav a:hover, nav.custom-navbar a:hover {
+  color: #3182ce !important;
+  text-decoration: underline;
+}
+.logout-link {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 115% !important;
+}
+.logout-link:hover {
+  color: #c53030 !important;
+  text-decoration: underline;
+}
+
+.btn-primary, .btn-primary:active, .btn-primary:focus {
+  background-color: #5bc0ff !important;
+  border-color: #5bc0ff !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(91,192,255,0.08);
+  transition: background 0.2s, border 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.btn-primary:hover {
+  background-color: #7fd6ff !important;
+  border-color: #7fd6ff !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(91,192,255,0.10);
+  transform: translateY(2px) scale(0.98);
+  text-shadow: none;
+}
+
+/* Restaurar color de enlaces globales excepto el especial de login */
+a, a:visited, a:active {
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+a:hover, a:focus {
+  color: #3182ce;
+  text-decoration: underline;
+}
+
+/* Enlace especial en login.ejs */
+.login-register-link {
+  color: #5bc0ff !important;
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.login-register-link:hover, .login-register-link:focus {
+  color: #3182ce !important;
+  text-shadow: 0 2px 8px rgba(91,192,255,0.18);
+}
+
+/* Elimina reglas globales de enlaces azules que puedan afectar index */
+body a:not(nav a):not(nav.custom-navbar a),
+body a:not(nav a):not(nav.custom-navbar a):visited,
+body a:not(nav a):not(nav.custom-navbar a):active,
+body a:not(nav a):not(nav.custom-navbar a):hover,
+body a:not(nav a):not(nav.custom-navbar a):focus {
+  /* Eliminado para restaurar el estilo original de los enlaces en index */
+}
