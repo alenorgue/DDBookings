@@ -150,8 +150,12 @@ router.get('/login', (req, res) => {
 });
 
 // Renderiza el dashboard del usuario
-router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
+router.get('/dashboard/:id', ensureAuthenticated, async (req, res, next) => {
   console.log('DASHBOARD - req.session.user:', req.session.user);
+  // Validar que el id es un ObjectId válido antes de consultar la base de datos
+  if (!/^[a-fA-F0-9]{24}$/.test(req.params.id)) {
+    return res.status(400).render('error', { message: 'ID de usuario no válido', error: null, user: req.session.user || null });
+  }
   try {
     const user = await userRepo.findById(req.params.id);
     console.log('DASHBOARD user.id:', user && user.id);
@@ -188,7 +192,7 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
     return;
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.status(500).render('error', { message: 'Error interno en el dashboard', error: err, user: req.session.user || null });
   }
 });
 
@@ -261,11 +265,5 @@ router.get('/bookings/:id/pdf', (req, res, next) => {
   return next();
 });
 
-// Manejo de rutas no encontradas (404)
-router.use((req, res, next) => {
-  const err = new Error('Página no encontrada');
-  err.status = 404;
-  next(err);
-});
 
 export default router;

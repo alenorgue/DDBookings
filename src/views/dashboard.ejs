@@ -10,6 +10,20 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
   <link href="/css/styles.css" rel="stylesheet">
   <style>
+    body {
+      background: url('/img/blog/blog-hero-1.webp') center center/cover no-repeat fixed;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .dashboard-bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: rgba(30, 40, 60, 0.45);
+      pointer-events: none;
+    }
+
     .dashboard-row {
       width: 95vw;
       max-width: 1600px;
@@ -24,12 +38,14 @@
     }
 
     .dashboard-card {
-      background: rgba(255, 255, 255, 0.97);
+      background: #fff !important;
+      opacity: 1 !important;
       border-radius: 1.2rem;
       box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
       padding: 2rem 1.5rem 1.5rem 1.5rem;
       min-height: 340px;
       width: 100%;
+      transition: none !important;
     }
 
     .dashboard-card h3 {
@@ -80,8 +96,10 @@
     .dashboard-card .btn,
     .dashboard-card button,
     .dashboard-card input[type="submit"] {
-      font-size: 1em;
+      font-size: 0.75em;
       border-radius: 0.5em;
+      padding: 0.18em 0.5em;
+      min-width: 60px;
     }
 
     .dashboard-card input,
@@ -130,8 +148,21 @@
     }
 
     .btn-smaller {
-      font-size: 0.85em !important;
-      padding: 0.3em 0.7em !important;
+      font-size: 0.75em !important;
+      padding: 0.18em 0.5em !important;
+      min-width: 60px;
+    }
+
+    .dashboard-card.fade-in,
+    .dashboard-card.fade-in.visible {
+      opacity: 1 !important;
+      background: #fff !important;
+      filter: none !important;
+    }
+
+    .fade-in,
+    .fade-in.visible {
+      will-change: opacity, transform;
     }
   </style>
   <script>
@@ -155,6 +186,7 @@
 </head>
 
 <body class="bg-light text-dark">
+  <div class="dashboard-bg-overlay"></div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main>
     <% if (successMessage) { %>
@@ -183,10 +215,10 @@
                   <span>Huéspedes: <%= res.guests %></span><br>
                   Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : '' %><br>
                   Estado: <%= res.status %><br>
-                  <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-outline-danger btn-sm mt-1" <%= res.status === 'cancelled' ? 'disabled' : '' %>>Cancelar</button>
+                  <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
+                    <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
                   </form>
-                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-link btn-sm">Ver alojamiento</a>
+                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver alojamiento</a>
                 </div>
               </div>
             <% }) %>
@@ -225,7 +257,7 @@
                   <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>">
                   <div>
                     <strong><%= acc.title %></strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
-                    <a href="/accommodations/<%= acc.id %>" class="btn btn-link btn-sm btn-smaller">Ver detalles</a>
+                    <a href="/accommodations/<%= acc.id %>" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver detalles</a>
                     <form action="/accommodations/<%= acc.id %>/update" method="GET" class="d-inline">
                       <button type="submit" class="btn btn-outline-warning btn-sm mt-1 btn-smaller">Editar</button>
                     </form>
@@ -243,6 +275,7 @@
                         </div>
                       </div>
                     </form>
+                   
                   </div>
                 </div>
               <% } %>
@@ -318,6 +351,33 @@
     </div>
   </main>
   <%- include('partials/footer') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let formToSubmit = null;
+      document.querySelectorAll('form[data-confirm]').forEach(form => {
+        const btn = form.querySelector('button');
+        if (btn) {
+          btn.setAttribute('type', 'button');
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            formToSubmit = form;
+            let msg = form.getAttribute('data-confirm') || '¿Estás seguro de que deseas realizar esta acción?';
+            document.getElementById('confirmModalBody').textContent = msg;
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+          });
+        }
+      });
+      document.getElementById('confirmModalAccept').addEventListener('click', function () {
+        if (formToSubmit) {
+          formToSubmit.submit();
+          formToSubmit = null;
+          const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+          modal.hide();
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
