@@ -3,260 +3,320 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Editar Perfil</title>
-  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+  <title>Mi Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
   <style>
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 2rem;
-      padding: 2rem;
+    .dashboard-row {
+      width: 95vw;
+      max-width: 1600px;
+      margin: 2.5rem auto 2rem auto;
+      min-height: 70vh;
     }
 
-    .dashboard section {
-      background: #f9f9f9;
-      padding: 1.5rem;
-      border-radius: 8px;
+    .dashboard-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
 
-    .dashboard h3 {
-      margin-top: 0;
+    .dashboard-card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 1.2rem;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      min-height: 340px;
+      width: 100%;
+    }
+
+    .dashboard-card h3 {
+      color: #232b3a;
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
     }
 
     .accommodation-card,
     .reservation-card {
-      border-bottom: 1px solid #ddd;
-      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.7rem 0 1.1rem 0;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.1rem;
+      background: transparent;
     }
 
-    .input-error {
-      border-color: #c00 !important;
+    .accommodation-card:last-child,
+    .reservation-card:last-child {
+      border-bottom: none;
     }
 
-    .field-error {
-      color: #c00;
-      font-size: 0.9em;
-      min-height: 1.2em;
-      display: block;
+    .accommodation-card img,
+    .reservation-card img {
+      max-width: 80px;
+      min-width: 60px;
+      border-radius: 0.7rem;
+      object-fit: cover;
+      background: #f7f8fa;
+    }
+
+    .profile-pic {
+      max-width: 120px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .dashboard-card form,
+    .dashboard-card a.button,
+    .dashboard-card button {
+      margin-top: 0.5em;
+    }
+
+    .dashboard-card .btn,
+    .dashboard-card button,
+    .dashboard-card input[type="submit"] {
+      font-size: 1em;
+      border-radius: 0.5em;
+    }
+
+    .dashboard-card input,
+    .dashboard-card textarea,
+    .dashboard-card select {
+      margin-bottom: 0.5em;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-row {
+        width: 99vw;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-row {
+        flex-direction: column !important;
+      }
+
+      .dashboard-col {
+        margin-bottom: 2rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .dashboard-row {
+        flex-direction: column !important;
+        width: 100vw;
+        padding: 0;
+      }
+
+      .dashboard-card {
+        padding: 1.2rem 0.5rem;
+      }
+    }
+
+    .btn-smaller {
+      font-size: 0.85em !important;
+      padding: 0.3em 0.7em !important;
     }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      if ('IntersectionObserver' in window) {
+        const observer = new window.IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        fadeEls.forEach(el => observer.observe(el));
+      } else {
+        fadeEls.forEach(el => el.classList.add('visible'));
+      }
+    });
+  </script>
 </head>
 
-<body>
-    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main class="dashboard">
+<body class="bg-light text-dark">
+  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
+  <main>
     <% if (successMessage) { %>
-      <div id="successModal" style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin-bottom:1em;text-align:center;">
+      <div id="successModal" class="alert alert-success text-center fade-in visible"
+        style="border-radius:8px;margin-bottom:1em;max-width:600px;margin-left:auto;margin-right:auto;">
         <%= successMessage %>
       </div>
       <script>
         setTimeout(() => {
           const modal = document.getElementById('successModal');
-          if(modal) modal.style.display = 'none';
+          if (modal) modal.style.display = 'none';
         }, 3000);
       </script>
     <% } %>
-    <!-- IZQUIERDA: Reservas -->
-    <section>
-      <h3>Tus Reservas</h3>
-      <% if (userBookings.length > 0) { %>
-        <% userBookings.forEach(res => { %>
-          <div class="reservation-card">
-            <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento" style="max-width: 80px; border-radius: 6px; margin-bottom: 0.5em;">
-            <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
-            <span>Huéspedes: <%= res.guests %></span><br>
-            Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : '' %><br>
-            Estado: <%= res.status %><br>
-            <form action="/bookings/<%= res.id %>/cancel" method="POST" style="margin-top:0.5em;">
-              <button type="submit" <%= res.status === 'cancelled' ? 'disabled' : '' %>>Cancelar reserva</button>
-            </form>
-            <a href="/accommodations/<%= res.accommodationId %>">Ver alojamiento</a>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <p>No tienes reservas aún.</p>
-      <% } %>
-
-        <h3>Reservas en tus alojamientos</h3>
-        <% if (hostBookings && hostBookings.length > 0) { %>
-          <% hostBookings.forEach(res => { %>
-            <div class="reservation-card">
-              <strong><%= res.id %></strong><br>
-              Huésped: <%= res.guestName || res.guestId %><br>
-              Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : (res.checkIn ? new Date(res.checkIn).toLocaleDateString() : '') %> 
-              al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : (res.checkOut ? new Date(res.checkOut).toLocaleDateString() : '') %>
-              <br>
-              Estado: <%= res.status || '' %>
-              <a href="/accommodations/<%= res.accommodationId %>">Ver alojamiento</a>
-            </div>
-          <% }) %>
-        <% } else { %>
-          <p>No hay reservas aún.</p>
-        <% } %>
-    </section>
-
-    <!-- CENTRO: Alojamientos -->
-    <section>
-      <h3>Tus Alojamientos</h3>
-      <a href="/createAccommodation" class="button">Publicar Nuevo Alojamiento</a>
-      <br><br>
-
-      <% if (userAccommodations.length> 0) { %>
-        <% userAccommodations.forEach(acc=> { %>
-          <% if (acc.id) { %>
-            <div class="accommodation-card">
-              <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>" style="max-width: 100px;">
-              <strong>
-                <%= acc.title %>
-              </strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
-                <a href="/accommodations/<%= acc.id %>">Ver detalles</a>
-                <form action="/accommodations/<%= acc.id %>/update" method="GET" style="margin-top:1em;">
-                  <button type="submit">Editar</button>
-                </form>
-                <form action="/api/accommodations/<%= acc.id %>/availability" method="POST" style="margin-top:1em;">
-                  <label>Disponibilidad:</label><br>
-                  <input type="date" name="startDate" required>
-                  <input type="date" name="endDate" required>
-                  <button type="submit">Añadir rango</button>
-                </form>
-                <!-- (Eliminado el formulario para cambiar status) -->
-            </div>
-            <% } %>
-              <% }) %>
-                <% } else { %>
-                  <p>No has publicado alojamientos todavía.</p>
-                  <% } %>
-    </section>
-
-    <!-- DERECHA: Edición de perfil -->
-    <section>
-         <h3>Perfil</h3>
-      <% if (user.profilePicture) { %>
-        <img src="<%= user.profilePicture %>" alt="Foto de perfil"
-          style="max-width:120px;border-radius:50%;margin-bottom:1rem;">
-        <% } else { %>
-          <div
-            style="width:120px;height:120px;background:#eee;border-radius:50%;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;">
-            Sin foto</div>
+    <div class="row dashboard-row d-flex justify-content-center align-items-stretch fade-in">
+      <!-- IZQUIERDA: Reservas -->
+      <div class="col-lg-4 dashboard-col">
+        <div class="dashboard-card">
+          <h3><i class="fa-solid fa-calendar-check me-2"></i>Tus Reservas</h3>
+          <% if (userBookings.length > 0) { %>
+            <% userBookings.forEach(res => { %>
+              <div class="reservation-card">
+                <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento">
+                <div>
+                  <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
+                  <span>Huéspedes: <%= res.guests %></span><br>
+                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : '' %><br>
+                  Estado: <%= res.status %><br>
+                  <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger btn-sm mt-1" <%= res.status === 'cancelled' ? 'disabled' : '' %>>Cancelar</button>
+                  </form>
+                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-link btn-sm">Ver alojamiento</a>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No tienes reservas aún.</p>
           <% } %>
-            <p><strong>
-                <%= user.name %>
-                  <%= user.surName %>
-              </strong></p>
-            <p>
-              <%= user.email %>
-            </p>
-      <h3>Editar Perfil</h3>
-      <div id="formErrorBox" style="color:#c00; margin-bottom:1em;"></div>
-      <form action="/api/users/update" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="userId" value="<%= user.id %>">
-        <label for="name">Nombre</label>
-        <input type="text" name="name" id="name" placeholder="Deja vacío para mantener el actual" value="" />
-        <span class="field-error" id="nameError"></span>
-        <label for="surName">Apellido</label>
-        <input type="text" name="surName" id="surName" placeholder="Deja vacío para mantener el actual" value="" />
-        <span class="field-error" id="surNameError"></span>
-        <input type="hidden" name="email" value="<%= user.email %>" />
-        <label for="password">Nueva contraseña (deja vacío para mantener actual)</label>
-        <input type="password" name="password" id="password" placeholder="********" />
-        <span class="field-error" id="passwordError"></span>
-        <label for="profilePicture">Foto de Perfil</label>
-        <input type="file" name="profilePicture" id="profilePicture" accept="image/*" />
-        <span class="field-error" id="profilePictureError"></span>
-        <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
-        <label for="bio">Biografía</label>
-        <textarea name="bio" id="bio" maxlength="500"><%= user.bio %></textarea>
-        <span class="field-error" id="bioError"></span>
-        <label for="phoneNumber">Teléfono</label>
-        <input type="text" name="phoneNumber" id="phoneNumber" value="<%= user.phoneNumber %>" />
-        <span class="field-error" id="phoneError"></span>
-        <label for="country">País</label>
-        <input type="text" name="country" id="country" value="<%= user.country %>" />
-        <span class="field-error" id="countryError"></span>
-        <label for="language">Idioma preferido</label>
-        <select name="language" id="language">
-          <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
-          <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
-          <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
-        </select>
-        <span class="field-error" id="languageError"></span>
-        <button type="submit">Guardar Cambios</button>
-      </form>
-
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const form = document.querySelector('form[action="/api/users/update"]');
-          const errorBox = document.getElementById('formErrorBox');
-          const name = form.name;
-          const surName = form.surName;
-          const password = form.password;
-          const profilePicture = form.profilePicture;
-          const bio = form.bio;
-          const phone = form.phoneNumber;
-          const country = form.country;
-          const language = form.language;
-          // Error spans
-          const nameError = document.getElementById('nameError');
-          const surNameError = document.getElementById('surNameError');
-          const passwordError = document.getElementById('passwordError');
-          const profilePictureError = document.getElementById('profilePictureError');
-          const bioError = document.getElementById('bioError');
-          const phoneError = document.getElementById('phoneError');
-          const countryError = document.getElementById('countryError');
-          const languageError = document.getElementById('languageError');
-          function setFieldError(input, errorSpan, msg) {
-            errorSpan.textContent = msg;
-            if (msg) input.classList.add('input-error');
-            else input.classList.remove('input-error');
-          }
-          function clearError() { errorBox.textContent = ''; }
-          // Real-time validation
-          name.addEventListener('input', function () {
-            if (name.value && (name.value.length < 2 || name.value.length > 100)) setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.');
-            else setFieldError(name, nameError, '');
-          });
-          surName.addEventListener('input', function () {
-            if (surName.value && (surName.value.length < 2 || surName.value.length > 100)) setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.');
-            else setFieldError(surName, surNameError, '');
-          });
-          password.addEventListener('input', function () {
-            if (password.value && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
-            else setFieldError(password, passwordError, '');
-          });
-          phone.addEventListener('input', function () {
-            if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) setFieldError(phone, phoneError, 'Introduce un teléfono válido.');
-            else setFieldError(phone, phoneError, '');
-          });
-          country.addEventListener('input', function () {
-            if (country.value && (country.value.length < 2 || country.value.length > 100)) setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.');
-            else setFieldError(country, countryError, '');
-          });
-          language.addEventListener('change', function () {
-            if (!['en','es','cat'].includes(language.value)) setFieldError(language, languageError, 'Selecciona un idioma válido.');
-            else setFieldError(language, languageError, '');
-          });
-          bio.addEventListener('input', function () {
-            if (bio.value && bio.value.length > 500) setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.');
-            else setFieldError(bio, bioError, '');
-          });
-          // On submit, check all fields
-          form.addEventListener('submit', function (e) {
-            clearError();
-            let hasError = false;
-            if (name.value && (name.value.length < 2 || name.value.length > 100)) { setFieldError(name, nameError, 'El nombre debe tener entre 2 y 100 caracteres.'); hasError = true; }
-            if (surName.value && (surName.value.length < 2 || surName.value.length > 100)) { setFieldError(surName, surNameError, 'El apellido debe tener entre 2 y 100 caracteres.'); hasError = true; }
-            if (password.value && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) { setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.'); hasError = true; }
-            if (phone.value && !/^[0-9+\-() ]{7,20}$/.test(phone.value)) { setFieldError(phone, phoneError, 'Introduce un teléfono válido.'); hasError = true; }
-            if (country.value && (country.value.length < 2 || country.value.length > 100)) { setFieldError(country, countryError, 'El país debe tener entre 2 y 100 caracteres.'); hasError = true; }
-            if (!['en','es','cat'].includes(language.value)) { setFieldError(language, languageError, 'Selecciona un idioma válido.'); hasError = true; }
-            if (bio.value && bio.value.length > 500) { setFieldError(bio, bioError, 'La biografía no puede superar los 500 caracteres.'); hasError = true; }
-            if (hasError) { errorBox.textContent = 'Corrige los errores antes de guardar.'; e.preventDefault(); }
-          });
-        });
-      </script>
-    </section>
- 
-  </main> 
+          <h3 class="mt-4"><i class="fa-solid fa-users-viewfinder me-2"></i>Reservas en tus alojamientos</h3>
+          <% if (hostBookings && hostBookings.length > 0) { %>
+            <% hostBookings.forEach(res => { %>
+              <div class="reservation-card">
+                <div>
+                  <strong>ID: <%= res.id %></strong><br>
+                  Huésped ID: <%= res.guestId %><br>
+                  <% if (res.guestName) { %><span class="text-muted"> <%= res.guestName %></span><br><% } %>
+                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : (res.checkIn ? new Date(res.checkIn).toLocaleDateString() : '') %> 
+                  al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : (res.checkOut ? new Date(res.checkOut).toLocaleDateString() : '') %><br>
+                  Estado: <%= res.status || '' %><br>
+                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-link btn-sm">Ver alojamiento</a>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No hay reservas aún.</p>
+          <% } %>
+        </div>
+      </div>
+      <!-- CENTRO: Alojamientos -->
+      <div class="col-lg-5 dashboard-col">
+        <div class="dashboard-card">
+          <h3><i class="fa-solid fa-house-user me-2"></i>Tus Alojamientos</h3>
+          <a href="/createAccommodation" class="btn btn-primary mb-3 btn-smaller">Publicar Nuevo Alojamiento</a>
+          <% if (userAccommodations.length > 0) { %>
+            <% userAccommodations.forEach(acc => { %>
+              <% if (acc.id) { %>
+                <div class="accommodation-card">
+                  <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>">
+                  <div>
+                    <strong><%= acc.title %></strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
+                    <a href="/accommodations/<%= acc.id %>" class="btn btn-link btn-sm btn-smaller">Ver detalles</a>
+                    <form action="/accommodations/<%= acc.id %>/update" method="GET" class="d-inline">
+                      <button type="submit" class="btn btn-outline-warning btn-sm mt-1 btn-smaller">Editar</button>
+                    </form>
+                    <form action="/api/accommodations/<%= acc.id %>/availability" method="POST" class="mt-2">
+                      <label class="form-label">Disponibilidad:</label>
+                      <div class="row g-2 align-items-end">
+                        <div class="col-auto">
+                          <input type="date" name="startDate" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-auto">
+                          <input type="date" name="endDate" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-auto">
+                          <button type="submit" class="btn btn-outline-primary btn-sm btn-smaller">Añadir rango</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              <% } %>
+            <% }) %>
+          <% } else { %>
+            <p>No has publicado alojamientos todavía.</p>
+          <% } %>
+        </div>
+      </div>
+      <!-- DERECHA: Edición de perfil -->
+      <div class="col-lg-3 dashboard-col">
+        <div class="dashboard-card">
+          <h3><i class="fa-solid fa-user-gear me-2"></i>Perfil</h3>
+          <% if (user.profilePicture) { %>
+            <img src="<%= user.profilePicture %>" alt="Foto de perfil" class="profile-pic">
+          <% } else { %>
+            <div class="profile-pic d-flex align-items-center justify-content-center" style="background:#eee;">Sin foto</div>
+          <% } %>
+          <p class="mb-1"><strong><%= user.name %> <%= user.surName %></strong></p>
+          <p class="mb-1"><%= user.email %></p>
+          <form action="/api/users/update" method="POST" enctype="multipart/form-data" class="mt-3">
+            <input type="hidden" name="userId" value="<%= user.id %>">
+            <div class="mb-2">
+              <label for="name" class="form-label">Nombre</label>
+              <input type="text" name="name" id="name" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+              <span class="field-error" id="nameError"></span>
+            </div>
+            <div class="mb-2">
+              <label for="surName" class="form-label">Apellido</label>
+              <input type="text" name="surName" id="surName" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+              <span class="field-error" id="surNameError"></span>
+            </div>
+            <input type="hidden" name="email" value="<%= user.email %>" />
+            <div class="mb-2">
+              <label for="password" class="form-label">Nueva contraseña (deja vacío para mantener actual)</label>
+              <input type="password" name="password" id="password" class="form-control" placeholder="********" />
+              <span class="field-error" id="passwordError"></span>
+            </div>
+            <div class="mb-2">
+              <label for="profilePicture" class="form-label">Foto de Perfil</label>
+              <input type="file" name="profilePicture" id="profilePicture" class="form-control" accept="image/*" />
+              <span class="field-error" id="profilePictureError"></span>
+              <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
+            </div>
+            <div class="mb-2">
+              <label for="bio" class="form-label">Biografía</label>
+              <textarea name="bio" id="bio" maxlength="500" class="form-control"><%= user.bio %></textarea>
+              <span class="field-error" id="bioError"></span>
+            </div>
+            <div class="mb-2">
+              <label for="phoneNumber" class="form-label">Teléfono</label>
+              <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" value="<%= user.phoneNumber %>" />
+              <span class="field-error" id="phoneError"></span>
+            </div>
+            <div class="mb-2">
+              <label for="country" class="form-label">País</label>
+              <input type="text" name="country" id="country" class="form-control" value="<%= user.country %>" />
+              <span class="field-error" id="countryError"></span>
+            </div>
+            <div class="mb-2">
+              <label for="language" class="form-label">Idioma preferido</label>
+              <select name="language" id="language" class="form-select">
+                <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
+                <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
+                <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
+              </select>
+              <span class="field-error" id="languageError"></span>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mt-2">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
   <%- include('partials/footer') %>
 </body>
 

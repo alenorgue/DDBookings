@@ -2,37 +2,126 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><%= accommodation.title %> - Detalles del alojamiento</title>
-  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
   <style>
-    body {
-      padding: 1rem;
+    .fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1); }
+    .fade-in.visible { opacity: 1; transform: none; }
+    .details-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 1.2rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+      max-width: 900px;
+      margin: 2.5rem auto 2rem auto;
     }
     .photos {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
       margin-bottom: 2rem;
+      justify-content: flex-start;
     }
     .photos img {
-      width: 200px;
-      height: auto;
-      border-radius: 0.5rem;
+      width: 180px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 0.7rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: #f7f8fa;
     }
-    #map {
+    .main-photo {
+      width: 320px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 1rem;
+      margin-right: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      background: #f7f8fa;
+    }
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem 0;
+    }
+    .info-list li { margin-bottom: 0.5rem; }
+    .calendar-box {
+      background: #f7f8fa;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .booking-form-box {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 2rem;
+      max-width: 420px;
+    }
+    .edit-btn {
+      position: fixed;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      z-index: 10;
+    }
+    /* Centrar texto de fechas en FullCalendar */
+    .fc .fc-daygrid-day-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      height: 400px;
-      margin-top: 1rem;
+      height: 100%;
+      font-size: 0.85em;
+      text-align: center;
+    }
+    /* Reducir altura de las celdas del calendario (FullCalendar) */
+    .fc .fc-daygrid-day,
+    .fc .fc-daygrid-day-frame,
+    .fc .fc-daygrid-day-bg {
+      min-height: 26px !important;
+      height: 28px !important;
+      max-height: 32px !important;
+     
+    }
+    
+    @media (max-width: 900px) {
+      .details-card { padding: 1.2rem 0.5rem; }
+      .main-photo { width: 100%; height: 180px; margin: 0 0 1rem 0; }
+      .photos img { width: 120px; height: 80px; }
     }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      if ('IntersectionObserver' in window) {
+        const observer = new window.IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        fadeEls.forEach(el => observer.observe(el));
+      } else {
+        fadeEls.forEach(el => el.classList.add('visible'));
+      }
+    });
+  </script>
 </head>
-<body>
+<body class="bg-light text-dark">
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main class="container">
+  <main class="container-fluid fade-in" style="max-width:1400px;">
     <% if (successMessage) { %>
-      <div id="successModal" style="background:#d4edda;color:#155724;padding:1em;border-radius:8px;margin-bottom:1em;text-align:center;">
+      <div id="successModal" class="alert alert-success text-center fade-in visible" style="border-radius:8px;margin-bottom:1em;">
         <%= successMessage %>
       </div>
       <script>
@@ -42,140 +131,185 @@
         }, 3000);
       </script>
     <% } %>
-    <h1><%= accommodation.title %></h1>
-
-    <div><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>
-    <div><strong>Descripción:</strong> <%= accommodation.description %></div>
-    <div><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %> - <%= accommodation.location.postalCode %></div>
-    <div><strong>Metros cuadrados:</strong> <%= accommodation.squareMeters %> m²</div>
-    <div><strong>Habitaciones:</strong> <%= accommodation.rooms %></div>
-    <div><strong>Camas:</strong> <%= accommodation.beds %></div>
-    <div><strong>Máximos huespedes:</strong> <%= accommodation.maxGuests %></div>
-    <div><strong>Baños:</strong> <%= accommodation.bathrooms %></div>
-    <div><strong>Tipo de propiedad:</strong> <%= accommodation.propertyType %></div>
-    <div><strong>Se permiten mascotas:</strong> <%= accommodation.petsAllowed ? 'Sí' : 'No' %></div>
-    <div><strong>Política de cancelación:</strong> <%= accommodation.cancellationPolicy %></div>
-    <div><strong>Check-in:</strong> <%= accommodation.checkIn %> | <strong>Check-out:</strong> <%= accommodation.checkOut %></div>
-    <div><strong>Reglas de la casa:</strong> <%= accommodation.houseRules || 'No especificadas' %></div>
-    <div><strong>Servicios:</strong>
-      <ul>
-        <% accommodation.amenities.forEach(a => { %>
-          <li><%= a %></li>
-        <% }) %>
-      </ul>
-    </div>
-
-    <h2>Fotos</h2>
-    <div class="photos">
-      <% if (accommodation.mainPhoto) { %>
-        <img src="<%= accommodation.mainPhoto %>" alt="Foto principal">
+    <div class="details-card fade-in">
+      <div class="row g-4 align-items-start">
+        <div class="col-md-5 text-center">
+          <% if (accommodation.mainPhoto) { %>
+            <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" class="main-photo mb-3 mb-md-0" style="width:100%;max-width:520px;height:340px;object-fit:cover;">
+          <% } %>
+          <% if (accommodation.photos && accommodation.photos.length > 0) { %>
+          <div id="photosCarousel" class="carousel slide mt-3" data-bs-ride="carousel" style="max-width:520px;margin:0 auto;">
+            <div class="carousel-inner">
+              <% accommodation.photos.forEach(function(photo, idx) { %>
+                <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+                  <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.label || 'Foto adicional' %>" style="height:220px;object-fit:cover;border-radius:0.7rem;">
+                </div>
+              <% }) %>
+            </div>
+            <% if (accommodation.photos.length > 1) { %>
+              <button class="carousel-control-prev" type="button" data-bs-target="#photosCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#photosCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+        <div class="col-md-7">
+          <h1 class="display-6 mb-2" style="color:#232b3a;"><%= accommodation.title %></h1>
+          <ul class="info-list">
+            <li><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></li>
+            <li><strong>Descripción:</strong> <%= accommodation.description %></li>
+            <li><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %> - <%= accommodation.location.postalCode %></li>
+            <li><strong>Metros cuadrados:</strong> <%= accommodation.squareMeters %> m²</li>
+            <li><strong>Habitaciones:</strong> <%= accommodation.rooms %> | <strong>Camas:</strong> <%= accommodation.beds %> | <strong>Baños:</strong> <%= accommodation.bathrooms %></li>
+            <li><strong>Máximos huéspedes:</strong> <%= accommodation.maxGuests %></li>
+            <li><strong>Tipo de propiedad:</strong> <%= accommodation.propertyType %></li>
+            <li><strong>Se permiten mascotas:</strong> <%= accommodation.petsAllowed ? 'Sí' : 'No' %></li>
+            <li><strong>Política de cancelación:</strong> <%= accommodation.cancellationPolicy %></li>
+            <li><strong>Check-in:</strong> <%= accommodation.checkIn %> | <strong>Check-out:</strong> <%= accommodation.checkOut %></li>
+            <li><strong>Reglas de la casa:</strong> <%= accommodation.houseRules || 'No especificadas' %></li>
+            <li><strong>Servicios:</strong>
+              <ul class="d-flex flex-wrap gap-2 mt-1" style="list-style:none;padding:0;">
+                <% accommodation.amenities.forEach(a => { %>
+                  <li><i class="fa-solid fa-circle-check me-1" style="color:#5bc0ff;"></i> <%= a %></li>
+                <% }) %>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row mt-4 g-4">
+        <div class="col-lg-6">
+          <div class="calendar-box">
+            <h3 class="h5 mb-3"><i class="fa-solid fa-calendar-days me-2"></i>Disponibilidad</h3>
+            <div id="calendar"></div>
+            <div class="mt-2 small" style="font-size:0.95em;">
+              <span style="background:#d4edda;border-radius:0.4em;padding:0.2em 0.7em;margin-right:0.5em;border:1px solid #b7e4c7;display:inline-block;"></span> Disponible
+              <span style="background:#f8d7da;border-radius:0.4em;padding:0.2em 0.7em;margin-left:1.5em;margin-right:0.5em;border:1px solid #f5c2c7;display:inline-block;"></span> Reservado
+             
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="booking-form-box">
+            <h3 class="h5 mb-3"><i class="fa-solid fa-bed me-2"></i>Realizar reserva</h3>
+            <form id="bookingForm" method="POST" action="/bookings/">
+              <input type="hidden" name="accommodationId" value="<%= accommodation.id %>">
+              <input type="hidden" name="hostId" value="<%= accommodation.hostId %>">
+              <div class="mb-2">
+                <label for="startDate" class="form-label">Fecha de entrada:</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" required>
+              </div>
+              <div class="mb-2">
+                <label for="endDate" class="form-label">Fecha de salida:</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" required>
+              </div>
+              <div class="mb-2">
+                <label for="guests" class="form-label">Huéspedes:</label>
+                <input type="number" class="form-control" id="guests" name="guests" min="1" max="<%= accommodation.maxGuests %>" value="1" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Reservar</button>
+              <div id="bookingMessage" class="mt-2 text-danger"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4 g-4">
+        <div class="col-12">
+          <div class="calendar-box">
+            <h3 class="h5 mb-3"><i class="fa-solid fa-map-location-dot me-2"></i>Ubicación en el mapa</h3>
+            <% if (accommodation.location && accommodation.location.coordinates) { %>
+              <div id="map" style="width:100%;height:320px;"></div>
+              <script>
+                function initMap() {
+                  const coords = JSON.parse('<%- JSON.stringify(accommodation.location.coordinates) %>');
+                  const map = new google.maps.Map(document.getElementById("map"), {
+                    center: coords,
+                    zoom: 15,
+                  });
+                  new google.maps.Marker({ position: coords, map: map });
+                }
+              </script>
+              <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
+            <% } else { %>
+              <p><em>Ubicación no disponible para este alojamiento.</em></p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <% if (typeof user !== 'undefined' && user && user.id === accommodation.hostId) { %>
+        <a href="/accommodations/<%= accommodation.id %>/update" class="btn btn-warning edit-btn"><i class="fa-solid fa-pen-to-square me-2"></i>Editar este alojamiento</a>
       <% } %>
-     <% accommodation.photos.forEach(photo => { %>
-  <div>
-    <img src="<%= photo.url %>" alt="<%= photo.label || 'Foto adicional' %>">
-  </div>
-<% }) %>
     </div>
-<h3>Disponibilidad</h3>
-<div id="calendar"></div>
-    <h2>Ubicación en el mapa</h2>
-    <div id="map"></div>
-<h3>Realizar reserva</h3>
-    <form id="bookingForm" method="POST" action="/bookings/">
-      <input type="hidden" name="accommodationId" value="<%= accommodation.id %>">
-      <input type="hidden" name="hostId" value="<%= accommodation.hostId %>">
-      <label for="startDate">Fecha de entrada:</label>
-      <input type="date" id="startDate" name="startDate" required>
-      <label for="endDate">Fecha de salida:</label>
-      <input type="date" id="endDate" name="endDate" required>
-      <label for="guests">Huéspedes:</label>
-      <input type="number" id="guests" name="guests" min="1" max="<%= accommodation.maxGuests %>" value="1" required>
-      <button type="submit">Reservar</button>
-      <div id="bookingMessage" style="margin-top:1em;color:red;"></div>
-    </form>
     <script>
       const availableDates = JSON.parse('<%- JSON.stringify(availability) %>');
       function isRangeAvailable(start, end) {
-      let current = new Date(start);
-      const last = new Date(end);
-      while (current <= last) {
-        const iso = current.toISOString().slice(0,10);
-        if (!availableDates.includes(iso)) return false;
-        current.setDate(current.getDate() + 1);
-      }
-      return true;
+        let current = new Date(start);
+        const last = new Date(end);
+        while (current <= last) {
+          const iso = current.toISOString().slice(0,10);
+          if (!availableDates.includes(iso)) return false;
+          current.setDate(current.getDate() + 1);
+        }
+        return true;
       }
       document.getElementById('bookingForm').addEventListener('submit', function(e) {
-      const start = document.getElementById('startDate').value;
-      const end = document.getElementById('endDate').value;
-      if (!start || !end || start > end) {
-        document.getElementById('bookingMessage').textContent = 'Selecciona un rango de fechas válido.';
-        e.preventDefault();
-        return;
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if (!start || !end || start > end) {
+          document.getElementById('bookingMessage').textContent = 'Selecciona un rango de fechas válido.';
+          e.preventDefault();
+          return;
+        }
+        if (!isRangeAvailable(start, end)) {
+          document.getElementById('bookingMessage').textContent = 'Fechas no disponibles, elige fechas marcadas como disponibles.';
+          e.preventDefault();
+        } else {
+          document.getElementById('bookingMessage').textContent = '';
+        }
+      });
+    </script>
+    <script>
+      function addOneDay(dateStr) {
+        const d = new Date(dateStr);
+        d.setDate(d.getDate() + 1);
+        return d.toISOString().slice(0, 10);
       }
-      if (!isRangeAvailable(start, end)) {
-        document.getElementById('bookingMessage').textContent = 'Fechas no disponibles, elige fechas marcadas como disponibles.';
-        e.preventDefault();
-      } else {
-        document.getElementById('bookingMessage').textContent = '';
-      }
+      document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+        const calendarAvailability = JSON.parse('<%- JSON.stringify(availability) %>');
+        const booked = JSON.parse('<%- JSON.stringify(bookedDates) %>');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          selectable: false,
+          dayCellContent: function(arg) {
+            // Reduce font size de las fechas y centra
+            return { html: '<span style="font-size:0.85em;">' + arg.dayNumberText + '</span>' };
+          },
+          events: [
+            ...calendarAvailability.map(date => ({
+              // Sin título, solo color de fondo
+              start: date,
+              display: 'background',
+              color: '#d4edda'
+            })),
+            ...booked.map(b => ({
+              start: b.start,
+              end: addOneDay(b.end),
+              color: '#f8d7da',
+              display:'background'
+            }))
+          ]
+        });
+        calendar.render();
       });
     </script>
   </main>
-  <% if (typeof user !== 'undefined' && user && user.id === accommodation.hostId) { %>
-      <a href="/accommodations/<%= accommodation.id %>/update" class="button">Editar este alojamiento</a>
-    <% } %>
-<% if (accommodation.location && accommodation.location.coordinates) { %>
-  <script>
-    function initMap() {
-      const coords = JSON.parse('<%- JSON.stringify(accommodation.location.coordinates) %>');
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: coords,
-        zoom: 15,
-      });
-      new google.maps.Marker({
-        position: coords,
-        map: map,
-      });
-    }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
-
-  <% } else { %>
-  <p><em>Ubicación no disponible para este alojamiento.</em></p>
-<% } %>
-<script>
-  function addOneDay(dateStr) {
-    const d = new Date(dateStr);
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().slice(0, 10);
-  }
-  document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-    const calendarAvailability = JSON.parse('<%- JSON.stringify(availability) %>');
-    const booked = JSON.parse('<%- JSON.stringify(bookedDates) %>');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      selectable: false,
-      events: [
-        ...calendarAvailability.map(date => ({
-          title: 'Disponible',
-          start: date,
-          display: 'background',
-          color: '#d4edda'
-        })),
-        ...booked.map(b => ({
-          title: 'Reservado',
-          start: b.start,
-          end: addOneDay(b.end), // Suma un día para que el rango sea inclusivo
-          color: '#f8d7da',
-          display:'background'
-        }))
-      ]
-    });
-    calendar.render();
-  });
-</script>
   <%- include('partials/footer') %>
 </body>
 </html>

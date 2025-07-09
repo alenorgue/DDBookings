@@ -250,6 +250,12 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
   }
 });
 
+// Vista temporal para secciones en desarrollo
+router.get('/on-development', (req, res) => {
+  res.render('onDevelopment', { user: req.session.user || null });
+  return;
+});
+
 // Excepción para dejar pasar /bookings/:id/pdf al siguiente router (API)
 router.get('/bookings/:id/pdf', (req, res, next) => {
   return next();
