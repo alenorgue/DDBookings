@@ -3,57 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <title>Detalles de la Reserva</title>
-  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
   <style>
+    body {
+      background: url('/img/blog/blog-hero-1.webp') center center/cover no-repeat fixed;
+      min-height: 100vh;
+      position: relative;
+    }
+    .booking-details-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 1.2rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 2.2rem 2rem 2rem 2rem;
+      max-width: 600px;
+      margin: 2.5rem auto 2rem auto;
+      position: relative;
+    }
+    .booking-details-card h2, .booking-details-card h3 {
+      color: #232b3a;
+      font-weight: 600;
+    }
+    .booking-details-card img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .booking-details-card ul {
+      padding-left: 1.2em;
+      font-size: 1.05em;
+    }
     .actions {
       margin-top: 2rem;
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
     }
+    .actions .btn {
+      font-size: 0.95em;
+      border-radius: 0.5em;
+      padding: 0.35em 1.2em;
+      min-width: 120px;
+    }
+    .btn-cancel {
+      border: 1.5px solid #dc3545;
+      color: #dc3545;
+      background: #fff;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-cancel:hover {
+      background: #dc3545;
+      color: #fff;
+    }
+    .btn-contact {
+      border: 1.5px solid #0d6efd;
+      color: #0d6efd;
+      background: #fff;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-contact:hover {
+      background: #0d6efd;
+      color: #fff;
+    }
+    .btn-back {
+      border: 1.5px solid #6c757d;
+      color: #6c757d;
+      background: #fff;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-back:hover {
+      background: #6c757d;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main class="container">
-    <h2>Detalles de la Reserva</h2>
-
-    <section>
-      <h3>Alojamiento reservado</h3>
-      <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" style="width: 100%; max-width: 400px; border-radius: 10px;">
-      <p><strong>Título:</strong> <%= accommodation.title %></p>
-      <p><strong>Ciudad:</strong> <%= accommodation.location.city %></p>
-      <p><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></p>
-    </section>
-
-    <section>
-      <h3>Datos de la Reserva</h3>
-      <ul>
-        <li><strong>Entrada:</strong> <%= booking.startDate.toLocaleDateString() %></li>
-        <li><strong>Salida:</strong> <%= booking.endDate.toLocaleDateString() %></li>
-        <li><strong>Personas:</strong> <%= booking.guests %></li>
-        <li><strong>Estado:</strong> <%= booking.status %></li>
-      </ul>
-    </section>
-
-    <div class="actions">
-      <!-- Botón para cancelar la reserva -->
-      <% if (booking.status !== 'cancelled') { %>
-        <form action="/api/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
-          <button type="submit" class="contrast">Cancelar reserva</button>
-        </form>
-      <% } else { %>
-        <p><strong>Reserva cancelada</strong></p>
-      <% } %>
-
-      <!-- Botón para contactar con el anfitrión -->
-      <a href="mailto:host@example.com" class="button">Contactar anfitrión</a>
-      <!-- Si tienes acceso al email real -->
-      <% /* <a href="mailto:<%= host.email %>" class="button">Contactar anfitrión</a> */ %>
+  <div class="dashboard-bg-overlay"></div>
+  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
+  <main>
+    <div class="booking-details-card fade-in">
+      <h2 class="mb-3"><i class="fa-solid fa-file-invoice me-2"></i>Detalles de la Reserva</h2>
+      <section>
+        <h3 class="mb-2">Alojamiento reservado</h3>
+        <img src="<%= accommodation.mainPhoto %>" alt="Foto principal">
+        <p><strong>Título:</strong> <%= accommodation.title %></p>
+        <p><strong>Ciudad:</strong> <%= accommodation.location.city %></p>
+        <p><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></p>
+      </section>
+      <section class="mt-4">
+        <h3 class="mb-2">Datos de la Reserva</h3>
+        <ul>
+          <li><strong>Entrada:</strong> <%= booking.startDate.toLocaleDateString() %></li>
+          <li><strong>Salida:</strong> <%= booking.endDate.toLocaleDateString() %></li>
+          <li><strong>Personas:</strong> <%= booking.guests %></li>
+          <li><strong>Estado:</strong> <%= booking.status %></li>
+        </ul>
+      </section>
+      <div class="actions mt-4">
+        <% if (booking.status !== 'cancelled') { %>
+          <form action="/api/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+            <button type="submit" class="btn btn-cancel"><i class="fa-solid fa-ban me-1"></i>Cancelar reserva</button>
+          </form>
+        <% } else { %>
+          <p class="text-danger"><strong>Reserva cancelada</strong></p>
+        <% } %>
+        <a href="mailto:host@example.com" class="btn btn-contact"><i class="fa-solid fa-envelope me-1"></i>Contactar anfitrión</a>
+        <% /* <a href="mailto:<%= host.email %>" class="btn btn-contact"><i class="fa-solid fa-envelope me-1"></i>Contactar anfitrión</a> */ %>
+      </div>
+      <a href="/dashboard/<%= booking.guestId %>" class="btn btn-back mt-4"><i class="fa-solid fa-arrow-left me-1"></i>Volver al dashboard</a>
     </div>
-
-    <a href="/dashboard/<%= booking.guestId %>" class="button secondary">Volver al dashboard</a>
   </main>
-    <%- include('partials/footer') %>
+  <%- include('partials/footer') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      if ('IntersectionObserver' in window) {
+        const observer = new window.IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        fadeEls.forEach(el => observer.observe(el));
+      } else {
+        fadeEls.forEach(el => el.classList.add('visible'));
+      }
+    });
+  </script>
 </body>
 </html>
