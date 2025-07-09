@@ -21,7 +21,9 @@ router.post('/login', async (req, res, next) => {
       isAdmin: user.isAdmin,
     };
     console.log('user en sesión:', req.session.user);
-    res.redirect(`/dashboard/${user.id}`);
+    req.session.save(() => {
+      res.redirect(`/dashboard/${user.id}`);
+    });
   } catch (err) {
     next(err);
   }

@@ -3,92 +3,272 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Alojamientos </title>
-  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>Alojamientos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
   <style>
+    .fade-in {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .hero-video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 50vh; /* Aumentada para mejor calidad visual */
+      min-height: 260px;
+      overflow: hidden;
+      z-index: -1;
+      margin-top: 0;
+      pointer-events: none; /* Sin superposición */
+    }
+    .main-content-offset {
+      margin-top: 34vh;
+    }
+    .hero-video-bg video {
+      width: 100vw;
+      height: 100%;
+      object-fit: cover;
+      min-width: 100vw;
+      min-height: 260px;
+      position: absolute;
+      top: 3vh; /* vuelve a la posición anterior y suma 1vh extra respecto a la original */
+      left: 0;
+      z-index: 0;
+      pointer-events: none; /* Sin superposición */
+      user-select: none; /* Sin selección de texto */
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      text-align: center;
+      padding-top: 6vh;
+      margin-bottom: 2.5rem;
+    }
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      filter: invert(1) brightness(0.2);
+    }
+    .carousel-control-prev,
+    .carousel-control-next {
+      filter: none;
+    }
     .accommodation-card {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      border-radius: 8px;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.95);
+      color: #232b3a;
+      transition: box-shadow 0.2s;
+    }
+    .accommodation-card:hover {
+      box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+      cursor: pointer;
+    }
+    .accommodation-card .amenities i {
+      color: #111 !important;
     }
     .amenities i {
       margin-right: 0.5rem;
+      color: #111 !important;
+    }
+    .filter-form {
+      background: rgba(255,255,255,0.85);
+      color: #232b3a;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      font-size: 0.8rem;
+    }
+    .filter-form label, .filter-form input, .filter-form select {
+      font-size: 0.8rem !important;
+    }
+    .filter-form .btn, .filter-form .btn-outline-secondary {
+      font-size: 0.9rem;
+    }
+    .section-filtros-destacados {
+      background: #f7f8fa;
+      border-radius: 1.2rem;
+      padding: 2rem 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .destacados-section {
+      font-size: 0.8rem;
+    }
+    .destacados-section h2 {
+      font-size: 1.2rem;
+    }
+    @media (max-width: 500px) {
+      .destacados-section {
+        display: none !important;
+      }
+    }
+    @media (max-width: 768px) {
+      .hero-content {
+        padding-top: 2vh;
+      }
+      .section-filtros-destacados {
+        padding: 1rem 0.2rem;
+      }
     }
   </style>
-</head>
-<body>
-  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main class="container">
-    <h1>Alojamientos</h1>
-    <form method="GET" action="/accommodations" style="margin-bottom: 2rem;">
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
-    <div>
-      <label for="guests">Capacidad mínima</label>
-      <input type="number" id="guests" name="guests" min="1" placeholder="Ej: 2" value="<%= query.guests || '' %>">
-    </div>
-
-    <div>
-      <label for="maxPrice">Precio máximo/noche (€)</label>
-      <input type="number" id="maxPrice" name="maxPrice" min="1" placeholder="Ej: 100" value="<%= query.maxPrice || '' %>">
-    </div>
-
-    <div>
-      <label for="city">Ciudad</label>
-      <input type="text" id="city" name="city" placeholder="Ej: Barcelona" value="<%= query.city || '' %>">
-    </div>
-
-    <div>
-      <label for="checkIn">Fecha entrada</label>
-      <input type="date" id="checkIn" name="checkIn" value="<%= query.checkIn || '' %>">
-    </div>
-
-    <div>
-      <label for="checkOut">Fecha salida</label>
-      <input type="date" id="checkOut" name="checkOut" value="<%= query.checkOut || '' %>">
-    </div>
-
-    <div>
-      <button type="submit">Filtrar</button>
-    </div>
-    <div>
-      <a href="/accommodations" class="button secondary">Limpiar filtros</a></div>
-  </div>
-</form>
-
- <% accommodations.forEach(acc => { %>
-  <div class="accommodation-card" data-id="<%= acc.id %>">
-    <h2><%= acc.title %></h2>
-    <img src="<%= acc.mainPhoto %>" alt="Foto principal" style="max-width: 100%; height: auto;" />
-    <p><strong>Precio por noche:</strong> <%= acc.pricePerNight %>€</p>
-    <p><strong>Tamaño:</strong> <%= acc.squareMeters %> m²</p>
-    <p><strong>Ciudad:</strong> <%= acc.location.city %> </p>
-    
-    <p><strong>Servicios:</strong></p>
-    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-      <% acc.amenities.forEach(a => { %>
-        <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
-        <i class="fas <%= icon %>" title="<%= a %>" style="font-size: 1.3rem; color: #444;"></i>
-      <% }) %>
-    </div>
-  </div>
-<% }) %>
-  </main>
-    <%- include('partials/footer') %>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.accommodation-card').forEach(card => {
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', () => {
-        const id = card.getAttribute('data-id');
-        if (id) {
-          window.location.href = `/accommodations/${id}`;
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      if ('IntersectionObserver' in window) {
+        const observer = new window.IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        fadeEls.forEach(el => observer.observe(el));
+      } else {
+        fadeEls.forEach(el => el.classList.add('visible'));
+      }
+      // Card click
+      document.querySelectorAll('.accommodation-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.getAttribute('data-id');
+          if (id) {
+            window.location.href = `/accommodations/${id}`;
+          }
+        });
       });
+      // Hero video speed
+      const heroVideo = document.querySelector('.hero-video-bg video');
+      if (heroVideo) heroVideo.playbackRate = 0.75;
     });
-  });
   </script>
-</body>
+</head>
+<body class="bg-light text-dark" style="position:relative;min-height:100vh;">
+  <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
 
+  <!-- Hero Section with video background (no overlay, no superposición) -->
+  <div class="hero-video-bg" aria-hidden="true">
+    <video autoplay muted loop playsinline tabindex="-1">
+      <source src="/img/accommodations.mp4" type="video/mp4">
+      Tu navegador no soporta el video de fondo.
+    </video>
+  </div>
+
+  <main class="container position-relative main-content-offset" style="z-index:2; margin-top: 42vh;">
+    <div class="fade-in text-center" style="position:relative;z-index:2;margin-bottom:2.5rem;background:#fff;border-radius:1.2rem;padding:1.2rem 1.2rem 1.2rem 1.2rem;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
+      <h1 class="display-5 mb-2" style="text-decoration:underline;">Alojamientos</h1>
+      <p class="lead">Encuentra tu próximo destino entre nuestros alojamientos turísticos.</p>
+    </div>
+    <div class="row section-filtros-destacados mb-5 fade-in">
+      <!-- Filtros a la izquierda -->
+      <div class="col-lg-5 order-1 order-lg-1 mb-4 mb-lg-0">
+        <div class="filter-form">
+          <h2 class="mb-3" style="font-size:1.1rem;">Filtrar alojamientos</h2>
+          <form method="GET" action="/accommodations">
+            <div class="row g-2">
+              <div class="col-6">
+                <label for="guests" class="form-label">Capacidad mínima</label>
+                <input type="number" class="form-control" id="guests" name="guests" min="1" placeholder="Ej: 2" value="<%= query.guests || '' %>">
+              </div>
+              <div class="col-6">
+                <label for="maxPrice" class="form-label">Precio máximo/noche (€)</label>
+                <input type="number" class="form-control" id="maxPrice" name="maxPrice" min="1" placeholder="Ej: 100" value="<%= query.maxPrice || '' %>">
+              </div>
+              <div class="col-12">
+                <label for="city" class="form-label">Ciudad</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="Ej: Barcelona" value="<%= query.city || '' %>">
+              </div>
+              <div class="col-6">
+                <label for="checkIn" class="form-label">Fecha entrada</label>
+                <input type="date" class="form-control" id="checkIn" name="checkIn" value="<%= query.checkIn || '' %>">
+              </div>
+              <div class="col-6">
+                <label for="checkOut" class="form-label">Fecha salida</label>
+                <input type="date" class="form-control" id="checkOut" name="checkOut" value="<%= query.checkOut || '' %>">
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button type="submit" class="btn btn-light flex-fill">Filtrar</button>
+              <a href="/accommodations" class="btn btn-outline-light flex-fill">Limpiar filtros</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Destacados a la derecha -->
+      <div class="col-lg-7 order-2 order-lg-2 destacados-section">
+        <div id="destacadosCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <% accommodations.slice(3, 6).forEach(function(acc, idx) { %>
+            <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+              <a href="/accommodations/<%= acc.id %>" class="text-decoration-none text-dark">
+                <div class="card h-100 mx-auto" style="max-width: 22rem;">
+                  <img src="<%= acc.mainPhoto %>" class="card-img-top" alt="Foto de <%= acc.title %>">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= acc.title %></h5>
+                    <p class="card-text">
+                      <strong>€<%= acc.pricePerNight %></strong> / noche<br>
+                      <span class="text-muted"> <%= acc.squareMeters %> m² · <%= acc.location.city %></span>
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 amenities">
+                      <% acc.amenities.forEach(a => { %>
+                      <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
+                      <i class="fa-solid <%= icon %>" title="<%= a %>" style="font-size: 1.2rem;color:#111 !important;"></i>
+                      <% }) %>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <% }) %>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#destacadosCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#destacadosCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listado de todos los alojamientos -->
+    <section class="fade-in">
+      <h2 class="mb-4" style="font-weight: 600;">Todos los alojamientos</h2>
+      <div class="row g-4" >
+        <% accommodations.forEach(acc => { %>
+        <div class="col-md-6 col-lg-4" style="margin-bottom: 2vh;">
+          <div class="card accommodation-card h-100" data-id="<%= acc.id %>" style="font-size:0.7em;">
+            <img src="<%= acc.mainPhoto %>" class="card-img-top" alt="Foto de <%= acc.title %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= acc.title %></h5>
+              <p class="card-text">
+                <strong>€<%= acc.pricePerNight %></strong> / noche<br>
+                <span class="text-muted"> <%= acc.squareMeters %> m² · <%= acc.location.city %></span>
+              </p>
+              <div class="d-flex flex-wrap gap-2 amenities">
+                <% acc.amenities.forEach(a => { %>
+                <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
+                <i class="fa-solid <%= icon %>" title="<%= a %>" style="font-size: 1.2rem;"></i>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+  <%- include('partials/footer') %>
+</body>
 </html>
