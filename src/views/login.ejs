@@ -10,21 +10,33 @@
     <script src="https://kit.fontawesome.com/a2e0bf0f60.js" crossorigin="anonymous"></script>
     <link href="/css/styles.css" rel="stylesheet">
     <script>
-        // Array de imágenes de fondo
-        const backgrounds = [
-            '/img/gallery/gallery-1.webp',
-            '/img/gallery/gallery-2.webp',
-            '/img/gallery/gallery-3.webp',
-            '/img/gallery/gallery-4.webp',
-            '/img/gallery/gallery-5.webp',
-            '/img/gallery/gallery-6.webp',
-            '/img/gallery/gallery-7.webp',
-            '/img/gallery/gallery-8.webp',
-        ];
-        // Selecciona una imagen aleatoria
-        const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
         document.addEventListener('DOMContentLoaded', function () {
-            document.body.style.background = `url('${bg}') center center / cover no-repeat fixed`;
+            // Video de fondo único
+            const bgVideo = '/img/intro.mp4';
+
+            // Crea el elemento de video
+            const videoElem = document.createElement('video');
+            videoElem.src = bgVideo;
+            videoElem.autoplay = true;
+            videoElem.loop = true;
+            videoElem.muted = true;
+            videoElem.playsInline = true;
+            videoElem.style.position = 'fixed';
+            videoElem.style.top = '0';
+            videoElem.style.left = '0';
+            videoElem.style.left = '-3vw'; // Desplaza el video 2vw a la izquierda
+            videoElem.style.width = '110vw';
+            videoElem.style.height = '120vh';
+            videoElem.style.objectFit = 'cover';
+            videoElem.style.zIndex = '-1';
+            videoElem.style.pointerEvents = 'none';
+
+            // Establece la velocidad de reproducción a 0.5x cuando el video esté listo
+            videoElem.addEventListener('loadedmetadata', function () {
+                videoElem.playbackRate = 0.75; // Ajusta la velocidad de reproducción
+            });
+
+            document.body.appendChild(videoElem);
             document.body.classList.add('bg-login-custom');
         });
     </script>
@@ -69,61 +81,38 @@
         .login-register-link:hover {
             color: #4da3e0 !important;
         }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: none;
-        }
     </style>
 </head>
 
 <body class="bg-light text-dark">
-    <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-    <main class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 75vh;">
-        <div class="w-100" style="max-width: 500px;">
-            <div class="bg-white bg-opacity-90 p-4 rounded shadow-sm border mb-4">
-                <h1 class="mb-4 text-center">Iniciar sesión</h1>
-                <% if (typeof error !== 'undefined') { %>
-                <div class="alert alert-danger" role="alert"><%= error %></div>
-                <% } %>
-                <form method="POST" action="/auth/login">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
-                </form>
-                <p class="mt-3 text-center mb-0">¿No tienes una cuenta? <a href="/register" class="login-register-link">Regístrate aquí</a>
-                </p>
+    <%- include('partials/navbar', { user: typeof user !=='undefined' ? user : null }) %>
+        <main class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 75vh;">
+            <div class="w-100" style="max-width: 500px;">
+                <div class="bg-white bg-opacity-90 p-4 rounded shadow-sm border mb-4">
+                    <h1 class="mb-4 text-center">Iniciar sesión</h1>
+                    <% if (typeof error !=='undefined' ) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                        <% } %>
+                            <form method="POST" action="/auth/login">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+                            </form>
+                            <p class="mt-3 text-center mb-0">¿No tienes una cuenta? <a href="/register"
+                                    class="login-register-link">Regístrate aquí</a>
+                            </p>
+                </div>
             </div>
-        </div>
-    </main>
-    <%- include('partials/footer') %>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Fade-in efecto progresivo
-            const fadeEls = document.querySelectorAll('.fade-in');
-            const observer = new window.IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.15 });
-            fadeEls.forEach(el => observer.observe(el));
-        });
-    </script>
+        </main>
+        <%- include('partials/footer') %>
 </body>
 
 </html>

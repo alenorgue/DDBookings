@@ -14,9 +14,28 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(120deg, #5bc0ff 0%, #e0e7ef 100%);
       position: relative;
       overflow-x: hidden;
+    }
+
+    .video-bg-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .video-bg-wrapper video {
+      width: 110vw;
+      height: 120vh;
+      left: -7vw;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      z-index: 0;
     }
 
     .background-overlay {
@@ -26,13 +45,12 @@
       width: 100vw;
       height: 100vh;
       background: rgba(30, 42, 60, 0.45);
-      z-index: 0;
-      pointer-events: none;
+      z-index: 1;
     }
 
     .main-content {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       flex: 1 0 auto;
       min-height: 100vh;
       display: flex;
@@ -124,7 +142,13 @@
 </head>
 
 <body>
-  <div class="background-overlay"></div>
+  <div class="video-bg-wrapper">
+    <video autoplay muted loop playsinline>
+      <source src="/img/createaccommodation.mp4" type="video/mp4">
+      Tu navegador no soporta el video de fondo.
+    </video>
+    <div style="position:absolute;top:0;left:0;width:100vw;height:100vh;background:rgba(30,42,60,0.45);z-index:1;"></div>
+  </div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <div class="main-content">
     <div class="card translucent shadow-lg col-lg-8 mx-auto fade-in visible">
@@ -555,6 +579,4 @@
     });
   </script>
 </body>
-</html>
-
 </html>

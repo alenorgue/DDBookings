@@ -10,21 +10,32 @@
   <script src="https://kit.fontawesome.com/a2e0bf0f60.js" crossorigin="anonymous"></script>
   <link href="/css/styles.css" rel="stylesheet">
   <script>
-    // Array de imágenes de fondo
-    const backgrounds = [
-      '/img/gallery/gallery-1.webp',
-      '/img/gallery/gallery-2.webp',
-      '/img/gallery/gallery-3.webp',
-      '/img/gallery/gallery-4.webp',
-      '/img/gallery/gallery-5.webp',
-      '/img/gallery/gallery-6.webp',
-      '/img/gallery/gallery-7.webp',
-      '/img/gallery/gallery-8.webp',
-    ];
-    // Selecciona una imagen aleatoria
-    const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     document.addEventListener('DOMContentLoaded', function () {
-      document.body.style.background = `url('${bg}') center center / cover no-repeat fixed`;
+      // Video de fondo único
+      const bgVideo = '/img/intro.mp4';
+
+      // Crea el elemento de video
+      const videoElem = document.createElement('video');
+      videoElem.src = bgVideo;
+      videoElem.autoplay = true;
+      videoElem.loop = true;
+      videoElem.muted = true;
+      videoElem.playsInline = true;
+      videoElem.style.position = 'fixed';
+      videoElem.style.top = '0';
+      videoElem.style.left = '-3vw'; // Desplaza el video 2vw a la izquierda
+      videoElem.style.width = '110vw';
+      videoElem.style.height = '120vh';
+      videoElem.style.objectFit = 'cover';
+      videoElem.style.zIndex = '-1';
+      videoElem.style.pointerEvents = 'none';
+
+      // Establece la velocidad de reproducción a 0.5x cuando el video esté listo
+      videoElem.addEventListener('loadedmetadata', function () {
+      videoElem.playbackRate = 0.75; // Ajusta la velocidad de reproducción
+      });
+
+      document.body.appendChild(videoElem);
       document.body.classList.add('bg-login-custom');
     });
   </script>
@@ -70,17 +81,6 @@
       border-color: #5bc0ff !important;
       color: #fff !important;
       box-shadow: 0 2px 8px rgba(91, 192, 255, 0.08);
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: none;
     }
   </style>
 </head>
@@ -232,7 +232,7 @@
         }
       });
       password.addEventListener('input', function () {
-        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]:;?,./]).{8,}$/.test(password.value)) {
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;?,./]).{8,}$/.test(password.value)) {
           setFieldError(password, passwordError, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
         } else {
           setFieldError(password, passwordError, '');
@@ -318,17 +318,6 @@
           e.preventDefault();
         }
       });
-      // Fade-in efecto progresivo
-      const fadeEls = document.querySelectorAll('.fade-in');
-      const observer = new window.IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-      fadeEls.forEach(el => observer.observe(el));
     });
   </script>
 </body>
