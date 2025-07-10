@@ -125,6 +125,22 @@
           <li><strong>Estado:</strong> <%= booking.status %></li>
         </ul>
       </section>
+      <section class="mt-4">
+        <h3 class="mb-2">Datos del Huésped</h3>
+        <ul>
+          <li><strong>Nombre:</strong> <%= guest.name %> <%= guest.surName %></li>
+          <li><strong>Email:</strong> <%= guest.email %></li>
+          <li><strong>Teléfono:</strong> <%= guest.phoneNumber %></li>
+        </ul>
+      </section>
+      <section class="mt-4">
+        <h3 class="mb-2">Datos del Anfitrión</h3>
+        <ul>
+          <li><strong>Nombre:</strong> <%= host.name %> <%= host.surName %></li>
+          <li><strong>Email:</strong> <%= host.email %></li>
+          <li><strong>Teléfono:</strong> <%= host.phoneNumber %></li>
+        </ul>
+      </section>
       <div class="actions mt-4">
         <% if (booking.status !== 'cancelled') { %>
           <form action="/api/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
@@ -134,7 +150,7 @@
           <p class="text-danger"><strong>Reserva cancelada</strong></p>
         <% } %>
         <a href="mailto:host@example.com" class="btn btn-contact"><i class="fa-solid fa-envelope me-1"></i>Contactar anfitrión</a>
-        <% /* <a href="mailto:<%= host.email %>" class="btn btn-contact"><i class="fa-solid fa-envelope me-1"></i>Contactar anfitrión</a> */ %>
+    
       </div>
       <a href="/dashboard/<%= booking.guestId %>" class="btn btn-back mt-4"><i class="fa-solid fa-arrow-left me-1"></i>Volver al dashboard</a>
     </div>

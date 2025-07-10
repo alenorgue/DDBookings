@@ -218,7 +218,7 @@
                   <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
                     <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
                   </form>
-                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver alojamiento</a>
+                  <a href="/bookings/<%= res.id %>/details" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver reserva</a>
                 </div>
               </div>
             <% }) %>
@@ -236,7 +236,7 @@
                   Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : (res.checkIn ? new Date(res.checkIn).toLocaleDateString() : '') %> 
                   al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : (res.checkOut ? new Date(res.checkOut).toLocaleDateString() : '') %><br>
                   Estado: <%= res.status || '' %><br>
-                  <a href="/accommodations/<%= res.accommodationId %>" class="btn btn-link btn-sm">Ver alojamiento</a>
+                  <a href="/bookings/<%= res.id %>/details" class="btn btn-link btn-sm">Ver reserva</a>
                 </div>
               </div>
             <% }) %>

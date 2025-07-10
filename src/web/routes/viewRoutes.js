@@ -254,6 +254,40 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
   }
 });
 
+// Renderiza los detalles de una reserva
+router.get('/bookings/:id/details', ensureAuthenticated, async (req, res, next) => {
+  try {
+    const booking = await bookingRepo.findById(req.params.id);
+    if (!booking) return res.status(404).render('error', { message: 'Reserva no encontrada', error: null, user: req.session.user || null });
+
+    const accommodation = await accommodationRepo.findById(booking.accommodationId);
+    if (!accommodation) return res.status(404).render('error', { message: 'Alojamiento no encontrado', error: null, user: req.session.user || null });
+
+    // Obtener datos de guest y host
+    const guest = await userRepo.findById(booking.guestId);
+    const host = await userRepo.findById(booking.hostId);
+    const user = req.session.user || null;
+
+    // Protección: solo guest, host o admin pueden ver
+    const isAllowed = user && (user.id === String(guest.id) || user.id === String(host.id) || user.isAdmin === true);
+    if (!isAllowed) {
+      return res.status(403).render('error', { message: 'No tienes permiso para ver esta reserva', error: null, user });
+    }
+
+    res.render('bookingDetails', {
+      booking,
+      accommodation,
+      guest,
+      host,
+      user
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 // Vista temporal para secciones en desarrollo
 router.get('/on-development', (req, res) => {
   res.render('onDevelopment', { user: req.session.user || null });
