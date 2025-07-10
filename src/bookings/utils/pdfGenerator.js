@@ -13,6 +13,12 @@ export function generateBookingPDF(booking, accommodation, user, res) {
   // Pipe output to response
   doc.pipe(res);
 
+  // Logo superior
+  try {
+    doc.image('public/img/logo-pdf.jpg', doc.page.width / 2 - 60, 10, { width: 120, height: 40, align: 'center' });
+  } catch (e) {
+    // Si falla, sigue sin logo
+  }
   // Banner decorativo
   doc.rect(0, 0, doc.page.width, 60).fill('#2a4365');
   doc.fillColor('white').fontSize(26).text('Confirmación de Reserva', 0, 18, { align: 'center', width: doc.page.width });
