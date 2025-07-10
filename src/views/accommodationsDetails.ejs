@@ -246,6 +246,12 @@
         <a href="/accommodations/<%= accommodation.id %>/update" class="btn btn-warning edit-btn"><i class="fa-solid fa-pen-to-square me-2"></i>Editar este alojamiento</a>
       <% } %>
     </div>
+    <div class="details-video-bg" aria-hidden="true" style="position:fixed;top:0;left:-5vw;width:105vw;height:100vh;z-index:-1;overflow:hidden;pointer-events:none;">
+      <video autoplay muted loop playsinline tabindex="-1" style="width:120vw;height:120vh;object-fit:cover;min-width:104vw;min-height:100vh;opacity:0.55;">
+        <source src="/img/details-view.mp4" type="video/mp4">
+        Tu navegador no soporta el video de fondo.
+      </video>
+    </div>
     <script>
       const availableDates = JSON.parse('<%- JSON.stringify(availability) %>');
       function isRangeAvailable(start, end) {

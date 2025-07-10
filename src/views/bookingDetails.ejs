@@ -78,10 +78,33 @@
       background: #6c757d;
       color: #fff;
     }
+    .details-video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .details-video-bg video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      min-width: 100vw;
+      min-height: 100vh;
+    }
   </style>
 </head>
 <body>
   <div class="dashboard-bg-overlay"></div>
+    <div class="details-video-bg" aria-hidden="true" style="position:fixed;top:0;left:-5vw;width:105vw;height:100vh;z-index:-1;overflow:hidden;pointer-events:none;">
+      <video autoplay muted loop playsinline tabindex="-1" style="width:120vw;height:120vh;object-fit:cover;min-width:104vw;min-height:100vh;opacity:0.55;">
+        <source src="/img/details-view.mp4" type="video/mp4">
+        Tu navegador no soporta el video de fondo.
+      </video>
+    </div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main>
     <div class="booking-details-card fade-in">
