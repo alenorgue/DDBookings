@@ -28,9 +28,12 @@ export const createAccommodationController = async (req, res, next) => {
         });
         const labels = req.body.photoLabels?.split(',').map(l => l.trim()) || [];
 
+        // Si no hay referer, redirige a la vista de creación de alojamiento
+        const fallbackUrl = '/accommodations/create';
+
         if (!mainPhotoUrl) {
             req.session.errorMessage = 'Se requiere una foto principal.';
-            return res.redirect('back');
+            return res.redirect(req.get('referer') || fallbackUrl);
         }
 
         // Adaptar path a URL si es necesario (aceptar tanto http(s) como URLs de Cloudinary sin extensión)
@@ -46,7 +49,13 @@ export const createAccommodationController = async (req, res, next) => {
 
         if (additionalPhotos.length > 0 && photos.length === 0) {
             req.session.errorMessage = 'Las fotos adicionales no tienen una URL válida.';
-            return res.redirect('back');
+            return res.redirect(req.get('referer') || fallbackUrl);
+        }
+
+        // Validación robusta de coordenadas en backend antes de crear alojamiento
+        if (!req.body['location.lat'] || !req.body['location.lng'] || isNaN(Number(req.body['location.lat'])) || isNaN(Number(req.body['location.lng']))) {
+            req.session.errorMessage = 'Debes seleccionar la ubicación en el mapa (coordenadas obligatorias).';
+            return res.redirect(req.get('referer') || fallbackUrl);
         }
 
         const data = {
@@ -71,6 +80,7 @@ export const createAccommodationController = async (req, res, next) => {
             location: {
                 address: req.body['address'] || req.body['location.address'],
                 city: req.body['city'] || req.body['location.city'],
+                province: req.body['province'] || req.body['location.province'],
                 country: req.body['country'] || req.body['location.country'],
                 postalCode: req.body['postalCode'] || req.body['location.postalCode'],
                 coordinates: {
@@ -90,7 +100,8 @@ export const createAccommodationController = async (req, res, next) => {
         req.session.successMessage = 'Alojamiento creado correctamente';
         return res.redirect('/dashboard/' + user._id.toString());
     } catch (err) {
+        console.error('Error en createAccommodationController:', err);
         req.session.errorMessage = err.message;
-        return res.redirect('back');
+        return res.redirect(req.get('referer') || fallbackUrl);
     }
 }

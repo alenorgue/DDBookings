@@ -30,11 +30,19 @@ router.get('/', async (req, res, next) => {
 
 router.get('/accommodations', async (req, res, next) => {
   try {
-    const { guests, maxPrice, city, checkIn, checkOut } = req.query;
+    const { guests, maxPrice, province, checkIn, checkOut } = req.query;
     const filter = {};
     if (guests) filter.maxGuests = { $gte: parseInt(guests) };
     if (maxPrice) filter.pricePerNight = { $lte: parseFloat(maxPrice) };
-    if (city) filter['location.city'] = { $regex: new RegExp(city, 'i') };
+    if (province) {
+      // Permitir varias provincias separadas por coma
+      const provinces = Array.isArray(province) ? province : province.split(',').map(p => p.trim()).filter(Boolean);
+      if (provinces.length === 1) {
+        filter['location.province'] = provinces[0];
+      } else if (provinces.length > 1) {
+        filter['location.province'] = { $in: provinces };
+      }
+    }
 
     let accommodations = Object.keys(filter).length > 0
       ? await accommodationRepo.findByFilter(filter)
