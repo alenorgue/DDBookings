@@ -258,43 +258,78 @@
           </form>
         </div>
       </div>
-      <!-- Destacados a la derecha -->
+      <!-- Gemini Filter Section (sustituye destacados) -->
       <div class="col-lg-7 order-2 order-lg-2 destacados-section">
-        <div id="destacadosCarousel" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <% accommodations.slice(3, 6).forEach(function(acc, idx) { %>
-            <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
-              <a href="/accommodations/<%= acc.id %>" class="text-decoration-none text-dark">
-                <div class="card h-100 mx-auto" style="max-width: 22rem;">
-                  <img src="<%= acc.mainPhoto %>" class="card-img-top" alt="Foto de <%= acc.title %>">
-                  <div class="card-body">
-                    <h5 class="card-title"><%= acc.title %></h5>
-                    <p class="card-text">
-                      <strong>€<%= acc.pricePerNight %></strong> / noche<br>
-                      <span class="text-muted"> <%= acc.squareMeters %> m² · <%= acc.location.city %></span>
-                    </p>
-                    <div class="d-flex flex-wrap gap-2 amenities">
-                      <% acc.amenities.forEach(a => { %>
-                      <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
-                      <i class="fa-solid <%= icon %>" title="<%= a %>" style="font-size: 1.2rem;color:#111 !important;"></i>
-                      <% }) %>
-                    </div>
-                  </div>
-                </div>
-              </a>
+        <div class="card p-3 mb-3" style="background:rgba(255,255,255,0.97);box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <h3 class="mb-2" style="font-size:1.1rem;">Filtrado inteligente (Gemini AI)</h3>
+          <form id="geminiFilterForm" autocomplete="off">
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" id="geminiPrompt" placeholder="Ej: Alojamientos con piscina y cerca de la playa en Cádiz" required>
+              <button class="btn btn-primary" type="submit">Filtrar</button>
             </div>
-            <% }) %>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#destacadosCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#destacadosCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-          </button>
+          </form>
+          <div id="geminiFilterError" class="text-danger mb-2" style="display:none;"></div>
+          <div id="geminiResults" class="row g-3"></div>
         </div>
       </div>
+      <script>
+var allAccommodations = <%- JSON.stringify(accommodations) %>;
+var amenityIcons = <%- JSON.stringify(amenityIcons) %>;
+      </script>
+      <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('geminiFilterForm');
+  const promptInput = document.getElementById('geminiPrompt');
+  const resultsDiv = document.getElementById('geminiResults');
+  const errorDiv = document.getElementById('geminiFilterError');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    errorDiv.style.display = 'none';
+    resultsDiv.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-primary" role="status"></div><div>Filtrando con IA...</div></div>';
+    const prompt = promptInput.value.trim();
+    if (!prompt) return;
+    try {
+      const res = await fetch('/api/accommodations/gemini-filter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, accommodations: allAccommodations })
+      });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.ids)) {
+        throw new Error(data.error || 'Error inesperado');
+      }
+      const filtered = allAccommodations.filter(acc => data.ids.includes(acc.id || acc._id));
+      if (filtered.length === 0) {
+        resultsDiv.innerHTML = '<div class="text-center text-muted">Ningún alojamiento coincide con el filtro.</div>';
+        return;
+      }
+      // Render cards
+      resultsDiv.innerHTML = filtered.map(acc => `
+        <div class='col-md-6 col-lg-4'>
+          <a href='/accommodations/${acc.id}' class='text-decoration-none text-dark'>
+            <div class='card accommodation-card h-100'>
+              <img src='${acc.mainPhoto}' class='card-img-top' alt='Foto de ${acc.title}'>
+              <div class='card-body'>
+                <h5 class='card-title'>${acc.title}</h5>
+                <p class='card-text'><strong>€${acc.pricePerNight}</strong> / noche<br>
+                <span class='text-muted'>${acc.squareMeters} m² · ${acc.location?.city || ''}</span></p>
+                <div class='d-flex flex-wrap gap-2 amenities'>
+                  ${(acc.amenities||[]).map(a => `<i class='fa-solid ${amenityIcons[a] || 'fa-circle-question'}' title='${a}' style='font-size:1.2rem;color:#111 !important;'></i>`).join('')}
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `).join('');
+    } catch (err) {
+      errorDiv.textContent = err.message;
+      errorDiv.style.display = 'block';
+      resultsDiv.innerHTML = '';
+    }
+  });
+});
+      </script>
     </div>
 
     <!-- Listado de todos los alojamientos -->

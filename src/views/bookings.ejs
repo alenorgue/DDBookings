@@ -17,6 +17,17 @@
       padding: 2.5rem 2rem 2rem 2rem;
       max-width: 520px;
       margin: 2.5rem auto 2rem auto;
+      font-size: 1rem; /* tamaño base reducido */
+    }
+    @media (max-width: 991px) {
+      .confirmation-card {
+        font-size: 0.97rem;
+      }
+    }
+    @media (max-width: 767px) {
+      .confirmation-card {
+        font-size: 0.95rem;
+      }
     }
     .fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1); }
     .fade-in.visible { opacity: 1; transform: none; }
@@ -46,27 +57,94 @@
   <div style="position:fixed;inset:0;z-index:0;background:rgba(30,40,60,0.45);"></div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
   <main style="position:relative;z-index:1;">
-    <div class="confirmation-card fade-in">
-      <h1 class="mb-3 text-success"><i class="fa-solid fa-circle-check me-2"></i>¡Reserva confirmada!</h1>
-      <% if (!accommodation || !booking) { %>
-        <p class="text-danger">Error: No se pudo encontrar la reserva o el alojamiento.</p>
-        <a href="/dashboard/<%= user.id %>" class="btn btn-primary btn-main">Ir a mi dashboard</a>
-        <a href="/accommodations" class="btn btn-outline-secondary btn-main">Ver alojamientos</a>
-        <% return; %>
-      <% } %>
-      <h5 class="mt-3">Id de reserva:</h5>
-      <p><%= booking.id %></p>
-      <a href="/bookings/<%= booking.id %>/pdf" class="btn btn-outline-info btn-main mb-3"><i class="fa-solid fa-file-arrow-down me-2"></i>Descargar confirmación en PDF</a>
-      <h4 class="mb-2"><%= accommodation.title %></h4>
-      <img src="<%= accommodation.mainPhoto %>" alt="Foto del alojamiento">
-      <div class="mb-2"><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %></div>
-      <div class="mb-2"><strong>Fechas reservadas:</strong> <%= booking.startDate.toISOString().slice(0,10) %> a <%= booking.endDate.toISOString().slice(0,10) %></div>
-      <div class="mb-2"><strong>Huéspedes:</strong> <%= booking.guests %></div>
-      <div class="mb-2"><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>
-      <div class="mb-2"><strong>Total estimado:</strong> €<%= (accommodation.pricePerNight * ((new Date(booking.endDate) - new Date(booking.startDate))/(1000*60*60*24))).toFixed(2) %></div>
-      <a href="/dashboard/<%= user.id %>" class="btn btn-primary btn-main">Ir a mi dashboard</a>
-      <a href="/accommodations/<%= accommodation.id %>" class="btn btn-outline-secondary btn-main">Ver alojamiento</a>
+    <div class="container">
+      <div class="row justify-content-center align-items-start">
+        <div class="col-lg-6 col-md-12">
+          <div class="confirmation-card fade-in mb-4">
+            <h1 class="mb-3 text-success"><i class="fa-solid fa-circle-check me-2"></i>¡Reserva confirmada!</h1>
+            <% if (!accommodation || !booking) { %>
+              <p class="text-danger">Error: No se pudo encontrar la reserva o el alojamiento.</p>
+              <a href="/dashboard/<%= user.id %>" class="btn btn-primary btn-main">Ir a mi dashboard</a>
+              <a href="/accommodations" class="btn btn-outline-secondary btn-main">Ver alojamientos</a>
+              <% return; %>
+            <% } %>
+            <h5 class="mt-3">Id de reserva:</h5>
+            <p><%= booking.id %></p>
+            <a href="/bookings/<%= booking.id %>/pdf" class="btn btn-outline-info btn-main mb-3"><i class="fa-solid fa-file-arrow-down me-2"></i>Descargar confirmación en PDF</a>
+            <h4 class="mb-2"><%= accommodation.title %></h4>
+            <img src="<%= accommodation.mainPhoto %>" alt="Foto del alojamiento">
+            <div class="mb-2"><strong>Dirección:</strong> <%= accommodation.location.address %>, <%= accommodation.location.city %>, <%= accommodation.location.country %></div>
+            <div class="mb-2"><strong>Fechas reservadas:</strong> <%= booking.startDate.toISOString().slice(0,10) %> a <%= booking.endDate.toISOString().slice(0,10) %></div>
+            <div class="mb-2"><strong>Huéspedes:</strong> <%= booking.guests %></div>
+            <div class="mb-2"><strong>Precio por noche:</strong> €<%= accommodation.pricePerNight %></div>
+            <div class="mb-2"><strong>Total estimado:</strong> €<%= (accommodation.pricePerNight * ((new Date(booking.endDate) - new Date(booking.startDate))/(1000*60*60*24))).toFixed(2) %></div>
+            <a href="/dashboard/<%= user.id %>" class="btn btn-primary btn-main">Ir a mi dashboard</a>
+            <a href="/accommodations/<%= accommodation.id %>" class="btn btn-outline-secondary btn-main">Ver alojamiento</a>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="confirmation-card fade-in mb-4" style="background:rgba(255,255,255,0.98);">
+            <h4 class="mb-3"><i class="fa-solid fa-lightbulb me-2"></i>¿Quieres recibir recomendaciones de actividades durante tu estancia?</h4>
+            <button id="btnGeminiRecs" class="btn btn-success mb-3" type="button">Obtener recomendaciones</button>
+            <div id="geminiRecsLoading" class="text-center my-2" style="display:none;"><div class="spinner-border text-success" role="status"></div><div>Consultando IA...</div></div>
+            <div id="geminiRecsError" class="text-danger mb-2" style="display:none;"></div>
+            <div id="geminiRecsList"></div>
+          </div>
+        </div>
+      </div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('btnGeminiRecs');
+        const loading = document.getElementById('geminiRecsLoading');
+        const errorDiv = document.getElementById('geminiRecsError');
+        const listDiv = document.getElementById('geminiRecsList');
+        if (!btn) return;
+        btn.addEventListener('click', async function() {
+          btn.disabled = true;
+          loading.style.display = 'block';
+          errorDiv.style.display = 'none';
+          listDiv.innerHTML = '';
+          try {
+            const res = await fetch('/bookings/recommendations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                city: '<%= accommodation.location.city %>',
+                checkIn: '<%= booking.startDate.toISOString().slice(0,10) %>',
+                checkOut: '<%= booking.endDate.toISOString().slice(0,10) %>'
+              })
+            });
+            let data;
+            try {
+              data = await res.json();
+            } catch (jsonErr) {
+              throw new Error('La respuesta del servidor no es válida. ¿Sesión expirada o error de red?');
+            }
+            if (!res.ok || !Array.isArray(data.recommendations)) {
+              throw new Error(data.error || 'Error inesperado');
+            }
+            if (data.recommendations.length === 0) {
+              listDiv.innerHTML = '<div class="text-muted">No se encontraron recomendaciones para estas fechas.</div>';
+              return;
+            }
+            // Render lista
+            listDiv.innerHTML = '<ul class="list-group">' + data.recommendations.map(r =>
+              `<li class="list-group-item">
+                <strong>${r.nombre}</strong> <span class="badge bg-info text-dark ms-2">${r.tipo}</span><br>
+                <span>${r.descripcion}</span>
+              </li>`
+            ).join('') + '</ul>';
+          } catch (err) {
+            errorDiv.textContent = err.message;
+            errorDiv.style.display = 'block';
+          } finally {
+            loading.style.display = 'none';
+            btn.disabled = false;
+          }
+        });
+      });
+    </script>
   </main>
   <%- include('partials/footer') %>
 </body>
