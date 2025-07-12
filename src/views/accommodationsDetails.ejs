@@ -135,14 +135,14 @@
       <div class="row g-4 align-items-start">
         <div class="col-md-5 text-center">
           <% if (accommodation.mainPhoto) { %>
-            <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" class="main-photo mb-3 mb-md-0" style="width:100%;max-width:520px;height:340px;object-fit:cover;">
+            <img src="<%= accommodation.mainPhoto %>" alt="Foto principal" class="main-photo mb-3 mb-md-0" style="width:100%;max-width:520px;height:340px;object-fit:cover;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#photosModal" data-photo-idx="0">
           <% } %>
           <% if (accommodation.photos && accommodation.photos.length > 0) { %>
           <div id="photosCarousel" class="carousel slide mt-3" data-bs-ride="carousel" style="max-width:520px;margin:0 auto;">
             <div class="carousel-inner">
               <% accommodation.photos.forEach(function(photo, idx) { %>
                 <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
-                  <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.label || 'Foto adicional' %>" style="height:220px;object-fit:cover;border-radius:0.7rem;">
+                  <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.label || 'Foto adicional' %>" style="height:220px;object-fit:cover;border-radius:0.7rem;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#photosModal" data-photo-idx="<%= idx+1 %>">
                 </div>
               <% }) %>
             </div>
@@ -158,6 +158,75 @@
             <% } %>
           </div>
           <% } %>
+          <!-- Modal para ver fotos ampliadas -->
+          <div class="modal fade" id="photosModal" tabindex="-1" aria-labelledby="photosModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="photosModalLabel">Galería de imágenes</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  <div id="modalPhotosCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active position-relative">
+                        <img src="<%= accommodation.mainPhoto %>" class="d-block w-100" alt="Foto principal" style="max-height:70vh;object-fit:contain;">
+                        <% if (accommodation.mainPhotoLabel) { %>
+                          <div class="photo-label-modal position-absolute w-100 text-center" style="left:0;bottom:0;background:rgba(0,0,0,0.55);color:#fff;font-size:1.1em;padding:0.5em 0;letter-spacing:0.03em;"> <%= accommodation.mainPhotoLabel %> </div>
+                        <% } %>
+                      </div>
+                      <% if (accommodation.photos && accommodation.photos.length > 0) { %>
+                        <% accommodation.photos.forEach(function(photo) { %>
+                          <div class="carousel-item position-relative">
+                            <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.label || 'Foto adicional' %>" style="max-height:70vh;object-fit:contain;">
+                            <% if (photo.label) { %>
+                              <div class="photo-label-modal position-absolute w-100 text-center" style="left:0;bottom:0;background:rgba(0,0,0,0.55);color:#fff;font-size:1.1em;padding:0.5em 0;letter-spacing:0.03em;"> <%= photo.label %> </div>
+                            <% } %>
+                          </div>
+                        <% }) %>
+                      <% } %>
+                    </div>
+                    <% if ((accommodation.photos && accommodation.photos.length > 0)) { %>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#modalPhotosCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#modalPhotosCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            // Sincronizar el índice del carrusel del modal con la imagen clicada
+            document.addEventListener('DOMContentLoaded', function () {
+              function showModalAt(idx) {
+                var modalCarousel = document.querySelector('#modalPhotosCarousel');
+                if (modalCarousel) {
+                  var bsCarousel = bootstrap.Carousel.getOrCreateInstance(modalCarousel);
+                  bsCarousel.to(idx);
+                }
+              }
+              // Main photo click
+              var mainPhoto = document.querySelector('.main-photo[data-bs-toggle="modal"]');
+              if (mainPhoto) {
+                mainPhoto.addEventListener('click', function() {
+                  showModalAt(0);
+                });
+              }
+              // Carousel photos click
+              document.querySelectorAll('#photosCarousel img[data-bs-toggle="modal"]').forEach(function(img) {
+                img.addEventListener('click', function() {
+                  var idx = parseInt(img.getAttribute('data-photo-idx')) || 0;
+                  showModalAt(idx);
+                });
+              });
+            });
+          </script>
         </div>
         <div class="col-md-7">
           <h1 class="display-6 mb-2" style="color:#232b3a;"><%= accommodation.title %></h1>

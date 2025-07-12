@@ -213,7 +213,7 @@
                 <div>
                   <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
                   <span>Huéspedes: <%= res.guests %></span><br>
-                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : '' %><br>
+                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : '' %><br>
                   Estado: <%= res.status %><br>
                   <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
                     <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
@@ -233,8 +233,8 @@
                   <strong>ID: <%= res.id %></strong><br>
                   Huésped ID: <%= res.guestId %><br>
                   <% if (res.guestName) { %><span class="text-muted"> <%= res.guestName %></span><br><% } %>
-                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString() : (res.checkIn ? new Date(res.checkIn).toLocaleDateString() : '') %> 
-                  al <%= res.endDate ? new Date(res.endDate).toLocaleDateString() : (res.checkOut ? new Date(res.checkOut).toLocaleDateString() : '') %><br>
+                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : (res.checkIn ? new Date(res.checkIn).toLocaleDateString('es-ES') : '') %> 
+                  al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : (res.checkOut ? new Date(res.checkOut).toLocaleDateString('es-ES') : '') %><br>
                   Estado: <%= res.status || '' %><br>
                   <a href="/bookings/<%= res.id %>/details" class="btn btn-link btn-sm">Ver reserva</a>
                 </div>

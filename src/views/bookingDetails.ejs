@@ -143,7 +143,7 @@
       </section>
       <div class="actions mt-4">
         <% if (booking.status !== 'cancelled') { %>
-          <form action="/api/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+          <form action="/bookings/<%= booking.id %>/cancel" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
             <button type="submit" class="btn btn-cancel"><i class="fa-solid fa-ban me-1"></i>Cancelar reserva</button>
           </form>
         <% } else { %>

@@ -34,6 +34,7 @@ class Accommodation {
     this.mainPhoto = mainPhoto;
     this.mainPhotoLabel = mainPhotoLabel;
     this.photos = photos;
+    this.photosLabels = photos.map(photo => photo.label || '');
     this.description = description;
     this.location = location; // { address, city, country, postalCode, coordinates }
     this.rooms = rooms;
