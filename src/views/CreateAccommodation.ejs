@@ -80,14 +80,37 @@
     }
 
     .field-error {
-      color: #c00;
-      font-size: 0.95em;
+      color: #dc3545;
+      font-size: 0.875rem;
       min-height: 1.2em;
       display: block;
+      margin-top: 0.25rem;
+      font-weight: 500;
     }
 
     .input-error {
-      border-color: #c00 !important;
+      border-color: #dc3545 !important;
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+      background-color: rgba(220, 53, 69, 0.05) !important;
+    }
+    
+    .input-error:focus {
+      border-color: #dc3545 !important;
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    #formErrorBox {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 0.375rem;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      display: none;
+      font-weight: 500;
+    }
+    
+    #formErrorBox:not(:empty) {
+      display: block;
     }
 
     .amenities-icons {
@@ -154,7 +177,7 @@
     <div class="card translucent shadow-lg col-lg-8 mx-auto fade-in visible">
       <h1 class="mb-4 text-center">Añadir nuevo alojamiento</h1>
       <div id="formErrorBox" class="text-danger mb-3"></div>
-      <form action="/api/accommodations" method="POST" enctype="multipart/form-data" novalidate>
+      <form id="createAccommodationForm" action="/api/accommodations" method="POST" enctype="multipart/form-data" novalidate>
         <input type="hidden" name="hostId" value="<%= user._id || user.id %>">
         <div class="row g-3">
           <div class="col-md-12">
@@ -402,29 +425,42 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const form = document.querySelector('form');
+      const form = document.getElementById('createAccommodationForm');
       const errorBox = document.getElementById('formErrorBox');
+      
+      if (!form || !errorBox) {
+        return;
+      }
+      
       // Get all fields
       const fields = {
-        title: form.title,
-        pricePerNight: form.pricePerNight,
-        description: form.description,
-        mainPhoto: form.mainPhoto,
-        mainPhotoLabel: form.mainPhotoLabel,
-        photos: form.photos,
-        rooms: form.rooms,
-        beds: form.beds,
-        maxGuests: form.maxGuests,
-        bathrooms: form.bathrooms,
-        petsAllowed: form.petsAllowed,
-        squareMeters: form.squareMeters,
-        address: form.address,
-        city: form.city,
-        province: form.province,
-        country: form.country,
-        postalCode: form.postalCode,
-        propertyType: form.propertyType
+        title: document.getElementById('title'),
+        pricePerNight: document.getElementById('pricePerNight'),
+        description: document.getElementById('description'),
+        mainPhoto: document.getElementById('mainPhoto'),
+        mainPhotoLabel: document.getElementById('mainPhotoLabel'),
+        photos: document.getElementById('photos'),
+        rooms: document.getElementById('rooms'),
+        beds: document.getElementById('beds'),
+        maxGuests: document.getElementById('maxGuests'),
+        bathrooms: document.getElementById('bathrooms'),
+        petsAllowed: document.getElementById('petsAllowed'),
+        squareMeters: document.getElementById('squareMeters'),
+        address: document.getElementById('address'),
+        city: document.getElementById('city'),
+        province: document.getElementById('province'),
+        country: document.getElementById('country'),
+        postalCode: document.getElementById('postalCode'),
+        propertyType: document.getElementById('propertyType'),
+        cancellationPolicy: document.getElementById('cancellationPolicy')
       };
+      
+      // Verificar que todos los campos existan
+      Object.keys(fields).forEach(key => {
+        if (!fields[key]) {
+          // Field not found
+        }
+      });
       const errors = {
         title: document.getElementById('titleError'),
         pricePerNight: document.getElementById('priceError'),
@@ -443,9 +479,20 @@
         province: document.getElementById('provinceError'),
         country: document.getElementById('countryError'),
         postalCode: document.getElementById('postalCodeError'),
-        propertyType: document.getElementById('propertyTypeError')
+        propertyType: document.getElementById('propertyTypeError'),
+        cancellationPolicy: document.getElementById('cancellationPolicyError')
       };
+      
+      // Verificar que todos los elementos de error existan
+      Object.keys(errors).forEach(key => {
+        if (!errors[key]) {
+          // Error element not found
+        }
+      });
       function setFieldError(input, errorSpan, msg) {
+        if (!errorSpan) {
+          return;
+        }
         errorSpan.textContent = msg;
         if (msg) {
           input.classList.add('input-error');
@@ -455,206 +502,327 @@
       }
       function clearError() {
         errorBox.textContent = '';
+        errorBox.style.display = 'none';
+      }
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'block';
       }
       // Real-time validation for each field
-      fields.title.addEventListener('input', function () {
-        if (!fields.title.value || fields.title.value.length < 3) {
-          setFieldError(fields.title, errors.title, 'El título debe tener al menos 3 caracteres.');
-        } else {
-          setFieldError(fields.title, errors.title, '');
-        }
-      });
-      fields.pricePerNight.addEventListener('input', function () {
-        if (!fields.pricePerNight.value || Number(fields.pricePerNight.value) <= 0) {
-          setFieldError(fields.pricePerNight, errors.pricePerNight, 'El precio debe ser un número positivo.');
-        } else {
-          setFieldError(fields.pricePerNight, errors.pricePerNight, '');
-        }
-      });
-      fields.description.addEventListener('input', function () {
-        if (!fields.description.value || fields.description.value.length < 10) {
-          setFieldError(fields.description, errors.description, 'La descripción debe tener al menos 10 caracteres.');
-        } else {
-          setFieldError(fields.description, errors.description, '');
-        }
-      });
-      fields.mainPhoto.addEventListener('change', function () {
-        if (!fields.mainPhoto.files || fields.mainPhoto.files.length === 0) {
-          setFieldError(fields.mainPhoto, errors.mainPhoto, 'Se requiere una foto principal.');
-        } else {
-          setFieldError(fields.mainPhoto, errors.mainPhoto, '');
-        }
-      });
-      fields.rooms.addEventListener('input', function () {
-        if (!fields.rooms.value || Number(fields.rooms.value) < 0) {
-          setFieldError(fields.rooms, errors.rooms, 'El número de habitaciones debe ser 0 o más.');
-        } else {
-          setFieldError(fields.rooms, errors.rooms, '');
-        }
-      });
-      fields.beds.addEventListener('input', function () {
-        if (!fields.beds.value || Number(fields.beds.value) < 1 || Number(fields.beds.value) > 40) {
-          setFieldError(fields.beds, errors.beds, 'El número de camas debe estar entre 1 y 40.');
-        } else {
-          setFieldError(fields.beds, errors.beds, '');
-        }
-      });
-      fields.maxGuests.addEventListener('input', function () {
-        if (!fields.maxGuests.value || Number(fields.maxGuests.value) < 1 || Number(fields.maxGuests.value) > 40) {
-          setFieldError(fields.maxGuests, errors.maxGuests, 'El número máximo de huéspedes debe estar entre 1 y 40.');
-        } else {
-          setFieldError(fields.maxGuests, errors.maxGuests, '');
-        }
-      });
-      fields.bathrooms.addEventListener('input', function () {
-        if (!fields.bathrooms.value || Number(fields.bathrooms.value) < 0) {
-          setFieldError(fields.bathrooms, errors.bathrooms, 'El número de baños debe ser 0 o más.');
-        } else {
-          setFieldError(fields.bathrooms, errors.bathrooms, '');
-        }
-      });
-      fields.petsAllowed.addEventListener('change', function () {
-        if (!fields.petsAllowed.value) {
-          setFieldError(fields.petsAllowed, errors.petsAllowed, 'Seleccione si se permiten mascotas.');
-        } else {
-          setFieldError(fields.petsAllowed, errors.petsAllowed, '');
-        }
-      });
-      fields.squareMeters.addEventListener('input', function () {
-        if (!fields.squareMeters.value || Number(fields.squareMeters.value) <= 0) {
-          setFieldError(fields.squareMeters, errors.squareMeters, 'El tamaño en m² debe ser positivo.');
-        } else {
-          setFieldError(fields.squareMeters, errors.squareMeters, '');
-        }
-      });
-      fields.address.addEventListener('input', function () {
-        if (!fields.address.value || fields.address.value.length < 3) {
-          setFieldError(fields.address, errors.address, 'La dirección debe tener al menos 3 caracteres.');
-        } else {
-          setFieldError(fields.address, errors.address, '');
-        }
-      });
-      fields.city.addEventListener('input', function () {
-        if (!fields.city.value || fields.city.value.length < 2) {
-          setFieldError(fields.city, errors.city, 'La ciudad debe tener al menos 2 caracteres.');
-        } else {
-          setFieldError(fields.city, errors.city, '');
-        }
-      });
-      fields.province.addEventListener('change', function () {
-        if (!fields.province.value) {
-          setFieldError(fields.province, errors.province, 'Seleccione una provincia.');
-        } else {
-          setFieldError(fields.province, errors.province, '');
-        }
-      });
-      fields.country.addEventListener('input', function () {
-        if (!fields.country.value || fields.country.value.length < 2) {
-          setFieldError(fields.country, errors.country, 'El país debe tener al menos 2 caracteres.');
-        } else {
-          setFieldError(fields.country, errors.country, '');
-        }
-      });
-      fields.postalCode.addEventListener('input', function () {
-        if (!fields.postalCode.value || fields.postalCode.value.length < 3) {
-          setFieldError(fields.postalCode, errors.postalCode, 'El código postal debe tener al menos 3 caracteres.');
-        } else {
-          setFieldError(fields.postalCode, errors.postalCode, '');
-        }
-      });
-      fields.propertyType.addEventListener('change', function () {
-        if (!fields.propertyType.value) {
-          setFieldError(fields.propertyType, errors.propertyType, 'Seleccione un tipo de alojamiento.');
-        } else {
-          setFieldError(fields.propertyType, errors.propertyType, '');
-        }
-      });
-      // Validación de coordenadas antes de enviar
-      function validateCoordinates() {
-        const lat = document.getElementById('lat').value;
-        const lng = document.getElementById('lng').value;
-        if (!lat || !lng || isNaN(Number(lat)) || isNaN(Number(lng))) {
-          setFieldError(document.getElementById('lat'), null, 'Debes seleccionar la ubicación en el mapa.');
-          setFieldError(document.getElementById('lng'), null, '');
-          errorBox.textContent = 'Debes seleccionar la ubicación en el mapa (coordenadas obligatorias).';
-          return false;
-        }
-        return true;
+      if (fields.title && errors.title) {
+        fields.title.addEventListener('input', function () {
+          if (!fields.title.value || fields.title.value.trim().length < 3) {
+            setFieldError(fields.title, errors.title, 'El título debe tener al menos 3 caracteres.');
+          } else {
+            setFieldError(fields.title, errors.title, '');
+          }
+        });
+      }
+      
+      if (fields.pricePerNight && errors.pricePerNight) {
+        fields.pricePerNight.addEventListener('input', function () {
+          if (!fields.pricePerNight.value || Number(fields.pricePerNight.value) <= 0) {
+            setFieldError(fields.pricePerNight, errors.pricePerNight, 'El precio debe ser un número positivo.');
+          } else {
+            setFieldError(fields.pricePerNight, errors.pricePerNight, '');
+          }
+        });
+      }
+      
+      if (fields.description && errors.description) {
+        fields.description.addEventListener('input', function () {
+          if (!fields.description.value || fields.description.value.trim().length < 10) {
+            setFieldError(fields.description, errors.description, 'La descripción debe tener al menos 10 caracteres.');
+          } else {
+            setFieldError(fields.description, errors.description, '');
+          }
+        });
+      }
+      
+      if (fields.mainPhoto && errors.mainPhoto) {
+        fields.mainPhoto.addEventListener('change', function () {
+          if (!fields.mainPhoto.files || fields.mainPhoto.files.length === 0) {
+            setFieldError(fields.mainPhoto, errors.mainPhoto, 'Se requiere una foto principal.');
+          } else {
+            setFieldError(fields.mainPhoto, errors.mainPhoto, '');
+          }
+        });
+      }
+      
+      if (fields.rooms && errors.rooms) {
+        fields.rooms.addEventListener('input', function () {
+          if (!fields.rooms.value || Number(fields.rooms.value) < 0) {
+            setFieldError(fields.rooms, errors.rooms, 'El número de habitaciones debe ser 0 o más.');
+          } else {
+            setFieldError(fields.rooms, errors.rooms, '');
+          }
+        });
+      }
+      
+      if (fields.beds && errors.beds) {
+        fields.beds.addEventListener('input', function () {
+          if (!fields.beds.value || Number(fields.beds.value) < 1 || Number(fields.beds.value) > 40) {
+            setFieldError(fields.beds, errors.beds, 'El número de camas debe estar entre 1 y 40.');
+          } else {
+            setFieldError(fields.beds, errors.beds, '');
+          }
+        });
+      }
+      
+      if (fields.maxGuests && errors.maxGuests) {
+        fields.maxGuests.addEventListener('input', function () {
+          if (!fields.maxGuests.value || Number(fields.maxGuests.value) < 1 || Number(fields.maxGuests.value) > 40) {
+            setFieldError(fields.maxGuests, errors.maxGuests, 'El número máximo de huéspedes debe estar entre 1 y 40.');
+          } else {
+            setFieldError(fields.maxGuests, errors.maxGuests, '');
+          }
+        });
+      }
+      
+      if (fields.bathrooms && errors.bathrooms) {
+        fields.bathrooms.addEventListener('input', function () {
+          if (!fields.bathrooms.value || Number(fields.bathrooms.value) < 0) {
+            setFieldError(fields.bathrooms, errors.bathrooms, 'El número de baños debe ser 0 o más.');
+          } else {
+            setFieldError(fields.bathrooms, errors.bathrooms, '');
+          }
+        });
+      }
+      
+      if (fields.petsAllowed && errors.petsAllowed) {
+        fields.petsAllowed.addEventListener('change', function () {
+          if (!fields.petsAllowed.value) {
+            setFieldError(fields.petsAllowed, errors.petsAllowed, 'Seleccione si se permiten mascotas.');
+          } else {
+            setFieldError(fields.petsAllowed, errors.petsAllowed, '');
+          }
+        });
+      }
+      
+      if (fields.squareMeters && errors.squareMeters) {
+        fields.squareMeters.addEventListener('input', function () {
+          if (!fields.squareMeters.value || Number(fields.squareMeters.value) <= 0) {
+            setFieldError(fields.squareMeters, errors.squareMeters, 'El tamaño en m² debe ser positivo.');
+          } else {
+            setFieldError(fields.squareMeters, errors.squareMeters, '');
+          }
+        });
+      }
+      
+      if (fields.address && errors.address) {
+        fields.address.addEventListener('input', function () {
+          if (!fields.address.value || fields.address.value.trim().length < 3) {
+            setFieldError(fields.address, errors.address, 'La dirección debe tener al menos 3 caracteres.');
+          } else {
+            setFieldError(fields.address, errors.address, '');
+          }
+        });
+      }
+      
+      if (fields.city && errors.city) {
+        fields.city.addEventListener('input', function () {
+          if (!fields.city.value || fields.city.value.trim().length < 2) {
+            setFieldError(fields.city, errors.city, 'La ciudad debe tener al menos 2 caracteres.');
+          } else {
+            setFieldError(fields.city, errors.city, '');
+          }
+        });
+      }
+      
+      if (fields.province && errors.province) {
+        fields.province.addEventListener('change', function () {
+          if (!fields.province.value) {
+            setFieldError(fields.province, errors.province, 'Seleccione una provincia.');
+          } else {
+            setFieldError(fields.province, errors.province, '');
+          }
+        });
+      }
+      
+      if (fields.country && errors.country) {
+        fields.country.addEventListener('input', function () {
+          if (!fields.country.value || fields.country.value.trim().length < 2) {
+            setFieldError(fields.country, errors.country, 'El país debe tener al menos 2 caracteres.');
+          } else {
+            setFieldError(fields.country, errors.country, '');
+          }
+        });
+      }
+      
+      if (fields.postalCode && errors.postalCode) {
+        fields.postalCode.addEventListener('input', function () {
+          if (!fields.postalCode.value || fields.postalCode.value.trim().length < 3) {
+            setFieldError(fields.postalCode, errors.postalCode, 'El código postal debe tener al menos 3 caracteres.');
+          } else {
+            setFieldError(fields.postalCode, errors.postalCode, '');
+          }
+        });
+      }
+      
+      if (fields.propertyType && errors.propertyType) {
+        fields.propertyType.addEventListener('change', function () {
+          if (!fields.propertyType.value) {
+            setFieldError(fields.propertyType, errors.propertyType, 'Seleccione un tipo de alojamiento.');
+          } else {
+            setFieldError(fields.propertyType, errors.propertyType, '');
+          }
+        });
+      }
+      
+      if (fields.cancellationPolicy && errors.cancellationPolicy) {
+        fields.cancellationPolicy.addEventListener('change', function () {
+          if (!fields.cancellationPolicy.value) {
+            setFieldError(fields.cancellationPolicy, errors.cancellationPolicy, 'Seleccione una política de cancelación.');
+          } else {
+            setFieldError(fields.cancellationPolicy, errors.cancellationPolicy, '');
+          }
+        });
       }
       // On submit, check all fields again
       form.addEventListener('submit', function (e) {
         clearError();
         let hasError = false;
-        if (!fields.title.value || fields.title.value.length < 3) {
+        
+        // Validar campos obligatorios manualmente (uno por uno con setFieldError)
+        if (!fields.title.value || fields.title.value.trim().length < 3) {
           setFieldError(fields.title, errors.title, 'El título debe tener al menos 3 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.title, errors.title, '');
         }
+        
         if (!fields.pricePerNight.value || Number(fields.pricePerNight.value) <= 0) {
           setFieldError(fields.pricePerNight, errors.pricePerNight, 'El precio debe ser un número positivo.');
           hasError = true;
+        } else {
+          setFieldError(fields.pricePerNight, errors.pricePerNight, '');
         }
-        if (!fields.description.value || fields.description.value.length < 10) {
+        
+        if (!fields.description.value || fields.description.value.trim().length < 10) {
           setFieldError(fields.description, errors.description, 'La descripción debe tener al menos 10 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.description, errors.description, '');
         }
+        
         if (!fields.mainPhoto.files || fields.mainPhoto.files.length === 0) {
           setFieldError(fields.mainPhoto, errors.mainPhoto, 'Se requiere una foto principal.');
           hasError = true;
+        } else {
+          setFieldError(fields.mainPhoto, errors.mainPhoto, '');
         }
+        
         if (!fields.rooms.value || Number(fields.rooms.value) < 0) {
           setFieldError(fields.rooms, errors.rooms, 'El número de habitaciones debe ser 0 o más.');
           hasError = true;
+        } else {
+          setFieldError(fields.rooms, errors.rooms, '');
         }
+        
         if (!fields.beds.value || Number(fields.beds.value) < 1 || Number(fields.beds.value) > 40) {
           setFieldError(fields.beds, errors.beds, 'El número de camas debe estar entre 1 y 40.');
           hasError = true;
+        } else {
+          setFieldError(fields.beds, errors.beds, '');
         }
+        
         if (!fields.maxGuests.value || Number(fields.maxGuests.value) < 1 || Number(fields.maxGuests.value) > 40) {
           setFieldError(fields.maxGuests, errors.maxGuests, 'El número máximo de huéspedes debe estar entre 1 y 40.');
           hasError = true;
+        } else {
+          setFieldError(fields.maxGuests, errors.maxGuests, '');
         }
+        
         if (!fields.bathrooms.value || Number(fields.bathrooms.value) < 0) {
           setFieldError(fields.bathrooms, errors.bathrooms, 'El número de baños debe ser 0 o más.');
           hasError = true;
+        } else {
+          setFieldError(fields.bathrooms, errors.bathrooms, '');
         }
+        
         if (!fields.petsAllowed.value) {
           setFieldError(fields.petsAllowed, errors.petsAllowed, 'Seleccione si se permiten mascotas.');
           hasError = true;
+        } else {
+          setFieldError(fields.petsAllowed, errors.petsAllowed, '');
         }
+        
         if (!fields.squareMeters.value || Number(fields.squareMeters.value) <= 0) {
           setFieldError(fields.squareMeters, errors.squareMeters, 'El tamaño en m² debe ser positivo.');
           hasError = true;
+        } else {
+          setFieldError(fields.squareMeters, errors.squareMeters, '');
         }
-        if (!fields.address.value || fields.address.value.length < 3) {
+        
+        if (!fields.address.value || fields.address.value.trim().length < 3) {
           setFieldError(fields.address, errors.address, 'La dirección debe tener al menos 3 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.address, errors.address, '');
         }
-        if (!fields.city.value || fields.city.value.length < 2) {
+        
+        if (!fields.city.value || fields.city.value.trim().length < 2) {
           setFieldError(fields.city, errors.city, 'La ciudad debe tener al menos 2 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.city, errors.city, '');
         }
+        
         if (!fields.province.value) {
           setFieldError(fields.province, errors.province, 'Seleccione una provincia.');
           hasError = true;
+        } else {
+          setFieldError(fields.province, errors.province, '');
         }
-        if (!fields.country.value || fields.country.value.length < 2) {
+        
+        if (!fields.country.value || fields.country.value.trim().length < 2) {
           setFieldError(fields.country, errors.country, 'El país debe tener al menos 2 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.country, errors.country, '');
         }
-        if (!fields.postalCode.value || fields.postalCode.value.length < 3) {
+        
+        if (!fields.postalCode.value || fields.postalCode.value.trim().length < 3) {
           setFieldError(fields.postalCode, errors.postalCode, 'El código postal debe tener al menos 3 caracteres.');
           hasError = true;
+        } else {
+          setFieldError(fields.postalCode, errors.postalCode, '');
         }
+        
         if (!fields.propertyType.value) {
           setFieldError(fields.propertyType, errors.propertyType, 'Seleccione un tipo de alojamiento.');
           hasError = true;
+        } else {
+          setFieldError(fields.propertyType, errors.propertyType, '');
         }
-        if (!validateCoordinates()) {
+        
+        if (!fields.cancellationPolicy.value) {
+          setFieldError(fields.cancellationPolicy, errors.cancellationPolicy, 'Seleccione una política de cancelación.');
+          hasError = true;
+        } else {
+          setFieldError(fields.cancellationPolicy, errors.cancellationPolicy, '');
+        }
+
+        // Validar coordenadas del mapa
+        const lat = document.getElementById('lat').value;
+        const lng = document.getElementById('lng').value;
+        if (!lat || !lng || isNaN(Number(lat)) || isNaN(Number(lng))) {
+          showError('Por favor, selecciona una ubicación en el mapa haciendo clic en él.');
           hasError = true;
         }
+        
         if (hasError) {
-          errorBox.textContent = 'Por favor, corrige los errores antes de enviar.';
+          showError('Por favor, corrige los errores antes de enviar.');
           e.preventDefault();
+          
+          // Enfocar el primer campo con error
+          const firstErrorField = form.querySelector('.input-error');
+          if (firstErrorField) {
+            firstErrorField.focus();
+            firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          
+          return false;
         }
       });
     });
