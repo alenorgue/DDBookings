@@ -19,23 +19,18 @@ export const updateAccommodationController = async (req, res, next) => {
     // Si se subieron nuevas fotos adicionales, fusionarlas con las existentes
     let newPhotos = [];
     if (req.files && req.files.photos && req.files.photos.length > 0) {
+      const existingCount = existingPhotos.length;
       newPhotos = req.files.photos.map((f, idx) => ({
         url: f.path,
-        label: req.body[`photoLabel_${idx}`] || ''
+        label: req.body[`photoLabel_${existingCount+idx}`] || ''
       }));
       req.body.photos = [...existingPhotos, ...newPhotos];
-    } else if (req.body.photoLabels) {
-      // Si solo se editaron etiquetas de fotos existentes
-      // req.body.photoLabels debe ser un array de etiquetas en el mismo orden que existingPhotos
-      let labels = req.body.photoLabels;
-      if (!Array.isArray(labels) && typeof labels === 'string') labels = [labels];
+    } else {
+      // Actualizar solo etiquetas de fotos existentes
       req.body.photos = existingPhotos.map((photo, idx) => ({
         ...photo,
-        label: labels && labels[idx] !== undefined ? labels[idx] : (photo.label || '')
+        label: req.body[`photoLabel_${idx}`] || photo.label || ''
       }));
-    } else {
-      // No se subieron nuevas fotos ni se editaron etiquetas, conservar las fotos existentes
-      req.body.photos = existingPhotos;
     }
     // Reconstruir location si viene plano desde el formulario o si falta alguna propiedad
     const lat = req.body['location.lat'] !== undefined && req.body['location.lat'] !== '' ? Number(req.body['location.lat']) : (req.body.location && req.body.location.coordinates && req.body.location.coordinates.lat !== undefined ? Number(req.body.location.coordinates.lat) : undefined);

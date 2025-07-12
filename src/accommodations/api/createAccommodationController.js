@@ -44,7 +44,7 @@ export const createAccommodationController = async (req, res, next) => {
 
         const photos = additionalPhotos.map((file, i) => ({
             url: file.path,
-            label: labels[i] || ''
+            label: req.body[`photoLabel_${i}`] || ''
         })).filter(photo => isValidPhotoUrl(photo.url));
 
         if (additionalPhotos.length > 0 && photos.length === 0) {

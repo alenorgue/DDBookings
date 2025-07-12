@@ -205,33 +205,36 @@
           <div class="col-md-6">
             <label for="photos" class="form-label">Fotos adicionales</label>
             <input type="file" name="photos" id="photos" accept="image/*" multiple class="form-control">
+            <div id="photoLabelsContainer" class="mt-2">
+              <% if (accommodation.photos && accommodation.photos.length > 0) { %>
+                <% accommodation.photos.forEach(function(photo, idx) { %>
+                  <div class="mb-1">
+                    <label class="form-label">Etiqueta para foto adicional <%= idx+1 %>:</label>
+                    <input type="text" name="photoLabel_<%= idx %>" class="form-control form-control-sm" maxlength="40" value="<%= photo.label || '' %>" placeholder="Ej: cocina, baño, salón">
+                  </div>
+                <% }) %>
+              <% } %>
+            </div>
             <span class="field-error" id="photosError"></span>
           </div>
-          <div class="col-md-12">
-            <label for="photoLabels" class="form-label">Etiquetas para fotos adicionales (separadas por comas)</label>
-            <input type="text" name="photoLabels" id="photoLabels" class="form-control"
-              placeholder="e.g., cocina, baño, salón"
-              value="<%= (accommodation.photos && accommodation.photos.map(p => p.label).filter(Boolean).join(', ')) || '' %>">
-            <span class="field-error" id="photoLabelsError"></span>
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="rooms" class="form-label">Habitaciones</label>
             <input type="number" id="rooms" name="rooms" class="form-control" required value="<%= accommodation.rooms %>">
             <span class="field-error" id="roomsError"></span>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="beds" class="form-label">Camas</label>
             <input type="number" id="beds" name="beds" class="form-control" required min="1" max="40"
               value="<%= accommodation.beds %>">
             <span class="field-error" id="bedsError"></span>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="maxGuests" class="form-label">Huéspedes máximos</label>
             <input type="number" id="maxGuests" name="maxGuests" class="form-control" min="1" max="40"
               required value="<%= accommodation.maxGuests %>">
             <span class="field-error" id="maxGuestsError"></span>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="bathrooms" class="form-label">Baños</label>
             <input type="number" id="bathrooms" name="bathrooms" class="form-control" required
               value="<%= accommodation.bathrooms %>">
@@ -445,7 +448,6 @@
         mainPhoto: form.mainPhoto,
         mainPhotoLabel: form.mainPhotoLabel,
         photos: form.photos,
-        photoLabels: form.photoLabels,
         rooms: form.rooms,
         beds: form.beds,
         maxGuests: form.maxGuests,
@@ -466,7 +468,6 @@
         mainPhoto: document.getElementById('mainPhotoError'),
         mainPhotoLabel: document.getElementById('mainPhotoLabelError'),
         photos: document.getElementById('photosError'),
-        photoLabels: document.getElementById('photoLabelsError'),
         rooms: document.getElementById('roomsError'),
         beds: document.getElementById('bedsError'),
         maxGuests: document.getElementById('maxGuestsError'),
@@ -684,6 +685,24 @@
         }
       });
     });
+  </script>
+  <script>
+    // Inputs dinámicos para etiquetas de nuevas fotos adicionales
+    const photosInput = document.getElementById('photos');
+    const photoLabelsContainer = document.getElementById('photoLabelsContainer');
+    if (photosInput && photoLabelsContainer) {
+      photosInput.addEventListener('change', function() {
+        // Mantener los inputs de etiquetas existentes
+        let existing = photoLabelsContainer.querySelectorAll('input[name^="photoLabel_"]');
+        let count = existing.length;
+        Array.from(photosInput.files).forEach((file, idx) => {
+          const div = document.createElement('div');
+          div.className = 'mb-1';
+          div.innerHTML = `<label class='form-label'>Etiqueta para nueva foto ${count+idx+1}:</label><input type='text' name='photoLabel_${count+idx}' class='form-control form-control-sm' maxlength='40' placeholder='Ej: cocina, baño, salón'>`;
+          photoLabelsContainer.appendChild(div);
+        });
+      });
+    }
   </script>
 </body>
 

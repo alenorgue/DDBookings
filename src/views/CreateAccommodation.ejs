@@ -187,13 +187,8 @@
           <div class="col-md-6">
             <label for="photos" class="form-label">Fotos adicionales</label>
             <input type="file" name="photos" id="photos" accept="image/*" multiple class="form-control">
+            <div id="photoLabelsContainer" class="mt-2"></div>
             <span class="field-error" id="photosError"></span>
-          </div>
-          <div class="col-md-12">
-            <label for="photoLabels" class="form-label">Etiquetas para fotos adicionales (separadas por comas):</label>
-            <input type="text" name="photoLabels" id="photoLabels" class="form-control"
-              placeholder="e.g., cocina, baño, salón">
-            <span class="field-error" id="photoLabelsError"></span>
           </div>
           <div class="col-md-4">
             <label for="rooms" class="form-label">Habitaciones:</label>
@@ -417,7 +412,6 @@
         mainPhoto: form.mainPhoto,
         mainPhotoLabel: form.mainPhotoLabel,
         photos: form.photos,
-        photoLabels: form.photoLabels,
         rooms: form.rooms,
         beds: form.beds,
         maxGuests: form.maxGuests,
@@ -438,7 +432,6 @@
         mainPhoto: document.getElementById('mainPhotoError'),
         mainPhotoLabel: document.getElementById('mainPhotoLabelError'),
         photos: document.getElementById('photosError'),
-        photoLabels: document.getElementById('photoLabelsError'),
         rooms: document.getElementById('roomsError'),
         beds: document.getElementById('bedsError'),
         maxGuests: document.getElementById('maxGuestsError'),
@@ -665,6 +658,22 @@
         }
       });
     });
+  </script>
+  <script>
+    // Inputs dinámicos para etiquetas de fotos adicionales
+    const photosInput = document.getElementById('photos');
+    const photoLabelsContainer = document.getElementById('photoLabelsContainer');
+    if (photosInput && photoLabelsContainer) {
+      photosInput.addEventListener('change', function() {
+        photoLabelsContainer.innerHTML = '';
+        Array.from(photosInput.files).forEach((file, idx) => {
+          const div = document.createElement('div');
+          div.className = 'mb-1';
+          div.innerHTML = `<label class='form-label'>Etiqueta para foto adicional ${idx+1}:</label><input type='text' name='photoLabel_${idx}' class='form-control form-control-sm' maxlength='40' placeholder='Ej: cocina, baño, salón'>`;
+          photoLabelsContainer.appendChild(div);
+        });
+      });
+    }
   </script>
 </body>
 </html>
