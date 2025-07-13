@@ -14,12 +14,13 @@ class UpdateAccommodation {
       throw new Error('Alojamiento no encontrado');
     }
     // Reconstruir location si viene plano desde el formulario
-    if (!data.location && data.country && data.city && data.address && data.postalCode) {
+    if (!data.location && data.country && data.city && data.address && data.postalCode && data.province) {
       data.location = {
         country: data.country,
         city: data.city,
         address: data.address,
         postalCode: data.postalCode,
+        province: data.province,
         coordinates: {
           lat: data.lat !== undefined && data.lat !== '' ? Number(data.lat) : existingAccommodation.location?.coordinates?.lat,
           lng: data.lng !== undefined && data.lng !== '' ? Number(data.lng) : existingAccommodation.location?.coordinates?.lng
@@ -85,8 +86,8 @@ class UpdateAccommodation {
       throw new Error('El precio por noche debe estar entre 10 y 100000');
     }
 
-    if (!data.location || !data.location.country || !data.location.city || !data.location.address || !data.location.postalCode) {
-      throw new Error('La ubicación debe incluir país, ciudad, dirección y código postal');
+    if (!data.location || !data.location.country || !data.location.city || !data.location.address || !data.location.postalCode || !data.location.province) {
+      throw new Error('La ubicación debe incluir país, ciudad, dirección, código postal y provincia');
     }
 
     if (typeof data.location.country !== 'string' || data.location.country.length < 2 || data.location.country.length > 100) {
@@ -100,6 +101,16 @@ class UpdateAccommodation {
     }
     if (typeof data.location.postalCode !== 'string' || data.location.postalCode.length < 2 || data.location.postalCode.length > 20) {
       throw new Error('El código postal debe ser una cadena de texto entre 2 y 20 caracteres');
+    }
+    if (typeof data.location.province !== 'string' || data.location.province.length < 2 || data.location.province.length > 40) {
+      throw new Error('La provincia debe ser una cadena de texto entre 2 y 40 caracteres');
+    }
+    const PROVINCES = [
+      "A Coruña", "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Formentera", "Girona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Ibiza", "Jaén", "León", "Lérida", "Lugo", "Madrid", "Mallorca", "Málaga", "Menorca", "Murcia", "Navarra", "Orense", "Palencia", "Las Palmas", "Pontevedra", "La Rioja", "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza"]
+      // Islas Baleares desglosadas
+     
+    if (!PROVINCES.includes(data.location.province)) {
+      throw new Error('La provincia seleccionada no es válida');
     }
     if (
       !data.location.coordinates ||
@@ -230,6 +241,7 @@ class UpdateAccommodation {
       if (isDifferent(data.location.city, loc.city)) fieldsToUpdate['location.city'] = data.location.city;
       if (isDifferent(data.location.address, loc.address)) fieldsToUpdate['location.address'] = data.location.address;
       if (isDifferent(data.location.postalCode, loc.postalCode)) fieldsToUpdate['location.postalCode'] = data.location.postalCode;
+      if (isDifferent(data.location.province, loc.province)) fieldsToUpdate['location.province'] = data.location.province;
       if (data.location.coordinates) {
         const coords = loc.coordinates || {};
         if (isDifferent(data.location.coordinates.lat, coords.lat)) fieldsToUpdate['location.coordinates.lat'] = data.location.coordinates.lat;

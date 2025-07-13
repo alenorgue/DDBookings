@@ -11,19 +11,38 @@ const userRepo = new MongoUserRepository();
 const bookingRepo = new MongoBookingRepository();
 const accommodationRepo = new MongoAccommodationRepository();
 
-router.get('/', (req, res) => {
-  res.render('index', { user: req.session.user || null });
+router.get('/', async (req, res, next) => {
+  try {
+    const accommodations = await accommodationRepo.findAllAvailable();
+    res.render('index', {
+      user: req.session.user || null,
+      accommodations,
+      amenityIcons
+    });
+    return;
+  } catch (err) {
+    console.error('Error al cargar la página principal:', err);
+    next(err);
+  }
 });
 // Renderiza la página principal con todos los apartamentos
 // Esta ruta se usa para mostrar la lista de alojamientos en la página principal
 
-router.get('/accommodations', async (req, res) => {
+router.get('/accommodations', async (req, res, next) => {
   try {
-    const { guests, maxPrice, city, checkIn, checkOut } = req.query;
+    const { guests, maxPrice, province, checkIn, checkOut } = req.query;
     const filter = {};
     if (guests) filter.maxGuests = { $gte: parseInt(guests) };
     if (maxPrice) filter.pricePerNight = { $lte: parseFloat(maxPrice) };
-    if (city) filter['location.city'] = { $regex: new RegExp(city, 'i') };
+    if (province) {
+      // Permitir varias provincias separadas por coma
+      const provinces = Array.isArray(province) ? province : province.split(',').map(p => p.trim()).filter(Boolean);
+      if (provinces.length === 1) {
+        filter['location.province'] = provinces[0];
+      } else if (provinces.length > 1) {
+        filter['location.province'] = { $in: provinces };
+      }
+    }
 
     let accommodations = Object.keys(filter).length > 0
       ? await accommodationRepo.findByFilter(filter)
@@ -52,14 +71,14 @@ router.get('/accommodations', async (req, res) => {
       query: req.query, // para persistencia en el formulario
       user: req.session.user || null
     });
-
+    return;
   } catch (err) {
     console.error('Error en GET /accommodations:', err);
     next(err);
   }
 });
 // Renderiza la página de detalles de un alojamiento específico
-router.get('/accommodations/:id', async (req, res) => {
+router.get('/accommodations/:id', async (req, res, next) => {
   // Validación de ObjectId para evitar CastError
   if (!/^[a-fA-F0-9]{24}$/.test(req.params.id)) {
     return res.status(400).send('ID de alojamiento no válido');
@@ -92,8 +111,8 @@ router.get('/accommodations/:id', async (req, res) => {
       user: req.session.user || null,
       successMessage: req.session.successMessage || null
     });
-    // Limpia el mensaje flash después de mostrarlo
     if (req.session.successMessage) delete req.session.successMessage;
+    return;
   } catch (err) {
     console.error('Error al cargar el alojamiento:', err);
     next(err);
@@ -105,11 +124,12 @@ router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
   if (req.session.user.role !== 'host') {
     return res.render('onlyHosts');
   }
-  res.render('CreateAccommodation', {
+  res.render('createAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, 
     amenityIcons: amenityIcons,
     user: req.session.user
   });
+  return;
 });
 
 // Renderiza el formulario para crear un nuevo alojamiento (ruta alternativa para dashboard)
@@ -117,26 +137,33 @@ router.get('/accommodations/createAccommodation', ensureAuthenticated, (req, res
   if (req.session.user.role !== 'host') {
     return res.render('onlyHosts');
   }
-  res.render('CreateAccommodation', {
+  res.render('createAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
     amenityIcons: amenityIcons,
     user: req.session.user
   });
+  return;
 });
 
 // Renderiza el formulario para registrar un nuevo usuario
 router.get('/register', (req, res) => {
   res.render('RegisterUser', { user: req.session.user || null });
+  return;
 });
 
 // Renderiza el formulario de inicio de sesión
 router.get('/login', (req, res) => {
   res.render('login', { user: req.session.user || null });
+  return;
 });
 
 // Renderiza el dashboard del usuario
-router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
+router.get('/dashboard/:id', ensureAuthenticated, async (req, res, next) => {
   console.log('DASHBOARD - req.session.user:', req.session.user);
+  // Validar que el id es un ObjectId válido antes de consultar la base de datos
+  if (!/^[a-fA-F0-9]{24}$/.test(req.params.id)) {
+    return res.status(400).render('error', { message: 'ID de usuario no válido', error: null, user: req.session.user || null });
+  }
   try {
     const user = await userRepo.findById(req.params.id);
     console.log('DASHBOARD user.id:', user && user.id);
@@ -170,39 +197,43 @@ router.get('/dashboard/:id', ensureAuthenticated, async (req, res) => {
       successMessage: req.session.successMessage || null
     });
     if (req.session.successMessage) delete req.session.successMessage;
+    return;
   } catch (err) {
     console.error(err);
-    next(err);
+    return res.status(500).render('error', { message: 'Error interno en el dashboard', error: err, user: req.session.user || null });
   }
 });
 
 // Elimina este POST duplicado para evitar conflicto con el de bookingsRoutes
 // router.post('/bookings/:id/cancel', async (req, res) => { ... });
 
-router.get('/bookings/guest/:guestId', async (req, res) => {
+router.get('/bookings/guest/:guestId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByGuestId(req.params.guestId);
     res.render('bookingsByGuest', { bookings, user: req.session.user || null });
+    return;
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
 
-router.get('/bookings/host/:hostId', async (req, res) => {
+router.get('/bookings/host/:hostId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByHostId(req.params.hostId);
     res.render('bookingsByHost', { bookings, user: req.session.user || null });
+    return;
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
 
-router.get('/bookings/accommodation/:accommodationId', async (req, res) => {
+router.get('/bookings/accommodation/:accommodationId', async (req, res, next) => {
   try {
     const bookings = await bookingRepo.findByAccommodationId(req.params.accommodationId);
     res.render('bookingsByAccommodation', { bookings, user: req.session.user || null });
+    return;
   } catch (err) {
     console.error(err);
     next(err);
@@ -224,10 +255,51 @@ router.get('/accommodations/:id/update', ensureAuthenticated, async (req, res) =
   amenityIcons,
   googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // corregido para que siempre haya valor
 });
+    return;
   } catch (err) {
     console.error(err);
     next(err);
   }
+});
+
+// Renderiza los detalles de una reserva
+router.get('/bookings/:id/details', ensureAuthenticated, async (req, res, next) => {
+  try {
+    const booking = await bookingRepo.findById(req.params.id);
+    if (!booking) return res.status(404).render('error', { message: 'Reserva no encontrada', error: null, user: req.session.user || null });
+
+    const accommodation = await accommodationRepo.findById(booking.accommodationId);
+    if (!accommodation) return res.status(404).render('error', { message: 'Alojamiento no encontrado', error: null, user: req.session.user || null });
+
+    // Obtener datos de guest y host
+    const guest = await userRepo.findById(booking.guestId);
+    const host = await userRepo.findById(booking.hostId);
+    const user = req.session.user || null;
+
+    // Protección: solo guest, host o admin pueden ver
+    const isAllowed = user && (user.id === String(guest.id) || user.id === String(host.id) || user.isAdmin === true);
+    if (!isAllowed) {
+      return res.status(403).render('error', { message: 'No tienes permiso para ver esta reserva', error: null, user });
+    }
+
+    res.render('bookingDetails', {
+      booking,
+      accommodation,
+      guest,
+      host,
+      user
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// Vista temporal para secciones en desarrollo
+router.get('/on-development', (req, res) => {
+  res.render('onDevelopment', { user: req.session.user || null });
+  return;
 });
 
 // Excepción para dejar pasar /bookings/:id/pdf al siguiente router (API)
@@ -235,11 +307,5 @@ router.get('/bookings/:id/pdf', (req, res, next) => {
   return next();
 });
 
-// Manejo de rutas no encontradas (404)
-router.use((req, res, next) => {
-  const err = new Error('Página no encontrada');
-  err.status = 404;
-  next(err);
-});
 
 export default router;

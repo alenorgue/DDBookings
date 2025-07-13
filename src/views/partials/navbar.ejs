@@ -1,13 +1,13 @@
 <nav>
   <div>
     <div class="navbar-left">
-      <a href="/" class="home-link">🏠 Home</a>
+      <a href="/" class="home-link">Home</a>
       <a href="/accommodations">Alojamientos</a>
       <% if (user) { %>
         <a href="/dashboard/<%= user.id || user._id %>">Mi Panel</a>
         <a href="/createAccommodation">Añadir alojamiento</a>
         <% if (user.isAdmin) { %>
-          <a href="/admin/dashboard" class="admin-link">Admin Panel</a>
+          <a href="/admin/dashboard" class="admin-link">Panel de Administración</a>
         <% } %>
       <% } %>
     </div>
@@ -17,7 +17,7 @@
           <button type="submit" class="logout-link">Cerrar sesión</button>
         </form>
       <% } else { %>
-        <a href="/register" class="register-link">Registrar usuario</a>
+        <a href="/register" class="register-link">Registrarse</a>
         <a href="/login" style="color:#3182ce;text-decoration:none;font-weight:bold;">Iniciar sesión</a>
       <% } %>
     </div>

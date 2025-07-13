@@ -1,3 +1,4 @@
+import e from "express";
 import mongoose from "mongoose";
 
 // Definimos el esquema de Mongoose para el modelo de alojamiento
@@ -60,6 +61,68 @@ const accommodationSchema = new mongoose.Schema({
         required: true,
         minlength: 2,
         maxlength: 100,
+        trim: true
+    },
+    province: {
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 100,
+        enum: [
+    "A Coruña",
+  "Álava",
+  "Albacete",
+  "Alicante",
+  "Almería",
+  "Asturias",
+  "Ávila",
+  "Badajoz",
+  "Barcelona",
+  "Burgos",
+  "Cáceres",
+  "Cádiz",
+  "Cantabria",
+  "Castellón",
+  "Ciudad Real",
+  "Córdoba",
+  "Cuenca",
+  "Girona",
+  "Granada",
+  "Guadalajara",
+  "Guipúzcoa",
+   "Formentera",
+  "Huelva",
+  "Huesca",
+  "Ibiza",
+  "Jaén",
+  "León",
+  "Lérida",
+  "Lugo",
+  "Madrid",
+  "Málaga",
+  "Mallorca", 
+  "Menorca",  
+  "Murcia",
+  "Navarra",
+  "Orense",
+  "Palencia",
+  "Las Palmas",
+  "Pontevedra",
+  "La Rioja",
+  "Salamanca",
+  "Santa Cruz de Tenerife",
+  "Segovia",
+  "Sevilla",
+  "Soria",
+  "Tarragona",
+  "Teruel",
+  "Toledo",
+  "Valencia",
+  "Valladolid",
+  "Vizcaya",
+  "Zamora",
+  "Zaragoza",],
+  
         trim: true
     },
     country: {
@@ -131,7 +194,7 @@ const accommodationSchema = new mongoose.Schema({
     },
     cancellationPolicy: {
         type: String,
-        enum: ['Flexible', 'Moderate', 'Strict', 'Super Strict', 'No Refund', 'Other'],
+        enum: ['Flexible', 'Moderate', 'Strict', 'Super Strict', 'No Refund'],
         default: 'Flexible'
     },
     checkIn: {

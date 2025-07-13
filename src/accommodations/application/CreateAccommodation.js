@@ -23,10 +23,9 @@ class CreateAccommodation {
       throw new Error('El precio por noche debe estar entre 10 y 100000');
     }
 
-    if (!data.location || !data.location.country || !data.location.city || !data.location.address || !data.location.postalCode) {
-      throw new Error('La ubicación debe incluir país, ciudad, dirección y código postal');
+    if (!data.location || !data.location.country || !data.location.city || !data.location.address || !data.location.postalCode || !data.location.province) {
+      throw new Error('La ubicación debe incluir país, ciudad, dirección, código postal y provincia');
     }
-
     if (typeof data.location.country !== 'string' || data.location.country.length < 2 || data.location.country.length > 100) {
       throw new Error('El país debe ser una cadena de texto entre 2 y 100 caracteres');
     }
@@ -38,6 +37,20 @@ class CreateAccommodation {
     }
     if (typeof data.location.postalCode !== 'string' || data.location.postalCode.length < 2 || data.location.postalCode.length > 20) {
       throw new Error('El código postal debe ser una cadena de texto entre 2 y 20 caracteres');
+    }
+    if (typeof data.location.province !== 'string' || data.location.province.length < 2 || data.location.province.length > 40) {
+      throw new Error('La provincia debe ser una cadena de texto entre 2 y 40 caracteres');
+    }
+    // Validar que la provincia esté en la lista de provincias válidas (nombres con tildes y variantes)
+    const PROVINCES = [
+      "A Coruña", "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Formentera", "Girona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Ibiza", "Jaén", "León", "Lérida", "Lugo", "Madrid", "Mallorca", "Málaga", "Menorca", "Murcia", "Navarra", "Orense", "Palencia", "Las Palmas", "Pontevedra", "La Rioja", "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza",
+      // Islas Baleares desglosadas
+      "Mallorca", "Menorca", "Ibiza", "Formentera", "Cabrera", "Conejera", "Dragonera", "Espalmador", "Espardell", "Es Vedrà", "Tagomago"
+    ];
+    // Validación de provincia
+    const { province } = data.location;
+    if (!province || typeof province !== 'string' || !PROVINCES.includes(province)) {
+      throw new Error('Provincia no válida.');
     }
     if (
       !data.location.coordinates ||

@@ -67,6 +67,9 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 día
 }));
 
+// Middleware para servir archivos estáticos
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Rutas base de cada contexto
 console.log('Montando rutas...');
 app.use('/api/accommodations', accommodationRoutes);

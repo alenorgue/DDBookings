@@ -5,6 +5,7 @@ import { updateAccommodationController } from './updateAccommodationController.j
 import parser from '../../config/multerCloudinary.js';
 import { ensureAuthenticated } from '../../auth/middleware/auth.js';
 import updateAvailabilityController from './updateAvailabilityController.js';
+import geminiFilterRouter from './geminiFilter.js';
 
 const router = express.Router();
 
@@ -57,6 +58,9 @@ router.put('/:id', ensureAuthenticated, parser.fields([
 
 router.post('/:id/availability', ensureAuthenticated, updateAvailabilityController);
 
+//ruta para filtrar alojamientos con Gemini
+// Esta ruta se maneja en geminiFilter.js
+router.use(geminiFilterRouter);
 //manejo de errores
 router.use((err, req, res, next) => {
   // No redeclares 'err', solo usa el que Express te pasa
@@ -71,5 +75,7 @@ router.use((req, res, next) => {
   err.status = 404;
   next(err);
 });
+
+
 
 export default router;

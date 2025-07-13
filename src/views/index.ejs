@@ -4,51 +4,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bienvenido a DDB</title>
-  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+  <title>Dream Driven Bookings</title>
+  <link rel="icon" type="image/jpeg" href="/img/logo-header.jpg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
   <style>
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 3rem;
-      text-align: center;
+    /* Solo animaciones typing, el resto está en styles.css */
+    .typing {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: .15em solid orange;
+      animation: typing 3s steps(40, end), blink .75s step-end infinite;
     }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    @keyframes typing {
+      from {
+        width: 0
+      }
+
+      to {
+        width: 100%
+      }
     }
 
-    p {
-      font-size: 1.2rem;
-      max-width: 600px;
+    @keyframes blink {
+      50% {
+        border-color: transparent
+      }
     }
 
-    a.button {
-      margin-top: 2rem;
+    .fade-in {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .explore-btn {
+      color: #ffffff !important;
+    }
+    .explore-btn:hover,
+    .explore-btn:focus {
+      color: #222 !important;
+      background: #fff !important;
+      border-color: #fff !important;
+  
     }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fadeEls = document.querySelectorAll('.fade-in');
+      const observer = new window.IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      fadeEls.forEach(el => observer.observe(el));
+    });
+  </script>
 </head>
 
-<body>
+<body class="bg-light text-dark">
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main class="container">
-    <h1>Bienvenido a Dream Driven Bookings</h1>
-    <p>Explora, publica y gestiona alojamientos turísticos con facilidad.</p>
 
-    <p>Para comenzar, puedes acceder a tu perfil o explorar los alojamientos disponibles.</p>
-    <p>Si eres un nuevo usuario, puedes registrarte y empezar a publicar tus alojamientos.</p>
-    <a href="/accommodations" class="button secondary">Explorar alojamientos</a>
-    <a href="/register" class="button primary">Registrarse</a>
-    <a href="/login" class="button secondary">Iniciar sesión</a>
-    <% if (user && user.id) { %>
-      <a href="/dashboard/<%= user.id %>" class="button primary">Ir a mi perfil</a>
-      <a href="/createAccommodation" class="button secondary">Publicar nuevo alojamiento</a>
-      <a href="/auth/logout" class="button secondary">Cerrar sesión</a>
-      <% } %>
+  <!-- Fondo de video para hero y sección siguiente -->
+  <div class="video-bg-wrapper" style="position:relative;width:100vw;min-height:800px;overflow:hidden;">
+    <video autoplay muted loop playsinline style="width:100vw;height:100%;object-fit:cover;min-width:100vw;min-height:800px;position:absolute;top:0;left:0;z-index:0;">
+      <source src="/img/travel/video-2.mp4" type="video/mp4">
+      Tu navegador no soporta el video de fondo.
+    </video>
+    <div style="position:absolute;top:0;left:0;width:100vw;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div>
 
-  </main>
+    <div style="position:relative;z-index:2;">
+      <!-- Hero Section con efecto typing y video de fondo -->
+      <section class="text-white text-center py-5 mb-5 fade-in" style="min-height: 400px; background: transparent;">
+        <div class="container">
+          <h1 class="display-4 mb-3"><span class="typing">Bienvenidos a Dream Driven Bookings</span></h1>
+          <p class="lead">Explora, publica y gestiona alojamientos turísticos con facilidad.</p>
+          <div class="mt-4">
+            <a href="#destacados" class="btn btn-outline-light me-2 explore-btn">Explorar alojamientos</a>
+            <% if (!user || !user.id) { %>
+            <a href="/register" class="btn btn-warning">Registrarse</a>
+            <a href="/login" class="btn btn-light ms-2">Iniciar sesión</a>
+            <% } %>
+            <% if (user && user.id) { %>
+            <a href="/dashboard/<%= user.id %>" class="btn btn-warning">Ir a mi perfil</a>
+            <a href="/createAccommodation" class="btn btn-light ms-2">Publicar nuevo alojamiento</a>
+            <% } %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Qué es DDB -->
+      <section class="container text-center mb-5 text-white fade-in" style="background: transparent; max-width: 55vw; margin: 0 auto 3rem auto;">
+        <h2 class="mb-4">¿Qué es Dream Driven Bookings?</h2>
+        <p class="mb-2">DDB es una plataforma que conecta a viajeros con propietarios de alojamientos turísticos, facilitando la búsqueda y gestión de reservas.</p>
+        <p class="mb-2">Ofrecemos una experiencia intuitiva para que tanto huéspedes como anfitriones puedan disfrutar de un servicio ágil y eficiente.</p>
+        <p>Ya sea que busques un lugar para hospedarte o quieras publicar tu propio alojamiento, aquí encontrarás todo lo que necesitas.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Alojamientos destacados -->
+  <section id="destacados" class="container mb-5 fade-in">
+    <h2 class="text-center mb-4">Conoce nuestros alojamientos destacados</h2>
+    <div class="row g-4">
+      <% accommodations.slice(3, 6).forEach(acc => { %>
+      <div class="col-md-4 fade-in">
+        <div class="card h-100 shadow-sm">
+          <img src="<%= acc.mainPhoto %>" class="card-img-top" alt="Foto de <%= acc.title %>">
+          <div class="card-body">
+            <h5 class="card-title"><%= acc.title %></h5>
+            <p class="card-text">
+              <strong>Precio por noche:</strong> €<%= acc.pricePerNight %><br>
+              <strong>Tamaño:</strong> <%= acc.squareMeters %> m²<br>
+              <strong>Ciudad:</strong> <%= acc.location.city %>
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <% acc.amenities.forEach(a => { %>
+              <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
+              <i class="fas <%= icon %>" title="<%= a %>" style="font-size: 1.2rem;"></i>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <div class="text-center mt-4 fade-in">
+      <a href="/accommodations" class="btn btn-outline-primary">Ver todos los alojamientos</a>
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="bg-white py-5 fade-in">
+    <div class="container">
+      <h2 class="text-center mb-4">¿Cómo funciona?</h2>
+      <div class="row text-center">
+        <div class="col-md-4 mb-4 fade-in">
+          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-3.webp');">
+            <h5>1. Explora</h5>
+            <p>Navega por nuestra amplia selección de alojamientos.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4 fade-in">
+          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-15.webp');">
+            <h5>2. Reserva</h5>
+            <p>Encuentra el lugar perfecto y realiza tu reserva de forma segura.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4 fade-in">
+          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-12.webp');">
+            <h5>3. Disfruta</h5>
+            <p>Vive una experiencia inolvidable en tu destino elegido.</p>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4 fade-in">
+          <div class="como-funciona-card" style="background-image:url('/img/blog/blog-post-4.webp');">
+            <h5>4. Publica</h5>
+            <p>Si eres propietario, publica tu alojamiento fácilmente.</p>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4 fade-in">
+          <div class="como-funciona-card" style="background-image:url('/img/blog/blog-hero-1.webp');">
+            <h5>5. Gestiona</h5>
+            <p>Consulta reservas y alojamientos desde tu perfil.</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-center mt-4 fade-in">¡Únete a nuestra comunidad y comienza tu aventura con Dream Driven Bookings!</p>
+    </div>
+  </section>
+
   <%- include('partials/footer') %>
 </body>
 
