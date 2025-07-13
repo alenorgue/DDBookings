@@ -8,6 +8,7 @@
 ---
 
 
+
 ## 📚 Table of Contents / Tabla de Contenidos
 
 **English**
@@ -15,22 +16,22 @@
 - [Architecture](#folder-structure--ddd-architecture)
 - [Tech Stack](#tech-stack)
 - [Features](#key-features)
-- [AI Integration](#ai--automation)
-- [User Flow](#app-navigation--user-flow-diagram)
-- [Getting Started](#-getting-started)
-- [Deployment](#-deployment)
-- [License](#-license)
+- [AI & Automation 🤖](#ai--automation)
+- [App Navigation & User Flow Diagram 🧭](#app-navigation--user-flow-diagram)
+- [Getting Started 🚀](#getting-started)
+- [Deployment 🌍](#deployment)
+- [License 📄](#license)
 
 **Español**
 - [Descripción General](#descripción-general)
 - [Estructura de Carpetas y Arquitectura DDD](#estructura-de-carpetas-y-arquitectura-ddd)
 - [Stack Tecnológico](#stack-tecnológico)
 - [Funcionalidades Clave](#funcionalidades-clave)
-- [IA y Automatización](#ia-y-automatización)
-- [Diagrama de Navegación y Flujo de Usuario](#diagrama-de-navegación-y-flujo-de-usuario)
-- [Cómo Empezar](#cómo-empezar)
-- [Despliegue](#despliegue)
-- [Licencia](#licencia)
+- [IA y Automatización 🤖](#ia-y-automatización)
+- [Diagrama de Navegación y Flujo de Usuario 🧭](#diagrama-de-navegación-y-flujo-de-usuario)
+- [Cómo Empezar 🚀](#cómo-empezar)
+- [Despliegue 🌍](#despliegue)
+- [Licencia 📄](#licencia)
 
 ---
 
@@ -116,7 +117,7 @@ Dream Driven Bookings is a full-stack accommodation and booking platform built w
 
 ---
 
-### 🤖 AI & Automation
+### AI & Automation
 - **Google Gemini API**:
   1. **Intelligent Filtering**: Filter accommodations using natural language prompts (e.g., "pet-friendly with pool in Cádiz").
   2. **Cultural Recommendations**: Get AI-generated activity suggestions for your travel destination and dates.
@@ -124,7 +125,7 @@ Dream Driven Bookings is a full-stack accommodation and booking platform built w
 
 ---
 
-### 🧭 App Navigation & User Flow Diagram
+### App Navigation & User Flow Diagram
 ```mermaid
 flowchart TD
     Start([Landing Page]) --> LoginOrRegister{Login/Register}
@@ -147,7 +148,7 @@ flowchart TD
 
 ---
 
-### 🚀 Getting Started
+### Getting Started
 
 ```bash
 # 1. Clone the repo
@@ -170,7 +171,7 @@ npm run dev
 
 ---
 
-### 🌍 Deployment
+### Deployment
 - Compatible with Render, Vercel or Docker
 - Uses `.env` for secrets
 - Static assets in `/public`
@@ -178,17 +179,17 @@ npm run dev
 
 ---
 
-### 📄 License
+### License
 MIT License — see [LICENSE](./LICENSE)
 
 ---
 
-### 🙋‍♂️ Disclaimer
+### Disclaimer
 This is a personal portfolio project. External services may have usage limits or require payment. No production warranties implied.
 
 ---
 
-### 📬 Contact
+### Contact
 Made with ❤️ by [Alejandro Noriega Guerra](https://github.com/alenorgue)
 
 ---
@@ -275,7 +276,7 @@ Dream Driven Bookings es una plataforma full-stack de reservas y alojamientos, c
 
 ---
 
-### 🤖 IA y Automatización
+### IA y Automatización
 - **Google Gemini API**:
   1. **Filtrado inteligente**: prompts como "pet-friendly con piscina en Cádiz"
   2. **Recomendaciones culturales**: actividades según ciudad y fechas de viaje
@@ -283,7 +284,7 @@ Dream Driven Bookings es una plataforma full-stack de reservas y alojamientos, c
 
 ---
 
-### 🧭 Diagrama de Navegación y Flujo de Usuario
+### Diagrama de Navegación y Flujo de Usuario
 ```mermaid
 flowchart TD
     Start([Página principal]) --> LoginOrRegister{Login/Registro}
@@ -306,7 +307,7 @@ flowchart TD
 
 ---
 
-### 🚀 Cómo Empezar
+### Cómo Empezar
 
 ```bash
 # 1. Clonar el repositorio
@@ -329,7 +330,7 @@ npm run dev
 
 ---
 
-### 🌍 Despliegue
+### Despliegue
 - Compatible con Render, Vercel o Docker
 - Usa `.env` para credenciales
 - Recursos estáticos en `/public`
@@ -337,15 +338,15 @@ npm run dev
 
 ---
 
-### 📄 Licencia
+### Licencia
 Licencia MIT — ver archivo [LICENSE](./LICENSE)
 
 ---
 
-### 🙋‍♂️ Aviso Legal
+### Aviso Legal
 Proyecto educativo/personal. Los servicios externos pueden tener límites o requerir suscripciones.
 
 ---
 
-### 📬 Contacto
+### Contacto
 Hecho con ❤️ por [Alejandro Noriega Guerra](https://github.com/alenorgue)
