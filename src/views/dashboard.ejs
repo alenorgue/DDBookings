@@ -203,153 +203,242 @@
       </script>
     <% } %>
     <div class="row dashboard-row d-flex justify-content-center align-items-stretch fade-in">
-      <!-- IZQUIERDA: Reservas -->
-      <div class="col-lg-4 dashboard-col">
-        <div class="dashboard-card">
-          <h3><i class="fa-solid fa-calendar-check me-2"></i>Tus Reservas</h3>
-          <% if (userBookings.length > 0) { %>
-            <% userBookings.forEach(res => { %>
-              <div class="reservation-card">
-                <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento">
-                <div>
-                  <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
-                  <span>Huéspedes: <%= res.guests %></span><br>
-                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : '' %><br>
-                  Estado: <%= res.status %><br>
-                  <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
-                    <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
-                  </form>
-                  <a href="/bookings/<%= res.id %>/details" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver reserva</a>
-                </div>
-              </div>
-            <% }) %>
-          <% } else { %>
-            <p>No tienes reservas aún.</p>
-          <% } %>
-          <h3 class="mt-4"><i class="fa-solid fa-users-viewfinder me-2"></i>Reservas en tus alojamientos</h3>
-          <% if (hostBookings && hostBookings.length > 0) { %>
-            <% hostBookings.forEach(res => { %>
-              <div class="reservation-card">
-                <div>
-                  <strong>ID: <%= res.id %></strong><br>
-                  Huésped ID: <%= res.guestId %><br>
-                  <% if (res.guestName) { %><span class="text-muted"> <%= res.guestName %></span><br><% } %>
-                  Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : (res.checkIn ? new Date(res.checkIn).toLocaleDateString('es-ES') : '') %> 
-                  al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : (res.checkOut ? new Date(res.checkOut).toLocaleDateString('es-ES') : '') %><br>
-                  Estado: <%= res.status || '' %><br>
-                  <a href="/bookings/<%= res.id %>/details" class="btn btn-link btn-sm">Ver reserva</a>
-                </div>
-              </div>
-            <% }) %>
-          <% } else { %>
-            <p>No hay reservas aún.</p>
-          <% } %>
-        </div>
-      </div>
-      <!-- CENTRO: Alojamientos -->
-      <div class="col-lg-5 dashboard-col">
-        <div class="dashboard-card">
-          <h3><i class="fa-solid fa-house-user me-2"></i>Tus Alojamientos</h3>
-          <a href="/createAccommodation" class="btn btn-primary mb-3 btn-smaller">Publicar Nuevo Alojamiento</a>
-          <% if (userAccommodations.length > 0) { %>
-            <% userAccommodations.forEach(acc => { %>
-              <% if (acc.id) { %>
-                <div class="accommodation-card">
-                  <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>">
+      
+      <% if (user.role === 'guest') { %>
+        <!-- Guest: Reservas (2/3) y Perfil (1/3) -->
+        <div class="col-lg-8 dashboard-col">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-calendar-check me-2"></i>Tus Reservas</h3>
+            <% if (userBookings.length > 0) { %>
+              <% userBookings.forEach(res => { %>
+                <div class="reservation-card">
+                  <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento">
                   <div>
-                    <strong><%= acc.title %></strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
-                    <a href="/accommodations/<%= acc.id %>" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver detalles</a>
-                    <form action="/accommodations/<%= acc.id %>/update" method="GET" class="d-inline">
-                      <button type="submit" class="btn btn-outline-warning btn-sm mt-1 btn-smaller">Editar</button>
+                    <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
+                    <span>Huéspedes: <%= res.guests %></span><br>
+                    Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : '' %><br>
+                    Estado: <%= res.status %><br>
+                    <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
+                      <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
                     </form>
-                    <form action="/api/accommodations/<%= acc.id %>/availability" method="POST" class="mt-2">
-                      <label class="form-label">Disponibilidad:</label>
-                      <div class="row g-2 align-items-end">
-                        <div class="col-auto">
-                          <input type="date" name="startDate" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-auto">
-                          <input type="date" name="endDate" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-auto">
-                          <button type="submit" class="btn btn-outline-primary btn-sm btn-smaller">Añadir rango</button>
-                        </div>
-                      </div>
-                    </form>
-                   
+                    <a href="/bookings/<%= res.id %>/details" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver reserva</a>
                   </div>
                 </div>
-              <% } %>
-            <% }) %>
-          <% } else { %>
-            <p>No has publicado alojamientos todavía.</p>
-          <% } %>
+              <% }) %>
+            <% } else { %>
+              <p>No tienes reservas aún.</p>
+            <% } %>
+          </div>
         </div>
-      </div>
-      <!-- DERECHA: Edición de perfil -->
-      <div class="col-lg-3 dashboard-col">
-        <div class="dashboard-card">
-          <h3><i class="fa-solid fa-user-gear me-2"></i>Perfil</h3>
-          <% if (user.profilePicture) { %>
-            <img src="<%= user.profilePicture %>" alt="Foto de perfil" class="profile-pic">
-          <% } else { %>
-            <div class="profile-pic d-flex align-items-center justify-content-center" style="background:#eee;">Sin foto</div>
-          <% } %>
-          <p class="mb-1"><strong><%= user.name %> <%= user.surName %></strong></p>
-          <p class="mb-1"><%= user.email %></p>
-          <form action="/api/users/update" method="POST" enctype="multipart/form-data" class="mt-3">
-            <input type="hidden" name="userId" value="<%= user.id %>">
-            <div class="mb-2">
-              <label for="name" class="form-label">Nombre</label>
-              <input type="text" name="name" id="name" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
-              <span class="field-error" id="nameError"></span>
-            </div>
-            <div class="mb-2">
-              <label for="surName" class="form-label">Apellido</label>
-              <input type="text" name="surName" id="surName" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
-              <span class="field-error" id="surNameError"></span>
-            </div>
-            <input type="hidden" name="email" value="<%= user.email %>" />
-            <div class="mb-2">
-              <label for="password" class="form-label">Nueva contraseña (deja vacío para mantener actual)</label>
-              <input type="password" name="password" id="password" class="form-control" placeholder="********" />
-              <span class="field-error" id="passwordError"></span>
-            </div>
-            <div class="mb-2">
-              <label for="profilePicture" class="form-label">Foto de Perfil</label>
-              <input type="file" name="profilePicture" id="profilePicture" class="form-control" accept="image/*" />
-              <span class="field-error" id="profilePictureError"></span>
-              <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
-            </div>
-            <div class="mb-2">
-              <label for="bio" class="form-label">Biografía</label>
-              <textarea name="bio" id="bio" maxlength="500" class="form-control"><%= user.bio %></textarea>
-              <span class="field-error" id="bioError"></span>
-            </div>
-            <div class="mb-2">
-              <label for="phoneNumber" class="form-label">Teléfono</label>
-              <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" value="<%= user.phoneNumber %>" />
-              <span class="field-error" id="phoneError"></span>
-            </div>
-            <div class="mb-2">
-              <label for="country" class="form-label">País</label>
-              <input type="text" name="country" id="country" class="form-control" value="<%= user.country %>" />
-              <span class="field-error" id="countryError"></span>
-            </div>
-            <div class="mb-2">
-              <label for="language" class="form-label">Idioma preferido</label>
-              <select name="language" id="language" class="form-select">
-                <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
-                <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
-                <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
-              </select>
-              <span class="field-error" id="languageError"></span>
-            </div>
-            <button type="submit" class="btn btn-success w-100 mt-2">Guardar Cambios</button>
-          </form>
+        <div class="d-none"></div>
+        <div class="col-lg-4 dashboard-col">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-user-gear me-2"></i>Perfil</h3>
+            <% if (user.profilePicture) { %>
+              <img src="<%= user.profilePicture %>" alt="Foto de perfil" class="profile-pic">
+            <% } else { %>
+              <div class="profile-pic d-flex align-items-center justify-content-center" style="background:#eee;">Sin foto</div>
+            <% } %>
+            <p class="mb-1"><strong><%= user.name %> <%= user.surName %></strong></p>
+            <p class="mb-1"><%= user.email %></p>
+            <form action="/api/users/update" method="POST" enctype="multipart/form-data" class="mt-3">
+              <input type="hidden" name="userId" value="<%= user.id %>">
+              <div class="mb-2">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" name="name" id="name" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+                <span class="field-error" id="nameError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="surName" class="form-label">Apellido</label>
+                <input type="text" name="surName" id="surName" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+                <span class="field-error" id="surNameError"></span>
+              </div>
+              <input type="hidden" name="email" value="<%= user.email %>" />
+              <div class="mb-2">
+                <label for="password" class="form-label">Nueva contraseña (deja vacío para mantener actual)</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="********" />
+                <span class="field-error" id="passwordError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="profilePicture" class="form-label">Foto de Perfil</label>
+                <input type="file" name="profilePicture" id="profilePicture" class="form-control" accept="image/*" />
+                <span class="field-error" id="profilePictureError"></span>
+                <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
+              </div>
+              <div class="mb-2">
+                <label for="bio" class="form-label">Biografía</label>
+                <textarea name="bio" id="bio" maxlength="500" class="form-control"><%= user.bio %></textarea>
+                <span class="field-error" id="bioError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="phoneNumber" class="form-label">Teléfono</label>
+                <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" value="<%= user.phoneNumber %>" />
+                <span class="field-error" id="phoneError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="country" class="form-label">País</label>
+                <input type="text" name="country" id="country" class="form-control" value="<%= user.country %>" />
+                <span class="field-error" id="countryError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="language" class="form-label">Idioma preferido</label>
+                <select name="language" id="language" class="form-select">
+                  <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
+                  <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
+                  <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
+                </select>
+                <span class="field-error" id="languageError"></span>
+              </div>
+              <button type="submit" class="btn btn-success w-100 mt-2">Guardar Cambios</button>
+            </form>
+          </div>
         </div>
+      <% } else { %>
+        <!-- Otros roles: Reservas (4), Alojamientos (5), Perfil (3) -->
+        <div class="col-lg-4 dashboard-col">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-calendar-check me-2"></i>Tus Reservas</h3>
+            <% if (userBookings.length > 0) { %>
+              <% userBookings.forEach(res => { %>
+                <div class="reservation-card">
+                  <img src="<%= res.mainPhoto || '' %>" alt="Foto alojamiento">
+                  <div>
+                    <strong><%= res.accommodationTitle || res.accommodationId %></strong><br>
+                    <span>Huéspedes: <%= res.guests %></span><br>
+                    Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : '' %> al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : '' %><br>
+                    Estado: <%= res.status %><br>
+                    <form action="/bookings/<%= res.id %>/cancel" method="POST" class="d-inline" data-confirm="¿Seguro que quieres cancelar esta reserva?">
+                      <button class="btn btn-outline-danger btn-sm btn-smaller mt-1">Cancelar</button>
+                    </form>
+                    <a href="/bookings/<%= res.id %>/details" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver reserva</a>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p>No tienes reservas aún.</p>
+            <% } %>
+            <h3 class="mt-4"><i class="fa-solid fa-users-viewfinder me-2"></i>Reservas en tus alojamientos</h3>
+            <% if (hostBookings && hostBookings.length > 0) { %>
+              <% hostBookings.forEach(res => { %>
+                <div class="reservation-card">
+                  <div>
+                    <strong>ID: <%= res.id %></strong><br>
+                    Huésped ID: <%= res.guestId %><br>
+                    <% if (res.guestName) { %><span class="text-muted"> <%= res.guestName %></span><br><% } %>
+                    Del <%= res.startDate ? new Date(res.startDate).toLocaleDateString('es-ES') : (res.checkIn ? new Date(res.checkIn).toLocaleDateString('es-ES') : '') %> 
+                    al <%= res.endDate ? new Date(res.endDate).toLocaleDateString('es-ES') : (res.checkOut ? new Date(res.checkOut).toLocaleDateString('es-ES') : '') %><br>
+                    Estado: <%= res.status || '' %><br>
+                    <a href="/bookings/<%= res.id %>/details" class="btn btn-link btn-sm">Ver reserva</a>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p>No hay reservas aún.</p>
+            <% } %>
+          </div>
+        </div>
+        <div class="col-lg-5 dashboard-col">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-house-user me-2"></i>Tus Alojamientos</h3>
+            <a href="/createAccommodation" class="btn btn-primary mb-3 btn-smaller">Publicar Nuevo Alojamiento</a>
+            <% if (userAccommodations.length > 0) { %>
+              <% userAccommodations.forEach(acc => { %>
+                <% if (acc.id) { %>
+                  <div class="accommodation-card">
+                    <img src="<%= acc.mainPhoto %>" alt="<%= acc.title %>">
+                    <div>
+                      <strong><%= acc.title %></strong> — <%= acc.location && acc.location.city ? acc.location.city : '' %><br>
+                      <a href="/accommodations/<%= acc.id %>" class="btn btn-outline-info btn-sm btn-smaller mt-1">Ver detalles</a>
+                      <form action="/accommodations/<%= acc.id %>/update" method="GET" class="d-inline">
+                        <button type="submit" class="btn btn-outline-warning btn-sm mt-1 btn-smaller">Editar</button>
+                      </form>
+                      <form action="/api/accommodations/<%= acc.id %>/availability" method="POST" class="mt-2">
+                        <label class="form-label">Disponibilidad:</label>
+                        <div class="row g-2 align-items-end">
+                          <div class="col-auto">
+                            <input type="date" name="startDate" class="form-control form-control-sm" required>
+                          </div>
+                          <div class="col-auto">
+                            <input type="date" name="endDate" class="form-control form-control-sm" required>
+                          </div>
+                          <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary btn-sm btn-smaller">Añadir rango</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                <% } %>
+              <% }) %>
+            <% } else { %>
+              <p>No has publicado alojamientos todavía.</p>
+            <% } %>
+          </div>
+        </div>
+        <div class="col-lg-3 dashboard-col">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-user-gear me-2"></i>Perfil</h3>
+            <% if (user.profilePicture) { %>
+              <img src="<%= user.profilePicture %>" alt="Foto de perfil" class="profile-pic">
+            <% } else { %>
+              <div class="profile-pic d-flex align-items-center justify-content-center" style="background:#eee;">Sin foto</div>
+            <% } %>
+            <p class="mb-1"><strong><%= user.name %> <%= user.surName %></strong></p>
+            <p class="mb-1"><%= user.email %></p>
+            <form action="/api/users/update" method="POST" enctype="multipart/form-data" class="mt-3">
+              <input type="hidden" name="userId" value="<%= user.id %>">
+              <div class="mb-2">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" name="name" id="name" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+                <span class="field-error" id="nameError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="surName" class="form-label">Apellido</label>
+                <input type="text" name="surName" id="surName" class="form-control" placeholder="Deja vacío para mantener el actual" value="" />
+                <span class="field-error" id="surNameError"></span>
+              </div>
+              <input type="hidden" name="email" value="<%= user.email %>" />
+              <div class="mb-2">
+                <label for="password" class="form-label">Nueva contraseña (deja vacío para mantener actual)</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="********" />
+                <span class="field-error" id="passwordError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="profilePicture" class="form-label">Foto de Perfil</label>
+                <input type="file" name="profilePicture" id="profilePicture" class="form-control" accept="image/*" />
+                <span class="field-error" id="profilePictureError"></span>
+                <span style="font-size:0.9em;">Puedes subir una nueva imagen o dejar vacío para mantener la actual.</span>
+              </div>
+              <div class="mb-2">
+                <label for="bio" class="form-label">Biografía</label>
+                <textarea name="bio" id="bio" maxlength="500" class="form-control"><%= user.bio %></textarea>
+                <span class="field-error" id="bioError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="phoneNumber" class="form-label">Teléfono</label>
+                <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" value="<%= user.phoneNumber %>" />
+                <span class="field-error" id="phoneError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="country" class="form-label">País</label>
+                <input type="text" name="country" id="country" class="form-control" value="<%= user.country %>" />
+                <span class="field-error" id="countryError"></span>
+              </div>
+              <div class="mb-2">
+                <label for="language" class="form-label">Idioma preferido</label>
+                <select name="language" id="language" class="form-select">
+                  <option value="es" <%=user.language==='es' ? 'selected' : '' %>>Español</option>
+                  <option value="cat" <%=user.language==='cat' ? 'selected' : '' %>>Català</option>
+                  <option value="en" <%=user.language==='en' ? 'selected' : '' %>>English</option>
+                </select>
+                <span class="field-error" id="languageError"></span>
+              </div>
+              <button type="submit" class="btn btn-success w-100 mt-2">Guardar Cambios</button>
+            </form>
+          </div>
+        </div>
+      <% } %>
       </div>
-    </div>
   </main>
   <%- include('partials/footer') %>
   <script>

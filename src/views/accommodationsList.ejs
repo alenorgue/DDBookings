@@ -165,9 +165,12 @@
   </div>
 
   <main class="container-lg position-relative main-content-offset" style="z-index:2; margin-top: 42vh;">
-    <div class="fade-in text-center" style="position:relative;z-index:2;margin-bottom:2.5rem;background:#fff;border-radius:1.2rem;padding:1.2rem 1.2rem 1.2rem 1.2rem;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
-      <h1 class="display-5 mb-2" style="text-decoration:underline;">Alojamientos</h1>
-      <p class="lead">Encuentra tu próximo destino entre nuestros alojamientos turísticos.</p>
+    <div class="fade-in text-center position-relative hero-blur-bg" style="z-index:2;margin-bottom:2.5rem;background:#fff;border-radius:1.2rem;padding:1.2rem 1.2rem 1.2rem 1.2rem;box-shadow:0 2px 16px rgba(0,0,0,0.06);overflow:hidden;">
+      <img src="/img/travel/misc-12.webp" alt="Fondo hero" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center 70%;opacity:0.5;z-index:0;pointer-events:none;border-radius:1.2rem;">
+      <div style="position:relative;z-index:1;">
+        <h1 class="display-5 mb-2 fw-bold" style="text-decoration:underline;font-weight:bold;">Alojamientos</h1>
+        <p class="lead"  style="font-weight:bold;">Encuentra tu próximo destino entre nuestros alojamientos turísticos.</p>
+      </div>
     </div>
     <div class="row section-filtros-destacados mb-5 fade-in">
       <!-- Filtros a la izquierda -->
@@ -260,7 +263,7 @@
       </div>
       <!-- Gemini Filter Section (sustituye destacados) -->
       <div class="col-lg-7 order-2 order-lg-2 destacados-section">
-        <div class="card p-3 mb-3" style="background:rgba(255,255,255,0.97);box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <div class="card p-4 mb-3" style="background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(0,0,0,0.06); border-radius:1rem; border:none; color:#232b3a;">
           <h3 class="mb-2" style="font-size:1.1rem;">Filtrado inteligente (Gemini AI)</h3>
           <form id="geminiFilterForm" autocomplete="off">
             <div class="input-group mb-2">
@@ -268,6 +271,9 @@
               <button class="btn btn-primary" type="submit">Filtrar</button>
             </div>
           </form>
+          <div id="geminiFilterImage" class="text-center mb-3">
+            <img src="/img/travel/misc-3.webp" alt="Inspiración IA" style="max-width: 450px; width:100%; border-radius:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+          </div>
           <div id="geminiFilterError" class="text-danger mb-2" style="display:none;"></div>
           <div id="geminiResults" class="row g-3"></div>
         </div>
@@ -282,11 +288,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const promptInput = document.getElementById('geminiPrompt');
   const resultsDiv = document.getElementById('geminiResults');
   const errorDiv = document.getElementById('geminiFilterError');
+  const imgDiv = document.getElementById('geminiFilterImage');
   if (!form) return;
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     errorDiv.style.display = 'none';
     resultsDiv.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-primary" role="status"></div><div>Filtrando con IA...</div></div>';
+    if (imgDiv) imgDiv.style.display = 'none';
     const prompt = promptInput.value.trim();
     if (!prompt) return;
     try {

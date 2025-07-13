@@ -25,7 +25,7 @@ router.post('/login', async (req, res, next) => {
       res.redirect(`/dashboard/${user.id}`);
     });
   } catch (err) {
-    next(err);
+    res.status(401).render('login', { error: err.message });
   }
 });
 
