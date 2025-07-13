@@ -132,11 +132,13 @@ flowchart TD
     LoginOrRegister -- Host --> HostDashboard
     LoginOrRegister -- Admin --> AdminDashboard
     GuestDashboard -->|Browse| AccommodationsList
+    HostDashboard -->|Browse (as Guest)| AccommodationsList
     AccommodationsList -->|View Details| AccommodationDetails
     AccommodationDetails -->|Book| BookingFlow
     BookingFlow -->|Confirm| BookingConfirmation
     BookingConfirmation -->|Get AI Recommendations| AIRecs[Gemini Recommendations]
     GuestDashboard -->|My Bookings| MyBookings
+    HostDashboard -->|My Bookings (as Guest)| MyBookings
     HostDashboard -->|My Accommodations| MyAccommodations
     HostDashboard -->|Create/Edit| AccommodationCRUD
     AdminDashboard -->|Manage Users/Hosts| AdminUserMgmt
@@ -289,11 +291,13 @@ flowchart TD
     LoginOrRegister -- Anfitrión --> HostDashboard
     LoginOrRegister -- Admin --> AdminDashboard
     GuestDashboard -->|Explorar| AccommodationsList
+    HostDashboard -->|Explorar (como huésped)| AccommodationsList
     AccommodationsList -->|Ver detalles| AccommodationDetails
     AccommodationDetails -->|Reservar| BookingFlow
     BookingFlow -->|Confirmar| BookingConfirmation
     BookingConfirmation -->|Obtener recomendaciones IA| AIRecs[Recomendaciones Gemini]
     GuestDashboard -->|Mis reservas| MyBookings
+    HostDashboard -->|Mis reservas (como huésped)| MyBookings
     HostDashboard -->|Mis alojamientos| MyAccommodations
     HostDashboard -->|Crear/Editar| AccommodationCRUD
     AdminDashboard -->|Gestionar usuarios| AdminUserMgmt
