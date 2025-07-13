@@ -124,7 +124,7 @@ router.get('/createAccommodation', ensureAuthenticated, (req, res) => {
   if (req.session.user.role !== 'host') {
     return res.render('onlyHosts');
   }
-  res.render('createAccommodation', {
+  res.render('CreateAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, 
     amenityIcons: amenityIcons,
     user: req.session.user
@@ -137,7 +137,7 @@ router.get('/accommodations/createAccommodation', ensureAuthenticated, (req, res
   if (req.session.user.role !== 'host') {
     return res.render('onlyHosts');
   }
-  res.render('createAccommodation', {
+  res.render('CreateAccommodation', {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
     amenityIcons: amenityIcons,
     user: req.session.user
