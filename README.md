@@ -66,6 +66,8 @@ Dream Driven Bookings is a full-stack accommodation and booking platform built w
 │   │   ├── domain/
 │   │   ├── infrastructure/
 │   │   └── models/
+│   ├── payments/            # Not implemented
+│   ├── reviews/             # Not implemented
 │   ├── auth/                # Authentication logic
 │   ├── config/              # DB, cloud, and middleware config
 │   ├── shared/              # Shared utilities (e.g., amenity icons)
@@ -221,6 +223,8 @@ Dream Driven Bookings es una plataforma full-stack de reservas y alojamientos, c
 │   │   ├── domain/
 │   │   ├── infrastructure/
 │   │   └── models/
+│   ├── payments/            # No implementado
+│   ├── reviews/             # No implementado
 │   ├── auth/                # Lógica de autenticación
 │   ├── config/              # Configuración de DB, cloud y middleware
 │   ├── shared/              # Utilidades compartidas (iconos, etc.)
