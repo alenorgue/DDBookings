@@ -55,7 +55,14 @@ Reglas:
   if (!response.ok) {
     throw new Error('Error al llamar a Gemini: ' + response.statusText);
   }
-  const data = await response.json();
+  let data, textRaw;
+  try {
+    textRaw = await response.text();
+    data = JSON.parse(textRaw);
+  } catch (e) {
+    // Si no es JSON, probablemente es HTML (error 502, 429, etc.)
+    throw new Error('La respuesta de Gemini no es JSON válido. Respuesta recibida:\n' + textRaw);
+  }
   // Gemini responde en data.candidates[0].content.parts[0].text
   let ids = [];
   try {
