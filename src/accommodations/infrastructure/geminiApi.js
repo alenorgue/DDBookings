@@ -39,7 +39,7 @@ Alojamientos: [
 Respuesta esperada: [1]
 `;
 
-  const promptText = `${example}\nAhora filtra según este criterio y lista:\nCriterio: ${prompt}\nAlojamientos: ${JSON.stringify(reducedAccommodations)}\nRecuerda: responde solo con el array de IDs, sin explicación.`;
+  const promptText = `${example}\nAhora filtra según este criterio y lista:\nCriterio: ${prompt}\nAlojamientos: ${JSON.stringify(reducedAccommodations)}\nRecuerda: responde solo con el array de IDs, en formato JSON válido, sin explicación ni texto adicional.`;
 
   const body = {
     contents: [
@@ -60,10 +60,15 @@ Respuesta esperada: [1]
   // Gemini responde en data.candidates[0].content.parts[0].text
   let ids = [];
   try {
-    const text = data.candidates[0].content.parts[0].text;
-    ids = JSON.parse(text);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Respuesta vacía de Gemini.');
+    // Extrae el primer array de la respuesta, aunque venga con texto extra
+    const match = text.match(/\[.*?\]/s);
+    if (!match) throw new Error('No se encontró un array en la respuesta de Gemini.');
+    ids = JSON.parse(match[0]);
+    if (!Array.isArray(ids)) throw new Error('La respuesta de Gemini no es un array.');
   } catch (e) {
-    ids = [];
+    throw new Error('Error al parsear la respuesta de Gemini: ' + e.message + (data ? `\nRespuesta Gemini: ${JSON.stringify(data)}` : ''));
   }
   return ids;
 }
