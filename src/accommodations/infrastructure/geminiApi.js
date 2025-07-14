@@ -33,8 +33,8 @@ export async function filterAccommodationsWithGemini(prompt, accommodations) {
   const example = `Ejemplo:
 Criterio: alojamiento en Madrid con piscina
 Alojamientos: [
-  {"id":1,"ciudad":"Madrid","provincia":"Madrid","precio":100,"habitaciones":2,"tipo":"apartamento","amenities":["piscina","wifi"]},
-  {"id":2,"ciudad":"Barcelona","provincia":"Barcelona","precio":90,"habitaciones":1,"tipo":"apartamento","amenities":["wifi"]}
+  {"id":1,"city":"Madrid","province":"Madrid","pricePerNight":100,"rooms":2,"type":"apartamento","amenities":["piscina","wifi"]},
+  {"id":2,"city":"Barcelona","province":"Barcelona","pricePerNight":90,"rooms":1,"type":"apartamento","amenities":["wifi"]}
 ]
 Respuesta esperada: [1]
 `;
