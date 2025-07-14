@@ -15,32 +15,31 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
  */
 export async function filterAccommodationsWithGemini(prompt, accommodations) {
   // Solo enviar los campos relevantes para evitar límites de tokens
-  const reducedAccommodations = accommodations.map(a => ({
-    id: a.id,
-    description: a.description,
-    city: a.city,
-    province: a.province,
-    pricePerNight: a.pricePerNight,
-    rooms: a.rooms,
-    type: a.type,
-    amenities: a.amenities,
-    title: a.title
-
-  }));
-
-  
-  // Ejemplo para guiar a Gemini
-  const example = `Ejemplo:
+  // Enviar todos los campos relevantes
+  // Prompt reforzado con varios ejemplos y reglas estrictas
+  const example = `Ejemplo 1:
 Criterio: alojamiento en Madrid con piscina
 Alojamientos: [
-  {"id":1,"city":"Madrid","province":"Madrid","pricePerNight":100,"rooms":2,"type":"apartamento","amenities":["piscina","wifi"]},
-  {"id":2,"city":"Barcelona","province":"Barcelona","pricePerNight":90,"rooms":1,"type":"apartamento","amenities":["wifi"]}
+  {"id":1,"city":"Madrid","province":"Madrid","pricePerNight":100,"rooms":2,"type":"apartamento","amenities":["piscina","wifi"],"description":"Bonito piso"},
+  {"id":2,"city":"Barcelona","province":"Barcelona","pricePerNight":90,"rooms":1,"type":"apartamento","amenities":["wifi"],"description":"Céntrico"}
 ]
 Respuesta esperada: [1]
+
+Ejemplo 2:
+Criterio: alojamiento barato en Barcelona
+Alojamientos: [
+  {"id":1,"city":"Madrid","province":"Madrid","pricePerNight":100,"rooms":2,"type":"apartamento","amenities":["piscina","wifi"]},
+  {"id":2,"city":"Barcelona","province":"Barcelona","pricePerNight":50,"rooms":1,"type":"apartamento","amenities":["wifi"]}
+]
+Respuesta esperada: [2]
+
+Reglas:
+- Responde solo con el array de IDs, en formato JSON puro, sin explicación ni texto extra.
+- No incluyas ningún texto antes ni después del array.
+- Si no hay coincidencias, responde [] (array vacío).
 `;
 
-  const promptText = `${example}\nAhora filtra según este criterio y lista:\nCriterio: ${prompt}\nAlojamientos: ${JSON.stringify(reducedAccommodations)}\nRecuerda: responde solo con el array de IDs, en formato JSON válido, sin explicación ni texto adicional.`;
-
+  const promptText = `${example}\nAhora filtra según este criterio y lista:\nCriterio: ${prompt}\nAlojamientos: ${JSON.stringify(accommodations)}\nRecuerda: responde solo con el array de IDs, en formato JSON válido, sin explicación ni texto adicional.`;
   const body = {
     contents: [
       { role: 'user', parts: [{ text: promptText }] }
