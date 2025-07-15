@@ -1,0 +1,43 @@
+body {
+  min-height: 100vh;
+  background: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+}
+.dev-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dev-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 7vh;
+}
+.dev-card i {
+  font-size: 3.5rem;
+  color: #f7b731;
+  margin-bottom: 1.2rem;
+}
+.dev-card h1 {
+  font-size: 2rem;
+  margin-bottom: 0.7rem;
+  color: #232b3a;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.dev-card p {
+  color: #444;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.dev-card .btn {
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+}

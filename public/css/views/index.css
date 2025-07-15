@@ -1,0 +1,95 @@
+/* Video background wrapper y video */
+.video-bg-wrapper {
+  position: relative;
+  width: 100vw;
+  min-height: 800px;
+  overflow: hidden;
+}
+.video-bg-video {
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+  min-width: 100vw;
+  min-height: 800px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+.video-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+.video-bg-content {
+  position: relative;
+  z-index: 2;
+}
+/* Hero section */
+.hero-section-index {
+  min-height: 400px;
+  background: transparent;
+}
+/* ¿Qué es DDB? section */
+.que-es-ddb-section {
+  background: transparent;
+  max-width: 55vw;
+  margin: 0 auto 3rem auto;
+}
+/* Amenity icon size */
+.amenity-icon-index {
+  font-size: 1.2rem;
+}
+/* Cards de cómo funciona */
+.bg-misc-3 {
+  background-image: url('/img/travel/misc-3.webp');
+}
+.bg-misc-15 {
+  background-image: url('/img/travel/misc-15.webp');
+}
+.bg-misc-12 {
+  background-image: url('/img/travel/misc-12.webp');
+}
+.bg-blog-post-4 {
+  background-image: url('/img/blog/blog-post-4.webp');
+}
+.bg-blog-hero-1 {
+  background-image: url('/img/blog/blog-hero-1.webp');
+}
+/* Estilos específicos para index.ejs */
+.typing {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: .15em solid orange;
+  animation: typing 3s steps(40, end), blink .75s step-end infinite;
+}
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+@keyframes blink {
+  50% { border-color: transparent }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+.explore-btn {
+  color: #ffffff !important;
+}
+.explore-btn:hover,
+.explore-btn:focus {
+  color: #222 !important;
+  background: #fff !important;
+  border-color: #fff !important;
+}

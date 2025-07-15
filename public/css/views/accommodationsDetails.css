@@ -1,0 +1,197 @@
+/* Animación fade-in */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Main container max width */
+.accommodations-main {
+  max-width: 1400px;
+}
+
+/* Card de detalles */
+.details-card {
+  background: rgba(255,255,255,0.97);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 900px;
+  margin: 2.5rem auto 2rem auto;
+}
+
+/* Galería de fotos */
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: flex-start;
+}
+.photos img {
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #f7f8fa;
+}
+.main-photo {
+  width: 100%;
+  max-width: 520px;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin-right: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  background: #f7f8fa;
+  cursor: pointer;
+}
+.main-photo-modal-trigger {
+  /* Para identificar el trigger de modal */
+}
+.photos-carousel {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.carousel-photo-modal-trigger {
+  height: 220px;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+.modal-main-photo, .modal-photo {
+  max-height: 70vh;
+  object-fit: contain;
+}
+.photo-label-modal {
+  left: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 1.1em;
+  padding: 0.5em 0;
+  letter-spacing: 0.03em;
+}
+
+/* Título de alojamiento */
+.accommodation-title {
+  color: #232b3a;
+}
+
+/* Lista de info */
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+.info-list li {
+  margin-bottom: 0.5rem;
+}
+
+/* Lista de amenities */
+.amenities-list {
+  list-style: none;
+  padding: 0;
+}
+
+/* Caja calendario y formulario */
+.calendar-box {
+  background: #f7f8fa;
+  border-radius: 1rem;
+  padding: 1.2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.booking-form-box {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 2rem;
+  max-width: 420px;
+}
+
+/* Botón editar */
+.edit-btn {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 10;
+}
+
+/* Leyenda calendario */
+.calendar-legend {
+  font-size: 0.95em;
+}
+.legend-available {
+  background: #d4edda;
+  border-radius: 0.4em;
+  padding: 0.2em 0.7em;
+  margin-right: 0.5em;
+  border: 1px solid #b7e4c7;
+  display: inline-block;
+}
+.legend-booked {
+  background: #f8d7da;
+  border-radius: 0.4em;
+  padding: 0.2em 0.7em;
+  margin-left: 1.5em;
+  margin-right: 0.5em;
+  border: 1px solid #f5c2c7;
+  display: inline-block;
+}
+
+/* Mapa */
+.accommodation-map {
+  width: 100%;
+  height: 320px;
+}
+
+/* Video de fondo */
+.details-video-bg {
+  position: fixed;
+  top: 0;
+  left: -5vw;
+  width: 105vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.details-bg-video {
+  width: 120vw;
+  height: 120vh;
+  object-fit: cover;
+  min-width: 104vw;
+  min-height: 100vh;
+  opacity: 0.55;
+}
+
+/* FullCalendar ajustes */
+.fc .fc-daygrid-day-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 0.85em;
+  text-align: center;
+}
+.fc .fc-daygrid-day,
+.fc .fc-daygrid-day-frame,
+.fc .fc-daygrid-day-bg {
+  min-height: 26px !important;
+  height: 28px !important;
+  max-height: 32px !important;
+}
+
+@media (max-width: 900px) {
+  .details-card { padding: 1.2rem 0.5rem; }
+  .main-photo { width: 100%; height: 180px; margin: 0 0 1rem 0; }
+  .photos img { width: 120px; height: 80px; }
+}

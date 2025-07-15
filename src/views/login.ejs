@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://kit.fontawesome.com/a2e0bf0f60.js" crossorigin="anonymous"></script>
     <link href="/css/styles.css" rel="stylesheet">
+    <link href="/css/views/login.css" rel="stylesheet">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Video de fondo único
@@ -41,56 +42,6 @@
             document.body.classList.add('bg-login-custom');
         });
     </script>
-    <style>
-        .bg-login-custom {
-            min-height: 100vh;
-            position: relative;
-        }
-
-        .bg-login-custom:before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        main.container>div {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-primary,
-        .btn-primary:active,
-        .btn-primary:focus,
-        .btn-primary:hover {
-            background-color: #5bc0ff !important;
-            border-color: #5bc0ff !important;
-            color: #fff !important;
-            box-shadow: 0 2px 8px rgba(91, 192, 255, 0.08);
-        }
-
-        .login-register-link {
-            color: #5bc0ff !important;
-            text-decoration: underline;
-        }
-
-        .login-register-link:hover {
-            color: #4da3e0 !important;
-        }
-
-        .login-register-row {
-            font-size: 1em !important;
-        }
-
-        .login-register-link-small {
-            font-size: 1em !important;
-        }
-    </style>
 </head>
 
 <body class="bg-light text-dark">

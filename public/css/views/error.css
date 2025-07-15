@@ -1,0 +1,52 @@
+body {
+  background: url('/img/blog/blog-hero-1.webp') center center/cover no-repeat fixed;
+  min-height: 100vh;
+  position: relative;
+}
+.error-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(30,40,60,0.45);
+  pointer-events: none;
+}
+.error-card {
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 540px;
+  margin: 5rem auto 2rem auto;
+  opacity: 1;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: fadein 0.8s cubic-bezier(.4,0,.2,1);
+}
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: none; }
+}
+.error-card h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #c00;
+  margin-bottom: 1.2rem;
+}
+.error-card p {
+  font-size: 1.15em;
+  color: #444;
+}
+.error-card pre {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1em;
+  border-radius: 6px;
+  margin-bottom: 1.2em;
+  text-align: left;
+  font-size: 0.98em;
+}
+.error-card a.btn {
+  min-width: 180px;
+  margin: 0.5em 0.5em 0 0;
+}

@@ -9,31 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
   <link href="/css/styles.css" rel="stylesheet">
-  <style>
-    .confirmation-card {
-      background: rgba(255,255,255,0.97);
-      border-radius: 1.2rem;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      padding: 2.5rem 2rem 2rem 2rem;
-      max-width: 520px;
-      margin: 2.5rem auto 2rem auto;
-      font-size: 1rem; /* tamaño base reducido */
-    }
-    @media (max-width: 991px) {
-      .confirmation-card {
-        font-size: 0.97rem;
-      }
-    }
-    @media (max-width: 767px) {
-      .confirmation-card {
-        font-size: 0.95rem;
-      }
-    }
-    .fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1); }
-    .fade-in.visible { opacity: 1; transform: none; }
-    .confirmation-card img { max-width: 320px; border-radius: 0.7rem; margin-bottom: 1em; }
-    .btn-main { font-size: 1.05em; border-radius: 0.5em; margin-bottom: 0.5em; }
-  </style>
+  <link href="/css/views/bookings.css" rel="stylesheet">
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const fadeEls = document.querySelectorAll('.fade-in');
@@ -53,10 +29,10 @@
     });
   </script>
 </head>
-<body class="bg-light text-dark" style="background: url('/img/blog/blog-hero-2.webp') center center/cover no-repeat fixed; min-height:100vh; position:relative;">
-  <div style="position:fixed;inset:0;z-index:0;background:rgba(30,40,60,0.45);"></div>
+<body class="bg-light text-dark bookings-bg">
+  <div class="bookings-overlay"></div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main style="position:relative;z-index:1;">
+  <main class="bookings-main">
     <div class="container">
       <div class="row justify-content-center align-items-start">
         <div class="col-lg-6 col-md-12">
