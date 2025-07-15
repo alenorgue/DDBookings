@@ -1,0 +1,53 @@
+.confirmation-card {
+  background: rgba(255,255,255,0.97);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 520px;
+  margin: 2.5rem auto 2rem auto;
+  font-size: 1rem;
+}
+@media (max-width: 991px) {
+  .confirmation-card {
+    font-size: 0.97rem;
+  }
+}
+@media (max-width: 767px) {
+  .confirmation-card {
+    font-size: 0.95rem;
+  }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+.confirmation-card img {
+  max-width: 320px;
+  border-radius: 0.7rem;
+  margin-bottom: 1em;
+}
+.btn-main {
+  font-size: 1.05em;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+}
+.bookings-bg {
+  background: url('/img/blog/blog-hero-2.webp') center center/cover no-repeat fixed;
+  min-height: 100vh;
+  position: relative;
+}
+.bookings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(30,40,60,0.45);
+}
+.bookings-main {
+  position: relative;
+  z-index: 1;
+}

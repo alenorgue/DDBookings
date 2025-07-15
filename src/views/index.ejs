@@ -10,53 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
   <link href="/css/styles.css" rel="stylesheet">
-  <style>
-    /* Solo animaciones typing, el resto está en styles.css */
-    .typing {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: .15em solid orange;
-      animation: typing 3s steps(40, end), blink .75s step-end infinite;
-    }
-
-    @keyframes typing {
-      from {
-        width: 0
-      }
-
-      to {
-        width: 100%
-      }
-    }
-
-    @keyframes blink {
-      50% {
-        border-color: transparent
-      }
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: none;
-    }
-    .explore-btn {
-      color: #ffffff !important;
-    }
-    .explore-btn:hover,
-    .explore-btn:focus {
-      color: #222 !important;
-      background: #fff !important;
-      border-color: #fff !important;
-  
-    }
-  </style>
+  <link href="/css/views/index.css" rel="stylesheet">
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const fadeEls = document.querySelectorAll('.fade-in');
@@ -77,16 +31,16 @@
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
 
   <!-- Fondo de video para hero y sección siguiente -->
-  <div class="video-bg-wrapper" style="position:relative;width:100vw;min-height:800px;overflow:hidden;">
-    <video autoplay muted loop playsinline style="width:100vw;height:100%;object-fit:cover;min-width:100vw;min-height:800px;position:absolute;top:0;left:0;z-index:0;">
+  <div class="video-bg-wrapper">
+    <video autoplay muted loop playsinline class="video-bg-video">
       <source src="/img/travel/video-2.mp4" type="video/mp4">
       Tu navegador no soporta el video de fondo.
     </video>
-    <div style="position:absolute;top:0;left:0;width:100vw;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div>
+    <div class="video-bg-overlay"></div>
 
-    <div style="position:relative;z-index:2;">
+    <div class="video-bg-content">
       <!-- Hero Section con efecto typing y video de fondo -->
-      <section class="text-white text-center py-5 mb-5 fade-in" style="min-height: 400px; background: transparent;">
+      <section class="text-white text-center py-5 mb-5 fade-in hero-section-index">
         <div class="container">
           <h1 class="display-4 mb-3"><span class="typing">Bienvenidos a Dream Driven Bookings</span></h1>
           <p class="lead">Explora, publica y gestiona alojamientos turísticos con facilidad.</p>
@@ -105,7 +59,7 @@
       </section>
 
       <!-- Qué es DDB -->
-      <section class="container text-center mb-5 text-white fade-in" style="background: transparent; max-width: 55vw; margin: 0 auto 3rem auto;">
+      <section class="container text-center mb-5 text-white fade-in que-es-ddb-section">
         <h2 class="mb-4">¿Qué es Dream Driven Bookings?</h2>
         <p class="mb-2">DDB es una plataforma que conecta a viajeros con propietarios de alojamientos turísticos, facilitando la búsqueda y gestión de reservas.</p>
         <p class="mb-2">Ofrecemos una experiencia intuitiva para que tanto huéspedes como anfitriones puedan disfrutar de un servicio ágil y eficiente.</p>
@@ -132,7 +86,7 @@
             <div class="d-flex flex-wrap gap-2">
               <% acc.amenities.forEach(a => { %>
               <% const icon = amenityIcons[a] || 'fa-circle-question'; %>
-              <i class="fas <%= icon %>" title="<%= a %>" style="font-size: 1.2rem;"></i>
+              <i class="fas <%= icon %> amenity-icon-index" title="<%= a %>"></i>
               <% }) %>
             </div>
           </div>
@@ -151,31 +105,31 @@
       <h2 class="text-center mb-4">¿Cómo funciona?</h2>
       <div class="row text-center">
         <div class="col-md-4 mb-4 fade-in">
-          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-3.webp');">
+          <div class="como-funciona-card bg-misc-3">
             <h5>1. Explora</h5>
             <p>Navega por nuestra amplia selección de alojamientos.</p>
           </div>
         </div>
         <div class="col-md-4 mb-4 fade-in">
-          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-15.webp');">
+          <div class="como-funciona-card bg-misc-15">
             <h5>2. Reserva</h5>
             <p>Encuentra el lugar perfecto y realiza tu reserva de forma segura.</p>
           </div>
         </div>
         <div class="col-md-4 mb-4 fade-in">
-          <div class="como-funciona-card" style="background-image:url('/img/travel/misc-12.webp');">
+          <div class="como-funciona-card bg-misc-12">
             <h5>3. Disfruta</h5>
             <p>Vive una experiencia inolvidable en tu destino elegido.</p>
           </div>
         </div>
         <div class="col-md-6 mb-4 fade-in">
-          <div class="como-funciona-card" style="background-image:url('/img/blog/blog-post-4.webp');">
+          <div class="como-funciona-card bg-blog-post-4">
             <h5>4. Publica</h5>
             <p>Si eres propietario, publica tu alojamiento fácilmente.</p>
           </div>
         </div>
         <div class="col-md-6 mb-4 fade-in">
-          <div class="como-funciona-card" style="background-image:url('/img/blog/blog-hero-1.webp');">
+          <div class="como-funciona-card bg-blog-hero-1">
             <h5>5. Gestiona</h5>
             <p>Consulta reservas y alojamientos desde tu perfil.</p>
           </div>

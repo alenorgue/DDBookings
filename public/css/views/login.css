@@ -1,0 +1,48 @@
+.bg-login-custom {
+    min-height: 100vh;
+    position: relative;
+}
+
+.bg-login-custom:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 0;
+    pointer-events: none;
+}
+
+main.container>div {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:hover {
+    background-color: #5bc0ff !important;
+    border-color: #5bc0ff !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(91, 192, 255, 0.08);
+}
+
+.login-register-link {
+    color: #5bc0ff !important;
+    text-decoration: underline;
+}
+
+.login-register-link:hover {
+    color: #4da3e0 !important;
+}
+
+.login-register-row {
+    font-size: 1em !important;
+}
+
+.login-register-link-small {
+    font-size: 1em !important;
+}

@@ -1,0 +1,195 @@
+/* Estilos específicos para accommodationsList.ejs */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.4, 0, .2, 1), transform 0.8s cubic-bezier(.4, 0, .2, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+.hero-video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 50vh;
+  min-height: 260px;
+  overflow: hidden;
+  z-index: -1;}
+/* Estilos para body y main */
+/* Estilos para body y main */
+.body-accommodations {
+  position: relative;
+  min-height: 100vh;
+  margin-top: 0;
+}
+.z42 {
+  z-index: 2;
+  margin-top: 42vh;
+}
+.main-content-offset {
+  margin-top: 42vh;
+}
+/* Hero blur y contenido */
+/* Hero blur y contenido */
+.hero-blur-bg-accommodations {
+  z-index: 2;
+  margin-bottom: 2.5rem;
+  background: #fff;
+  border-radius: 1.2rem;
+  padding: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+.hero-video-bg video {
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+  min-width: 100vw;
+  min-height: 260px;
+  position: absolute;
+  top: 3vh;
+  left: 0;
+}
+.hero-blur-img-accommodations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 70%;
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 1.2rem;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+  padding-top: 6vh;
+  margin-bottom: 2.5rem;
+}
+.hero-blur-content-accommodations {
+  position: relative;
+  z-index: 1;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1) brightness(0.2);
+}
+.carousel-control-prev,
+.carousel-control-next {
+  filter: none;
+}
+.hero-title-accommodations {
+  text-decoration: underline;
+  font-weight: bold;
+}
+.hero-lead-accommodations {
+  font-weight: bold;
+}
+/* Gemini filter card */
+.gemini-filter-card {
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 1rem;
+  border: none;
+  color: #232b3a;
+}
+/* Gemini filter image */
+.gemini-filter-img {
+  max-width: 450px;
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+/* Margin bottom para cards */
+.mb-2vh {
+  margin-bottom: 2vh;
+}
+.card-font-small {
+  font-size: 0.7em;
+}
+/* Card styles */
+.accommodation-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.95);
+  color: #232b3a;
+  transition: box-shadow 0.2s;
+  width: 100%;
+  min-width: 360px;
+  max-width: 440px;
+  height: 510px;
+  display: flex;
+  flex-direction: column;
+}
+.accommodation-card:hover {
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+.accommodation-card .card-img-top {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background: #e9ecef;
+}
+.accommodation-card .card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.accommodation-card .amenities i {
+  color: #111 !important;
+}
+.amenities i {
+  margin-right: 0.5rem;
+  color: #111 !important;
+}
+.filter-form {
+  background: rgba(255,255,255,0.85);
+  color: #232b3a;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-size: 1.05rem;
+}
+.filter-form label, .filter-form input, .filter-form select {
+  font-size: 1.05rem !important;
+}
+.filter-form .btn, .filter-form .btn-outline-secondary {
+  font-size: 1.05rem;
+}
+.section-filtros-destacados {
+  background: #f7f8fa;
+  border-radius: 1.2rem;
+  padding: 2rem 1rem;
+  margin-bottom: 2.5rem;
+}
+.destacados-section {
+  font-size: 0.8rem;
+}
+.destacados-section h2 {
+  font-size: 1.2rem;
+}
+@media (max-width: 500px) {
+  .destacados-section {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .hero-content {
+    padding-top: 2vh;
+  }
+  .section-filtros-destacados {
+    padding: 1rem 0.2rem;
+  }
+}
