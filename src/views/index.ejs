@@ -74,7 +74,7 @@
     <div class="row g-4">
       <% accommodations.slice(3, 6).forEach(acc => { %>
       <div class="col-md-4 fade-in">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm featured-acc-card" data-acc-id="<%= acc.id %>">
           <img src="<%= acc.mainPhoto %>" class="card-img-top" alt="Foto de <%= acc.title %>">
           <div class="card-body">
             <h5 class="card-title"><%= acc.title %></h5>
@@ -140,6 +140,21 @@
   </section>
 
   <%- include('partials/footer') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // ...existing code...
+      // Add click event to featured accommodation cards
+      document.querySelectorAll('.featured-acc-card').forEach(function(card) {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function() {
+          var accId = card.getAttribute('data-acc-id');
+          if (accId) {
+            window.location.href = '/accommodations/' + accId;
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

@@ -63,7 +63,6 @@ router.post('/:id/availability', ensureAuthenticated, updateAvailabilityControll
 router.use(geminiFilterRouter);
 //manejo de errores
 router.use((err, req, res, next) => {
-  // No redeclares 'err', solo usa el que Express te pasa
   err = err || new Error('Error interno del servidor');
   err.status = err.status || 500;
   next(err);
