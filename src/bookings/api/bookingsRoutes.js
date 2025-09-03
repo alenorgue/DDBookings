@@ -45,15 +45,4 @@ router.get('/:id/pdf', ensureAuthenticated, generateBookingConfirmationControlle
 
 router.use('/recommendations', geminiRecommendationsRouter);
 
-// Manejo global de errores para bookings
-router.use((err, req, res, next) => {
-  const status = err.status || 500;
-  const message = err.message || 'Error interno del servidor';
-  if (req.accepts('html')) {
-    res.status(status).render('error', { message });
-  } else {
-    res.status(status).json({ error: message });
-  }
-});
-
 export default router;

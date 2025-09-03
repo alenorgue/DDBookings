@@ -68,13 +68,5 @@ router.use((err, req, res, next) => {
   next(err);
 });        
 
-// Manejo de rutas no encontradas (404)
-router.use((req, res, next) => {
-  const err = new Error('Página no encontrada');
-  err.status = 404;
-  next(err);
-});
-
-
 
 export default router;
