@@ -92,18 +92,36 @@ console.log('connectDB llamado');
 app.use((req, res, next) => {
   const err = new Error('Página no encontrada');
   err.status = 404;
-  next(err);
+  // Si la petición acepta HTML, renderiza la vista
+  if (req.accepts('html')) {
+    return res.status(404).render('error', {
+      message: err.message,
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      user: req.session && req.session.user ? req.session.user : null
+    });
+  }
+  // Si la petición acepta JSON, responde con JSON
+  if (req.accepts('json')) {
+    return res.status(404).json({ message: err.message });
+  }
+  // Por defecto, responde texto plano
+  res.status(404).type('txt').send(err.message);
 });
 
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err);
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message || 'Error interno del servidor',
-    error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    user: req.session && req.session.user ? req.session.user : null
-  });
+  if (req.accepts('html')) {
+    return res.status(err.status || 500).render('error', {
+      message: err.message || 'Error interno del servidor',
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      user: req.session && req.session.user ? req.session.user : null
+    });
+  }
+  if (req.accepts('json')) {
+    return res.status(err.status || 500).json({ message: err.message });
+  }
+  res.status(err.status || 500).type('txt').send(err.message || 'Error interno del servidor');
 });
 console.log('Middleware de errores montado');
 
