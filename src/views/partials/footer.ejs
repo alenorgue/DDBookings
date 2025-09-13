@@ -12,7 +12,7 @@
 opacity: 0.9;
   border-top: 3px solid #2a4365;
   font-size: 0.8rem;
-  width: 100vw;
+  width: 100%;
   margin: 0;
   padding: 0;
 }
@@ -32,10 +32,26 @@ opacity: 0.9;
   margin: 0.1em 0;
   font-size: 1em;
   line-height: 1.2;
+   @media (max-width: 600px) {
+     .footer-content {
+       flex-direction: row !important;
+       flex-wrap: wrap !important;
+       align-items: flex-start !important;
+       gap: 0.7em !important;
+       width: 100%;
+       justify-content: flex-start !important;
+     }
+     .main-footer p, .main-footer small {
+       text-align: left !important;
+       width: auto !important;
+       white-space: normal !important;
+     }
+   }
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: initial;
+  word-break: break-word;
 }
 .main-footer a {
   color: #7ec4fa;
