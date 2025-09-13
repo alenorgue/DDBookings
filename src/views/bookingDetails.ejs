@@ -18,9 +18,10 @@
       </video>
     </div>
   <%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
-  <main>
+  <main style="display: flex; flex-direction: row; gap: 2rem; flex-wrap: wrap;">
     <div class="booking-details-card fade-in">
       <h2 class="mb-3"><i class="fa-solid fa-file-invoice me-2"></i>Detalles de la Reserva</h2>
+      <a href="/bookings/<%= booking.id %>/pdf" class="btn btn-outline-info btn-main mb-3"><i class="fa-solid fa-file-arrow-down me-2"></i>Descargar confirmación en PDF</a>
       <section>
         <h3 class="mb-2">Alojamiento reservado</h3>
         <img src="<%= accommodation.mainPhoto %>" alt="Foto principal">
@@ -66,6 +67,13 @@
       </div>
       <a href="/dashboard/<%= booking.guestId %>" class="btn btn-back mt-4"><i class="fa-solid fa-arrow-left me-1"></i>Volver al dashboard</a>
     </div>
+    <div class="booking-details-card fade-in" style="min-width:350px; max-width:500px; max-height: fit-content;">
+      <h4 class="mb-3"><i class="fa-solid fa-lightbulb me-2"></i>¿Quieres recibir recomendaciones de actividades durante tu estancia?</h4>
+            <button id="btnGeminiRecs" class="btn btn-success mb-3" type="button">Obtener recomendaciones</button>
+            <div id="geminiRecsLoading" class="text-center my-2" style="display:none;"><div class="spinner-border text-success" role="status"></div><div>Consultando IA...</div></div>
+            <div id="geminiRecsError" class="text-danger mb-2" style="display:none;"></div>
+            <div id="geminiRecsList"></div>
+    </div>
   </main>
   <%- include('partials/footer') %>
   <script>
@@ -85,6 +93,56 @@
         fadeEls.forEach(el => el.classList.add('visible'));
       }
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('btnGeminiRecs');
+        const loading = document.getElementById('geminiRecsLoading');
+        const errorDiv = document.getElementById('geminiRecsError');
+        const listDiv = document.getElementById('geminiRecsList');
+        if (!btn) return;
+        btn.addEventListener('click', async function() {
+          btn.disabled = true;
+          loading.style.display = 'block';
+          errorDiv.style.display = 'none';
+          listDiv.innerHTML = '';
+          try {
+            const res = await fetch('/bookings/recommendations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                city: '<%= accommodation.location.city %>',
+                checkIn: '<%= booking.startDate.toISOString().slice(0,10) %>',
+                checkOut: '<%= booking.endDate.toISOString().slice(0,10) %>'
+              })
+            });
+            let data;
+            try {
+              data = await res.json();
+            } catch (jsonErr) {
+              throw new Error('La respuesta del servidor no es válida. ¿Sesión expirada o error de red?');
+            }
+            if (!res.ok || !Array.isArray(data.recommendations)) {
+              throw new Error(data.error || 'Error inesperado');
+            }
+            if (data.recommendations.length === 0) {
+              listDiv.innerHTML = '<div class="text-muted">No se encontraron recomendaciones para estas fechas.</div>';
+              return;
+            }
+            // Render lista
+            listDiv.innerHTML = '<ul class="list-group">' + data.recommendations.map(r =>
+              `<li class="list-group-item">
+                <strong>${r.nombre}</strong> <span class="badge bg-info text-dark ms-2">${r.tipo}</span><br>
+                <span>${r.descripcion}</span>
+              </li>`
+            ).join('') + '</ul>';
+          } catch (err) {
+            errorDiv.textContent = err.message;
+            errorDiv.style.display = 'block';
+          } finally {
+            loading.style.display = 'none';
+            btn.disabled = false;
+          }
+        });
+      });
   </script>
 </body>
 </html>

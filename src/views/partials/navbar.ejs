@@ -48,6 +48,21 @@ nav .navbar-left, nav .navbar-right {
 }
 nav .navbar-left {
   gap: 1.5em;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  nav .navbar-left {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 0.7em !important;
+    width: 100%;
+  }
+  nav .navbar-right {
+    width: 100%;
+    justify-content: flex-start;
+    margin-left: 0 !important;
+    margin-top: 0.5em;
+  }
 }
 nav .navbar-right {
   gap: 2.2em;
